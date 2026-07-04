@@ -1,2 +1,5 @@
-Console.WriteLine("SeedTool scaffold OK.");
-return 0;
+using Norse.SeedTool.Commands;
+using Spectre.Console.Cli;
+
+CommandApp<GenerateUnsdM49Command> app = new();
+return app.Run(args);
