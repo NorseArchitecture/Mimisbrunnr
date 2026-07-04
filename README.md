@@ -19,3 +19,6 @@ Mímisbrunnr and Mímir are one bounded context split across two repositories fo
 ## The cosmos
 
 Mímisbrunnr is one realm of the [Norse Architecture](https://github.com/NorseArchitecture). The whole platform composes at [Bifröst](https://github.com/NorseArchitecture/Bifrost) — clone once, cross the bridge, and every session starts there so decisions get brainstormed across the entire landscape, not in isolation. Every design is tried in [Glitnir](https://github.com/NorseArchitecture/Glitnir), the design court, before code is forged here; this realm's specs and plans will live in the court's [docs/Mimisbrunnr/](https://github.com/NorseArchitecture/Glitnir/tree/master/docs/Mimisbrunnr) once they converge.
+
+## Soundtrack: Óðinn við Mímis brunn (Odin at the Well of Mimir)
+[![Soundtrack: Óðinn við Mímis brunn (Odin at the Well of Mimir)](https://img.youtube.com/vi/luOqIm__-l8/maxresdefault.jpg)](https://www.youtube.com/watch?v=luOqIm__-l8)
