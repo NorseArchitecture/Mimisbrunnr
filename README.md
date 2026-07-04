@@ -12,6 +12,123 @@ The reference-data store of the Norse Architecture — **`Norse.ReferenceData.Da
 
 This realm is currently a bare shell — no code, no specs converged yet. Design happens first: brainstorm → spec → plan, recorded in Glitnir's `docs/Mimisbrunnr/`, before any project is scaffolded here.
 
+## Initial sketch of reference data plan
+```mermaid
+erDiagram
+  region {
+    char(3) un_m49_code PK
+    varchar name
+    char(3) parent_m49 FK
+    smallint level
+  }
+
+  country {
+    char(2) iso_3166_1_alpha2 PK
+    char(3) iso_3166_1_alpha3
+    char(3) iso_3166_1_numeric
+    char(3) un_m49_code FK
+    varchar common_name
+    varchar official_name
+    bool is_independent
+    bool is_active
+  }
+
+  subdivision {
+    varchar iso_3166_2_code PK
+    char(2) country_alpha2 FK
+    varchar name
+    varchar type
+  }
+
+  language {
+    char(3) iso_639_3_code PK
+    char(2) iso_639_1_code
+    varchar name
+    char(4) iso_15924_script FK
+    varchar scope
+    varchar lang_type
+  }
+
+  script {
+    char(4) iso_15924_code PK
+    varchar name
+    smallint unicode_number
+    varchar unicode_alias
+  }
+
+  locale {
+    varchar bcp47_tag PK
+    char(3) language_code FK
+    char(4) script_code FK
+    char(2) country_alpha2 FK
+    varchar display_name
+    varchar number_format
+    varchar date_format
+    varchar first_day_of_week
+  }
+
+  currency {
+    char(3) iso_4217_code PK
+    varchar name
+    varchar symbol
+    smallint minor_unit
+    bool is_active
+  }
+
+  country_currency {
+    char(2) country_alpha2 FK
+    char(3) currency_code FK
+    bool is_primary
+  }
+
+  country_language {
+    char(2) country_alpha2 FK
+    char(3) language_code FK
+    varchar status
+  }
+
+  timezone {
+    varchar iana_key PK
+    varchar canonical_key FK
+    char(2) country_alpha2 FK
+    varchar region_hint
+    bool is_canonical
+  }
+
+  utc_offset {
+    varchar iana_key FK
+    varchar offset_code
+    smallint offset_minutes
+    varchar abbreviation
+    bool is_dst
+    date valid_from
+    date valid_until
+  }
+
+  calling_code {
+    serial id PK
+    char(2) country_alpha2 FK
+    varchar e164_prefix
+    bool is_primary
+  }
+
+  region ||--o{ region : "parent"
+  region ||--o{ country : "contains"
+  country ||--o{ subdivision : "has"
+  country ||--o{ country_currency : "uses"
+  country ||--o{ country_language : "speaks"
+  country ||--o{ timezone : "observes"
+  country ||--o{ calling_code : "assigned"
+  currency ||--o{ country_currency : "used by"
+  language ||--o{ country_language : "spoken in"
+  language }o--|| script : "written in"
+  script ||--o{ locale : "used by"
+  language ||--o{ locale : "defines"
+  country ||--o{ locale : "applies"
+  timezone ||--o{ utc_offset : "has rules"
+  timezone }o--o| timezone : "alias of"
+```
+
 ## Why two repos
 
 Mímisbrunnr and Mímir are one bounded context split across two repositories for a specific, verified reason: reference-data content (IANA reissuing time zone data, ISO adding or redenominating currencies) changes far more often than the service and component code that serves it, and the platform's release tooling only supports repo-scoped tags — packing and publishing happen for an entire repo at once, not per project. Splitting the repository is what lets `Data` cut a release without dragging `Components`/`Web.Server`/`Worker` along, and vice versa. This pair is a template for anyone whose own reference data has the same shape — not a pattern the platform applies by default.
