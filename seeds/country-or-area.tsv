@@ -1,0 +1,249 @@
+M49Code	IsoAlpha2Code	IsoAlpha3Code	Name	ParentM49Code	IsLeastDevelopedCountry	IsLandLockedDevelopingCountry	IsSmallIslandDevelopingState
+012	DZ	DZA	Algeria	015	false	false	false
+818	EG	EGY	Egypt	015	false	false	false
+434	LY	LBY	Libya	015	false	false	false
+504	MA	MAR	Morocco	015	false	false	false
+729	SD	SDN	Sudan	015	true	false	false
+788	TN	TUN	Tunisia	015	false	false	false
+732	EH	ESH	Western Sahara	015	false	false	false
+086	IO	IOT	British Indian Ocean Territory	014	false	false	false
+108	BI	BDI	Burundi	014	true	true	false
+174	KM	COM	Comoros	014	true	false	true
+262	DJ	DJI	Djibouti	014	true	false	false
+232	ER	ERI	Eritrea	014	true	false	false
+231	ET	ETH	Ethiopia	014	true	true	false
+260	TF	ATF	French Southern Territories	014	false	false	false
+404	KE	KEN	Kenya	014	false	false	false
+450	MG	MDG	Madagascar	014	true	false	false
+454	MW	MWI	Malawi	014	true	true	false
+480	MU	MUS	Mauritius	014	false	false	true
+175	YT	MYT	Mayotte	014	false	false	false
+508	MZ	MOZ	Mozambique	014	true	false	false
+638	RE	REU	Réunion	014	false	false	false
+646	RW	RWA	Rwanda	014	true	true	false
+690	SC	SYC	Seychelles	014	false	false	true
+706	SO	SOM	Somalia	014	true	false	false
+728	SS	SSD	South Sudan	014	true	true	false
+800	UG	UGA	Uganda	014	true	true	false
+834	TZ	TZA	United Republic of Tanzania	014	true	false	false
+894	ZM	ZMB	Zambia	014	true	true	false
+716	ZW	ZWE	Zimbabwe	014	false	true	false
+024	AO	AGO	Angola	017	true	false	false
+120	CM	CMR	Cameroon	017	false	false	false
+140	CF	CAF	Central African Republic	017	true	true	false
+148	TD	TCD	Chad	017	true	true	false
+178	CG	COG	Congo	017	false	false	false
+180	CD	COD	Democratic Republic of the Congo	017	true	false	false
+226	GQ	GNQ	Equatorial Guinea	017	false	false	false
+266	GA	GAB	Gabon	017	false	false	false
+678	ST	STP	Sao Tome and Principe	017	false	false	true
+072	BW	BWA	Botswana	018	false	true	false
+748	SZ	SWZ	Eswatini	018	false	true	false
+426	LS	LSO	Lesotho	018	true	true	false
+516	NA	NAM	Namibia	018	false	false	false
+710	ZA	ZAF	South Africa	018	false	false	false
+204	BJ	BEN	Benin	011	true	false	false
+854	BF	BFA	Burkina Faso	011	true	true	false
+132	CV	CPV	Cabo Verde	011	false	false	true
+384	CI	CIV	Côte d’Ivoire	011	false	false	false
+270	GM	GMB	Gambia	011	true	false	false
+288	GH	GHA	Ghana	011	false	false	false
+324	GN	GIN	Guinea	011	true	false	false
+624	GW	GNB	Guinea-Bissau	011	true	false	true
+430	LR	LBR	Liberia	011	true	false	false
+466	ML	MLI	Mali	011	true	true	false
+478	MR	MRT	Mauritania	011	true	false	false
+562	NE	NER	Niger	011	true	true	false
+566	NG	NGA	Nigeria	011	false	false	false
+654	SH	SHN	Saint Helena	011	false	false	false
+686	SN	SEN	Senegal	011	true	false	false
+694	SL	SLE	Sierra Leone	011	true	false	false
+768	TG	TGO	Togo	011	true	false	false
+660	AI	AIA	Anguilla	029	false	false	true
+028	AG	ATG	Antigua and Barbuda	029	false	false	true
+533	AW	ABW	Aruba	029	false	false	true
+044	BS	BHS	Bahamas	029	false	false	true
+052	BB	BRB	Barbados	029	false	false	true
+535	BQ	BES	Bonaire, Sint Eustatius and Saba	029	false	false	true
+092	VG	VGB	British Virgin Islands	029	false	false	true
+136	KY	CYM	Cayman Islands	029	false	false	false
+192	CU	CUB	Cuba	029	false	false	true
+531	CW	CUW	Curaçao	029	false	false	true
+212	DM	DMA	Dominica	029	false	false	true
+214	DO	DOM	Dominican Republic	029	false	false	true
+308	GD	GRD	Grenada	029	false	false	true
+312	GP	GLP	Guadeloupe	029	false	false	false
+332	HT	HTI	Haiti	029	true	false	true
+388	JM	JAM	Jamaica	029	false	false	true
+474	MQ	MTQ	Martinique	029	false	false	false
+500	MS	MSR	Montserrat	029	false	false	true
+630	PR	PRI	Puerto Rico	029	false	false	true
+652	BL	BLM	Saint Barthélemy	029	false	false	false
+659	KN	KNA	Saint Kitts and Nevis	029	false	false	true
+662	LC	LCA	Saint Lucia	029	false	false	true
+663	MF	MAF	Saint Martin (French Part)	029	false	false	false
+670	VC	VCT	Saint Vincent and the Grenadines	029	false	false	true
+534	SX	SXM	Sint Maarten (Dutch part)	029	false	false	true
+780	TT	TTO	Trinidad and Tobago	029	false	false	true
+796	TC	TCA	Turks and Caicos Islands	029	false	false	false
+850	VI	VIR	United States Virgin Islands	029	false	false	true
+084	BZ	BLZ	Belize	013	false	false	true
+188	CR	CRI	Costa Rica	013	false	false	false
+222	SV	SLV	El Salvador	013	false	false	false
+320	GT	GTM	Guatemala	013	false	false	false
+340	HN	HND	Honduras	013	false	false	false
+484	MX	MEX	Mexico	013	false	false	false
+558	NI	NIC	Nicaragua	013	false	false	false
+591	PA	PAN	Panama	013	false	false	false
+032	AR	ARG	Argentina	005	false	false	false
+068	BO	BOL	Bolivia (Plurinational State of)	005	false	true	false
+074	BV	BVT	Bouvet Island	005	false	false	false
+076	BR	BRA	Brazil	005	false	false	false
+152	CL	CHL	Chile	005	false	false	false
+170	CO	COL	Colombia	005	false	false	false
+218	EC	ECU	Ecuador	005	false	false	false
+238	FK	FLK	Falkland Islands (Malvinas)	005	false	false	false
+254	GF	GUF	French Guiana	005	false	false	false
+328	GY	GUY	Guyana	005	false	false	true
+600	PY	PRY	Paraguay	005	false	true	false
+604	PE	PER	Peru	005	false	false	false
+239	GS	SGS	South Georgia and the South Sandwich Islands	005	false	false	false
+740	SR	SUR	Suriname	005	false	false	true
+858	UY	URY	Uruguay	005	false	false	false
+862	VE	VEN	Venezuela (Bolivarian Republic of)	005	false	false	false
+060	BM	BMU	Bermuda	021	false	false	false
+124	CA	CAN	Canada	021	false	false	false
+304	GL	GRL	Greenland	021	false	false	false
+666	PM	SPM	Saint Pierre and Miquelon	021	false	false	false
+840	US	USA	United States of America	021	false	false	false
+010	AQ	ATA	Antarctica		false	false	false
+398	KZ	KAZ	Kazakhstan	143	false	true	false
+417	KG	KGZ	Kyrgyzstan	143	false	true	false
+762	TJ	TJK	Tajikistan	143	false	true	false
+795	TM	TKM	Turkmenistan	143	false	true	false
+860	UZ	UZB	Uzbekistan	143	false	true	false
+156	CN	CHN	China	030	false	false	false
+344	HK	HKG	China, Hong Kong Special Administrative Region	030	false	false	false
+446	MO	MAC	China, Macao Special Administrative Region	030	false	false	false
+408	KP	PRK	Democratic People's Republic of Korea	030	false	false	false
+392	JP	JPN	Japan	030	false	false	false
+496	MN	MNG	Mongolia	030	false	true	false
+410	KR	KOR	Republic of Korea	030	false	false	false
+096	BN	BRN	Brunei Darussalam	035	false	false	false
+116	KH	KHM	Cambodia	035	true	false	false
+360	ID	IDN	Indonesia	035	false	false	false
+418	LA	LAO	Lao People's Democratic Republic	035	true	true	false
+458	MY	MYS	Malaysia	035	false	false	false
+104	MM	MMR	Myanmar	035	true	false	false
+608	PH	PHL	Philippines	035	false	false	false
+702	SG	SGP	Singapore	035	false	false	true
+764	TH	THA	Thailand	035	false	false	false
+626	TL	TLS	Timor-Leste	035	true	false	true
+704	VN	VNM	Viet Nam	035	false	false	false
+004	AF	AFG	Afghanistan	034	true	true	false
+050	BD	BGD	Bangladesh	034	true	false	false
+064	BT	BTN	Bhutan	034	false	true	false
+356	IN	IND	India	034	false	false	false
+364	IR	IRN	Iran (Islamic Republic of)	034	false	false	false
+462	MV	MDV	Maldives	034	false	false	true
+524	NP	NPL	Nepal	034	true	true	false
+586	PK	PAK	Pakistan	034	false	false	false
+144	LK	LKA	Sri Lanka	034	false	false	false
+051	AM	ARM	Armenia	145	false	true	false
+031	AZ	AZE	Azerbaijan	145	false	true	false
+048	BH	BHR	Bahrain	145	false	false	false
+196	CY	CYP	Cyprus	145	false	false	false
+268	GE	GEO	Georgia	145	false	false	false
+368	IQ	IRQ	Iraq	145	false	false	false
+376	IL	ISR	Israel	145	false	false	false
+400	JO	JOR	Jordan	145	false	false	false
+414	KW	KWT	Kuwait	145	false	false	false
+422	LB	LBN	Lebanon	145	false	false	false
+512	OM	OMN	Oman	145	false	false	false
+634	QA	QAT	Qatar	145	false	false	false
+682	SA	SAU	Saudi Arabia	145	false	false	false
+275	PS	PSE	State of Palestine	145	false	false	false
+760	SY	SYR	Syrian Arab Republic	145	false	false	false
+792	TR	TUR	Türkiye	145	false	false	false
+784	AE	ARE	United Arab Emirates	145	false	false	false
+887	YE	YEM	Yemen	145	true	false	false
+112	BY	BLR	Belarus	151	false	false	false
+100	BG	BGR	Bulgaria	151	false	false	false
+203	CZ	CZE	Czechia	151	false	false	false
+348	HU	HUN	Hungary	151	false	false	false
+616	PL	POL	Poland	151	false	false	false
+498	MD	MDA	Republic of Moldova	151	false	true	false
+642	RO	ROU	Romania	151	false	false	false
+643	RU	RUS	Russian Federation	151	false	false	false
+703	SK	SVK	Slovakia	151	false	false	false
+804	UA	UKR	Ukraine	151	false	false	false
+248	AX	ALA	Åland Islands	154	false	false	false
+208	DK	DNK	Denmark	154	false	false	false
+233	EE	EST	Estonia	154	false	false	false
+234	FO	FRO	Faroe Islands	154	false	false	false
+246	FI	FIN	Finland	154	false	false	false
+831	GG	GGY	Guernsey	154	false	false	false
+352	IS	ISL	Iceland	154	false	false	false
+372	IE	IRL	Ireland	154	false	false	false
+833	IM	IMN	Isle of Man	154	false	false	false
+832	JE	JEY	Jersey	154	false	false	false
+428	LV	LVA	Latvia	154	false	false	false
+440	LT	LTU	Lithuania	154	false	false	false
+578	NO	NOR	Norway	154	false	false	false
+744	SJ	SJM	Svalbard and Jan Mayen Islands	154	false	false	false
+752	SE	SWE	Sweden	154	false	false	false
+826	GB	GBR	United Kingdom of Great Britain and Northern Ireland	154	false	false	false
+008	AL	ALB	Albania	039	false	false	false
+020	AD	AND	Andorra	039	false	false	false
+070	BA	BIH	Bosnia and Herzegovina	039	false	false	false
+191	HR	HRV	Croatia	039	false	false	false
+292	GI	GIB	Gibraltar	039	false	false	false
+300	GR	GRC	Greece	039	false	false	false
+336	VA	VAT	Holy See	039	false	false	false
+380	IT	ITA	Italy	039	false	false	false
+470	MT	MLT	Malta	039	false	false	false
+499	ME	MNE	Montenegro	039	false	false	false
+807	MK	MKD	North Macedonia	039	false	true	false
+620	PT	PRT	Portugal	039	false	false	false
+674	SM	SMR	San Marino	039	false	false	false
+688	RS	SRB	Serbia	039	false	false	false
+705	SI	SVN	Slovenia	039	false	false	false
+724	ES	ESP	Spain	039	false	false	false
+040	AT	AUT	Austria	155	false	false	false
+056	BE	BEL	Belgium	155	false	false	false
+250	FR	FRA	France	155	false	false	false
+276	DE	DEU	Germany	155	false	false	false
+438	LI	LIE	Liechtenstein	155	false	false	false
+442	LU	LUX	Luxembourg	155	false	false	false
+492	MC	MCO	Monaco	155	false	false	false
+528	NL	NLD	Netherlands (Kingdom of the)	155	false	false	false
+756	CH	CHE	Switzerland	155	false	false	false
+036	AU	AUS	Australia	053	false	false	false
+162	CX	CXR	Christmas Island	053	false	false	false
+166	CC	CCK	Cocos (Keeling) Islands	053	false	false	false
+334	HM	HMD	Heard Island and McDonald Islands	053	false	false	false
+554	NZ	NZL	New Zealand	053	false	false	false
+574	NF	NFK	Norfolk Island	053	false	false	false
+242	FJ	FJI	Fiji	054	false	false	true
+540	NC	NCL	New Caledonia	054	false	false	true
+598	PG	PNG	Papua New Guinea	054	false	false	true
+090	SB	SLB	Solomon Islands	054	true	false	true
+548	VU	VUT	Vanuatu	054	false	false	true
+316	GU	GUM	Guam	057	false	false	true
+296	KI	KIR	Kiribati	057	true	false	true
+584	MH	MHL	Marshall Islands	057	false	false	true
+583	FM	FSM	Micronesia (Federated States of)	057	false	false	true
+520	NR	NRU	Nauru	057	false	false	true
+580	MP	MNP	Northern Mariana Islands	057	false	false	true
+585	PW	PLW	Palau	057	false	false	true
+581	UM	UMI	United States Minor Outlying Islands	057	false	false	false
+016	AS	ASM	American Samoa	061	false	false	true
+184	CK	COK	Cook Islands	061	false	false	true
+258	PF	PYF	French Polynesia	061	false	false	true
+570	NU	NIU	Niue	061	false	false	true
+612	PN	PCN	Pitcairn	061	false	false	false
+882	WS	WSM	Samoa	061	false	false	true
+772	TK	TKL	Tokelau	061	false	false	false
+776	TO	TON	Tonga	061	false	false	true
+798	TV	TUV	Tuvalu	061	true	false	true
+876	WF	WLF	Wallis and Futuna Islands	061	false	false	false
