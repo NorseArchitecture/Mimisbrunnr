@@ -2,6 +2,10 @@
 
 > Mímisbrunnr — the well of wisdom at Yggdrasil's roots, guarded by Mímir, where Odin traded an eye for a single drink of it.
 
+![Mímisbrunnr — the well of wisdom at Yggdrasil's roots, guarded by Mímir, where Odin traded an eye for a single drink of it](https://github.com/user-attachments/assets/d3af978b-2608-4975-8559-2531b0e87aa1 "Mímisbrunnr — the well Odin paid an eye to drink from")
+
+*Image credit: [@norsemythologyclips](https://www.instagram.com/norsemythologyclips/) — go follow them.*
+
 The reference-data store of the Norse Architecture — **`Norse.ReferenceData.Data`**: entities, view models, TSV seeders (nietras Sep), and EF migrations for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urdarbrunnr's EF foundation and everything below; Mímir rides on it.
 
 ## Status
