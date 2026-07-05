@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="*" />
 		<PackageReference Include="Testcontainers.PostgreSql" Version="*" />
-		<PackageReference Include="Npgsql" Version="*" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\ReferenceData.Data\ReferenceData.Data.csproj" />
