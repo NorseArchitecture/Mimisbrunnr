@@ -7,7 +7,8 @@ namespace Norse.ReferenceData.Data.Migrations;
 
 /// <summary>
 /// Seeds <see cref="Region"/> and <see cref="CountryOrArea"/> rows from the committed UN M49 TSVs
-/// (<c>seeds/region.tsv</c>, <c>seeds/country-or-area.tsv</c>), idempotently.
+/// (<c>seeds/region.tsv</c>, <c>seeds/country-or-area.tsv</c>), idempotently, and hydrates each
+/// <see cref="CountryOrArea.RegionAncestry"/> from the same region rows.
 /// </summary>
 /// <param name="context">The reference-data context instance resolved from DI.</param>
 public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context) : ISeedContributor
@@ -24,14 +25,13 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 	/// <inheritdoc />
 	public async Task SeedAsync(CancellationToken cancellationToken)
 	{
-		var regionIdByCode = await SeedRegionsAsync(cancellationToken).ConfigureAwait(false);
-		await SeedCountriesAsync(regionIdByCode, cancellationToken).ConfigureAwait(false);
+		var regionsByCode = await SeedRegionsAsync(cancellationToken).ConfigureAwait(false);
+		await SeedCountriesAsync(regionsByCode, cancellationToken).ConfigureAwait(false);
 	}
 
-	async Task<Dictionary<string, Guid>> SeedRegionsAsync(CancellationToken cancellationToken)
+	async Task<Dictionary<string, RegionRow>> SeedRegionsAsync(CancellationToken cancellationToken)
 	{
-		var regionIdByCode = new Dictionary<string, Guid>();
-		List<(Guid Id, string M49Code, string Name, RegionLevel Level, string? ParentM49Code)> rows = [];
+		Dictionary<string, RegionRow> regionsByCode = [];
 
 		using ITabularReader reader = TabularReader.OpenDelimited(
 			Path.Combine(AppContext.BaseDirectory, "seeds", "region.tsv"), '\t');
@@ -49,13 +49,12 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 			var parentCode = reader[parentOrdinal].ToString();
 			var id = new DeterministicGuid(_namespaceRegion, m49Code);
 
-			regionIdByCode[m49Code] = id;
-			rows.Add((id, m49Code, reader[nameOrdinal].ToString(), level, parentCode.Length == 0 ? null : parentCode));
+			regionsByCode[m49Code] = new RegionRow(id, m49Code, reader[nameOrdinal].ToString(), level, parentCode.Length == 0 ? null : parentCode);
 		}
 
 		var existingIds = (await context.Set<Region>().Select(r => r.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
 
-		foreach (var row in rows)
+		foreach (var row in regionsByCode.Values)
 		{
 			if (existingIds.Contains(row.Id))
 				continue;
@@ -66,15 +65,15 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 				M49Code = row.M49Code,
 				Name = row.Name,
 				Level = row.Level,
-				ParentRegionId = row.ParentM49Code is null ? null : regionIdByCode[row.ParentM49Code],
+				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
 			});
 		}
 
 		await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-		return regionIdByCode;
+		return regionsByCode;
 	}
 
-	async Task SeedCountriesAsync(Dictionary<string, Guid> regionIdByCode, CancellationToken cancellationToken)
+	async Task SeedCountriesAsync(Dictionary<string, RegionRow> regionsByCode, CancellationToken cancellationToken)
 	{
 		using ITabularReader reader = TabularReader.OpenDelimited(
 			Path.Combine(AppContext.BaseDirectory, "seeds", "country-or-area.tsv"), '\t');
@@ -123,7 +122,8 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 				IsoAlpha2Code = row.Alpha2Code,
 				IsoAlpha3Code = row.Alpha3Code,
 				Name = row.Name,
-				ParentRegionId = row.ParentM49Code is null ? null : regionIdByCode[row.ParentM49Code],
+				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
+				RegionAncestry = BuildRegionAncestry(row.ParentM49Code, regionsByCode),
 				IsLeastDevelopedCountry = row.IsLeastDevelopedCountry,
 				IsLandLockedDevelopingCountry = row.IsLandLockedDevelopingCountry,
 				IsSmallIslandDevelopingState = row.IsSmallIslandDevelopingState,
@@ -132,4 +132,37 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 
 		await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
+
+	/// <summary>
+	/// Walks <paramref name="leafCode"/> up through <paramref name="regionsByCode"/> via each row's own
+	/// <c>ParentM49Code</c>, then re-nests the chain from the root down (Region contains Subregion
+	/// contains IntermediateRegion), classifying each ancestor by its own <see cref="RegionLevel"/>
+	/// rather than assuming a fixed position — a country's direct parent may be a Subregion or an
+	/// IntermediateRegion, never a bare positional offset.
+	/// </summary>
+	static RegionNode? BuildRegionAncestry(string? leafCode, Dictionary<string, RegionRow> regionsByCode)
+	{
+		if (leafCode is null)
+			return null;
+
+		List<RegionRow> chain = [];
+		for (var code = leafCode; code is not null; code = regionsByCode[code].ParentM49Code)
+			chain.Add(regionsByCode[code]);
+
+		var intermediateRow = chain.SingleOrDefault(r => r.Level == RegionLevel.IntermediateRegion);
+		var subregionRow = chain.SingleOrDefault(r => r.Level == RegionLevel.Subregion);
+		var regionRow = chain.Single(r => r.Level == RegionLevel.Region);
+
+		var intermediate = intermediateRow is null
+			? null
+			: new IntermediateRegionNode { Code = intermediateRow.M49Code, Name = intermediateRow.Name };
+
+		var subregion = subregionRow is null
+			? null
+			: new SubregionNode { Code = subregionRow.M49Code, Name = subregionRow.Name, IntermediateRegion = intermediate };
+
+		return new RegionNode { Code = regionRow.M49Code, Name = regionRow.Name, Subregion = subregion };
+	}
+
+	sealed record RegionRow(Guid Id, string M49Code, string Name, RegionLevel Level, string? ParentM49Code);
 }
