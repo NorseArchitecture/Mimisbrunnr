@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<PackageReference Include="Testcontainers.PostgreSql" Version="*" />
+		<PackageReference Include="Npgsql" Version="*" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\ReferenceData.Data\ReferenceData.Data.csproj" />
+		<ProjectReference Include="..\..\src\ReferenceData.Data.Migrations\ReferenceData.Data.Migrations.csproj" />
+	</ItemGroup>
+</Project>
