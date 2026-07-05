@@ -30,10 +30,12 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	/// <summary>True if this is a Small Island Developing State per UN classification.</summary>
 	public bool IsSmallIslandDevelopingState { get; init; }
 	/// <summary>
-	/// The ancestor Region/Subregion/IntermediateRegion chain, hydrated by the seed contributor and
-	/// stored as an owned JSON document — <see langword="null"/> only for Antarctica.
+	/// The denormalized read-model column: the ancestor Region/Subregion/IntermediateRegion chain,
+	/// hydrated by the seed contributor and stored as an owned JSON document — <see langword="null"/>
+	/// only for Antarctica. Named <c>View</c> as a deliberate homage to the SQL view it replaced: this
+	/// is the platform's first "peer + ancestry" read column, one per entity, queried without joins.
 	/// </summary>
-	public RegionNode? RegionAncestry { get; init; }
+	public RegionNode? View { get; init; }
 
 	/// <summary>Configures the EF entity mapping.</summary>
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
@@ -48,7 +50,7 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 		builder.HasIndex(c => c.IsoAlpha2Code).IsUnique().HasDatabaseName("uq_country_or_areas_iso_alpha2_code");
 		builder.HasIndex(c => c.IsoAlpha3Code).IsUnique().HasDatabaseName("uq_country_or_areas_iso_alpha3_code");
 		builder.HasOne(c => c.ParentRegion).WithMany().HasForeignKey(c => c.ParentRegionId).IsRequired(false);
-		builder.OwnsOne(c => c.RegionAncestry, region =>
+		builder.OwnsOne(c => c.View, region =>
 		{
 			region.ToJson();
 			region.OwnsOne(r => r.Subregion, sub => sub.OwnsOne(s => s.IntermediateRegion));

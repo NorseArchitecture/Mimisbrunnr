@@ -44,7 +44,7 @@ namespace Norse.ReferenceData.Data.Migrations.Migrations
                     is_least_developed_country = table.Column<bool>(type: "boolean", nullable: false),
                     is_land_locked_developing_country = table.Column<bool>(type: "boolean", nullable: false),
                     is_small_island_developing_state = table.Column<bool>(type: "boolean", nullable: false),
-                    region_ancestry = table.Column<string>(type: "jsonb", nullable: true)
+                    view = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {

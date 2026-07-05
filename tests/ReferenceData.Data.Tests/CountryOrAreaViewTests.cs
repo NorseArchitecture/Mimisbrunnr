@@ -5,7 +5,7 @@ using Norse.ReferenceData.Data.Migrations;
 namespace Norse.ReferenceData.Data.Tests;
 
 [Collection("Postgres")]
-public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
+public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 {
 	static async Task<ReferenceDataDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
 	{
@@ -19,7 +19,7 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task RegionAncestry_round_trips_all_three_levels_for_Nigeria_shape()
+	public async Task View_round_trips_all_three_levels_for_Nigeria_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -34,7 +34,7 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 				IsoAlpha2Code = "NG",
 				IsoAlpha3Code = "NGA",
 				Name = "Nigeria",
-				RegionAncestry = new RegionNode
+				View = new RegionNode
 				{
 					Code = "002",
 					Name = "Africa",
@@ -51,11 +51,11 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 
 			var reread = await context.Set<CountryOrArea>().SingleAsync(c => c.Id == countryId, cancellationToken);
 
-			reread.RegionAncestry.ShouldNotBeNull();
-			reread.RegionAncestry.Code.ShouldBe("002");
-			reread.RegionAncestry.Subregion.ShouldNotBeNull();
-			reread.RegionAncestry.Subregion.IntermediateRegion.ShouldNotBeNull();
-			reread.RegionAncestry.Subregion.IntermediateRegion.Code.ShouldBe("011");
+			reread.View.ShouldNotBeNull();
+			reread.View.Code.ShouldBe("002");
+			reread.View.Subregion.ShouldNotBeNull();
+			reread.View.Subregion.IntermediateRegion.ShouldNotBeNull();
+			reread.View.Subregion.IntermediateRegion.Code.ShouldBe("011");
 		}
 		finally
 		{
@@ -64,7 +64,7 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task RegionAncestry_has_null_intermediate_region_for_Algeria_shape()
+	public async Task View_has_null_intermediate_region_for_Algeria_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -79,7 +79,7 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 				IsoAlpha2Code = "DZ",
 				IsoAlpha3Code = "DZA",
 				Name = "Algeria",
-				RegionAncestry = new RegionNode
+				View = new RegionNode
 				{
 					Code = "002",
 					Name = "Africa",
@@ -91,9 +91,9 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 
 			var reread = await context.Set<CountryOrArea>().SingleAsync(c => c.Id == countryId, cancellationToken);
 
-			reread.RegionAncestry.ShouldNotBeNull();
-			reread.RegionAncestry.Subregion.ShouldNotBeNull();
-			reread.RegionAncestry.Subregion.IntermediateRegion.ShouldBeNull();
+			reread.View.ShouldNotBeNull();
+			reread.View.Subregion.ShouldNotBeNull();
+			reread.View.Subregion.IntermediateRegion.ShouldBeNull();
 		}
 		finally
 		{
@@ -102,7 +102,7 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task RegionAncestry_is_null_for_Antarctica_shape()
+	public async Task View_is_null_for_Antarctica_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -117,14 +117,14 @@ public class CountryOrAreaRegionAncestryTests(PostgresContainerFixture fixture)
 				IsoAlpha2Code = "AQ",
 				IsoAlpha3Code = "ATA",
 				Name = "Antarctica",
-				RegionAncestry = null,
+				View = null,
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
 			var reread = await context.Set<CountryOrArea>().SingleAsync(c => c.Id == countryId, cancellationToken);
 
-			reread.RegionAncestry.ShouldBeNull();
+			reread.View.ShouldBeNull();
 		}
 		finally
 		{

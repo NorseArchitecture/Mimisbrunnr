@@ -8,7 +8,7 @@ namespace Norse.ReferenceData.Data.Migrations;
 /// <summary>
 /// Seeds <see cref="Region"/> and <see cref="CountryOrArea"/> rows from the committed UN M49 TSVs
 /// (<c>seeds/region.tsv</c>, <c>seeds/country-or-area.tsv</c>), idempotently, and hydrates each
-/// <see cref="CountryOrArea.RegionAncestry"/> from the same region rows.
+/// <see cref="CountryOrArea.View"/> from the same region rows.
 /// </summary>
 /// <param name="context">The reference-data context instance resolved from DI.</param>
 public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context) : ISeedContributor
@@ -123,7 +123,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 				IsoAlpha3Code = row.Alpha3Code,
 				Name = row.Name,
 				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
-				RegionAncestry = BuildRegionAncestry(row.ParentM49Code, regionsByCode),
+				View = BuildView(row.ParentM49Code, regionsByCode),
 				IsLeastDevelopedCountry = row.IsLeastDevelopedCountry,
 				IsLandLockedDevelopingCountry = row.IsLandLockedDevelopingCountry,
 				IsSmallIslandDevelopingState = row.IsSmallIslandDevelopingState,
@@ -140,7 +140,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 	/// rather than assuming a fixed position — a country's direct parent may be a Subregion or an
 	/// IntermediateRegion, never a bare positional offset.
 	/// </summary>
-	static RegionNode? BuildRegionAncestry(string? leafCode, Dictionary<string, RegionRow> regionsByCode)
+	static RegionNode? BuildView(string? leafCode, Dictionary<string, RegionRow> regionsByCode)
 	{
 		if (leafCode is null)
 			return null;

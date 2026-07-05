@@ -88,7 +88,7 @@ public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task SeedAsync_hydrates_RegionAncestry_for_all_three_verified_shapes()
+	public async Task SeedAsync_hydrates_View_for_all_three_verified_shapes()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -99,19 +99,19 @@ public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)
 			context.ChangeTracker.Clear();
 
 			var nigeria = await context.Set<CountryOrArea>().SingleAsync(c => c.M49Code == "566", cancellationToken);
-			nigeria.RegionAncestry.ShouldNotBeNull();
-			nigeria.RegionAncestry.Code.ShouldBe("002");
-			nigeria.RegionAncestry.Subregion.ShouldNotBeNull();
-			nigeria.RegionAncestry.Subregion.IntermediateRegion.ShouldNotBeNull();
-			nigeria.RegionAncestry.Subregion.IntermediateRegion.Code.ShouldBe("011");
+			nigeria.View.ShouldNotBeNull();
+			nigeria.View.Code.ShouldBe("002");
+			nigeria.View.Subregion.ShouldNotBeNull();
+			nigeria.View.Subregion.IntermediateRegion.ShouldNotBeNull();
+			nigeria.View.Subregion.IntermediateRegion.Code.ShouldBe("011");
 
 			var algeria = await context.Set<CountryOrArea>().SingleAsync(c => c.M49Code == "012", cancellationToken);
-			algeria.RegionAncestry.ShouldNotBeNull();
-			algeria.RegionAncestry.Subregion.ShouldNotBeNull();
-			algeria.RegionAncestry.Subregion.IntermediateRegion.ShouldBeNull();
+			algeria.View.ShouldNotBeNull();
+			algeria.View.Subregion.ShouldNotBeNull();
+			algeria.View.Subregion.IntermediateRegion.ShouldBeNull();
 
 			var antarctica = await context.Set<CountryOrArea>().SingleAsync(c => c.M49Code == "010", cancellationToken);
-			antarctica.RegionAncestry.ShouldBeNull();
+			antarctica.View.ShouldBeNull();
 		}
 		finally
 		{

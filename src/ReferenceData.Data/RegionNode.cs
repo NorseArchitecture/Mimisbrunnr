@@ -1,7 +1,7 @@
 namespace Norse.ReferenceData.Data;
 
 /// <summary>
-/// The Region ancestor of a <see cref="CountryOrArea.RegionAncestry"/> graph — an owned JSON document,
+/// The Region ancestor of a <see cref="CountryOrArea.View"/> graph — an owned JSON document,
 /// never a separately-queried table or view. Hydrated by the seed contributor at seed time.
 /// </summary>
 public sealed class RegionNode

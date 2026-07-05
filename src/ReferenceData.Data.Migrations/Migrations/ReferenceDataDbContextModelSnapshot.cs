@@ -137,7 +137,7 @@ namespace Norse.ReferenceData.Data.Migrations.Migrations
                         .HasForeignKey("ParentRegionId")
                         .HasConstraintName("fk_country_or_areas_region_parent_region_id");
 
-                    b.OwnsOne("Norse.ReferenceData.Data.RegionNode", "RegionAncestry", b1 =>
+                    b.OwnsOne("Norse.ReferenceData.Data.RegionNode", "View", b1 =>
                         {
                             b1.Property<Guid>("CountryOrAreaId");
 
@@ -152,7 +152,7 @@ namespace Norse.ReferenceData.Data.Migrations.Migrations
                             b1.ToTable("country_or_areas");
 
                             b1
-                                .ToJson("region_ancestry")
+                                .ToJson("view")
                                 .HasColumnType("jsonb");
 
                             b1.WithOwner()
@@ -206,7 +206,7 @@ namespace Norse.ReferenceData.Data.Migrations.Migrations
 
                     b.Navigation("ParentRegion");
 
-                    b.Navigation("RegionAncestry");
+                    b.Navigation("View");
                 });
 
             modelBuilder.Entity("Norse.ReferenceData.Data.Region", b =>
