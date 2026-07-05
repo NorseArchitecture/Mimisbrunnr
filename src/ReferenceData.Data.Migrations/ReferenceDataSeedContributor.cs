@@ -53,9 +53,11 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 			rows.Add((id, m49Code, reader[nameOrdinal].ToString(), level, parentCode.Length == 0 ? null : parentCode));
 		}
 
+		var existingIds = (await context.Set<Region>().Select(r => r.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
+
 		foreach (var row in rows)
 		{
-			if (await context.Set<Region>().AnyAsync(r => r.Id == row.Id, cancellationToken).ConfigureAwait(false))
+			if (existingIds.Contains(row.Id))
 				continue;
 
 			context.Set<Region>().Add(new Region
@@ -85,29 +87,46 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 		var lldcOrdinal = reader.Ordinal("IsLandLockedDevelopingCountry");
 		var sidsOrdinal = reader.Ordinal("IsSmallIslandDevelopingState");
 
+		List<(Guid Id, string M49Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState)> rows = [];
+
 		while (reader.Read())
 		{
 			var m49Code = reader[m49Ordinal].ToString();
 			var id = new DeterministicGuid(_namespaceCountryOrArea, m49Code);
-
-			if (await context.Set<CountryOrArea>().AnyAsync(c => c.Id == id, cancellationToken).ConfigureAwait(false))
-				continue;
-
 			var parentCode = reader[parentOrdinal].ToString();
+
+			rows.Add((
+				id,
+				m49Code,
+				reader[alpha2Ordinal].ToString(),
+				reader[alpha3Ordinal].ToString(),
+				reader[nameOrdinal].ToString(),
+				parentCode.Length == 0 ? null : parentCode,
+				// The TSV's flag columns hold literal "true"/"false" (written by UnsdM49Writer's
+				// FormatFlag), not the "x"/blank convention of the raw UNSD source CSV.
+				bool.Parse(reader[ldcOrdinal]),
+				bool.Parse(reader[lldcOrdinal]),
+				bool.Parse(reader[sidsOrdinal])));
+		}
+
+		var existingIds = (await context.Set<CountryOrArea>().Select(c => c.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
+
+		foreach (var row in rows)
+		{
+			if (existingIds.Contains(row.Id))
+				continue;
 
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
-				Id = id,
-				M49Code = m49Code,
-				IsoAlpha2Code = reader[alpha2Ordinal].ToString(),
-				IsoAlpha3Code = reader[alpha3Ordinal].ToString(),
-				Name = reader[nameOrdinal].ToString(),
-				ParentRegionId = parentCode.Length == 0 ? null : regionIdByCode[parentCode],
-				// The TSV's flag columns hold literal "true"/"false" (written by UnsdM49Writer's
-				// FormatFlag), not the "x"/blank convention of the raw UNSD source CSV.
-				IsLeastDevelopedCountry = bool.Parse(reader[ldcOrdinal]),
-				IsLandLockedDevelopingCountry = bool.Parse(reader[lldcOrdinal]),
-				IsSmallIslandDevelopingState = bool.Parse(reader[sidsOrdinal]),
+				Id = row.Id,
+				M49Code = row.M49Code,
+				IsoAlpha2Code = row.Alpha2Code,
+				IsoAlpha3Code = row.Alpha3Code,
+				Name = row.Name,
+				ParentRegionId = row.ParentM49Code is null ? null : regionIdByCode[row.ParentM49Code],
+				IsLeastDevelopedCountry = row.IsLeastDevelopedCountry,
+				IsLandLockedDevelopingCountry = row.IsLandLockedDevelopingCountry,
+				IsSmallIslandDevelopingState = row.IsSmallIslandDevelopingState,
 			});
 		}
 
