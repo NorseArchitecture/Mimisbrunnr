@@ -1,0 +1,20 @@
+<Solution>
+	<Folder Name="/Solution Items/">
+		<File Path=".editorconfig" />
+		<File Path=".gitattributes" />
+		<File Path=".gitignore" />
+		<File Path="Directory.Build.props" />
+		<File Path="global.json" />
+		<File Path="LICENSE" />
+		<File Path="nuget.config" />
+	</Folder>
+	<Folder Name="/tools/">
+		<File Path="tools/Directory.Build.props" />
+		<File Path="tools/Directory.Build.targets" />
+		<Project Path="tools/SeedTool/SeedTool.csproj" />
+	</Folder>
+	<Folder Name="/tests/">
+		<File Path="tests/Directory.Build.props" />
+		<Project Path="tests/SeedTool.Tests/SeedTool.Tests.csproj" />
+	</Folder>
+</Solution>

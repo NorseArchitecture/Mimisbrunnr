@@ -1,0 +1,30 @@
+M49Code	Name	Level	ParentM49Code
+002	Africa	Region	
+009	Oceania	Region	
+019	Americas	Region	
+142	Asia	Region	
+150	Europe	Region	
+015	Northern Africa	Subregion	002
+021	Northern America	Subregion	019
+030	Eastern Asia	Subregion	142
+034	Southern Asia	Subregion	142
+035	South-eastern Asia	Subregion	142
+039	Southern Europe	Subregion	150
+053	Australia and New Zealand	Subregion	009
+054	Melanesia	Subregion	009
+057	Micronesia	Subregion	009
+061	Polynesia	Subregion	009
+143	Central Asia	Subregion	142
+145	Western Asia	Subregion	142
+151	Eastern Europe	Subregion	150
+154	Northern Europe	Subregion	150
+155	Western Europe	Subregion	150
+202	Sub-Saharan Africa	Subregion	002
+419	Latin America and the Caribbean	Subregion	019
+005	South America	IntermediateRegion	419
+011	Western Africa	IntermediateRegion	202
+013	Central America	IntermediateRegion	419
+014	Eastern Africa	IntermediateRegion	202
+017	Middle Africa	IntermediateRegion	202
+018	Southern Africa	IntermediateRegion	202
+029	Caribbean	IntermediateRegion	419

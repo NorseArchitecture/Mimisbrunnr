@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<PackageReference Include="Spectre.Console.Cli" Version="*" />
+	</ItemGroup>
+	<ItemGroup>
+		<NorseRef Include="Primitives">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<NorseRef Include="Primitives.Ingestion">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+	</ItemGroup>
+</Project>
