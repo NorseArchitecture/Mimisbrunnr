@@ -29,6 +29,11 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	public bool IsLandLockedDevelopingCountry { get; init; }
 	/// <summary>True if this is a Small Island Developing State per UN classification.</summary>
 	public bool IsSmallIslandDevelopingState { get; init; }
+	/// <summary>
+	/// The ancestor Region/Subregion/IntermediateRegion chain, hydrated by the seed contributor and
+	/// stored as an owned JSON document — <see langword="null"/> only for Antarctica.
+	/// </summary>
+	public RegionNode? RegionAncestry { get; init; }
 
 	/// <summary>Configures the EF entity mapping.</summary>
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
@@ -43,5 +48,10 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 		builder.HasIndex(c => c.IsoAlpha2Code).IsUnique().HasDatabaseName("uq_country_or_areas_iso_alpha2_code");
 		builder.HasIndex(c => c.IsoAlpha3Code).IsUnique().HasDatabaseName("uq_country_or_areas_iso_alpha3_code");
 		builder.HasOne(c => c.ParentRegion).WithMany().HasForeignKey(c => c.ParentRegionId).IsRequired(false);
+		builder.OwnsOne(c => c.RegionAncestry, region =>
+		{
+			region.ToJson();
+			region.OwnsOne(r => r.Subregion, sub => sub.OwnsOne(s => s.IntermediateRegion));
+		});
 	}
 }

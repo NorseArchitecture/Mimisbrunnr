@@ -90,37 +90,6 @@ namespace Norse.ReferenceData.Data.Migrations.Migrations
                     b.ToTable("country_or_areas", (string)null);
                 });
 
-            modelBuilder.Entity("Norse.ReferenceData.Data.CountryOrAreaDossierRow", b =>
-                {
-                    b.Property<string>("Alpha2")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)")
-                        .HasColumnName("alpha2");
-
-                    b.Property<string>("Alpha3")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
-                        .HasColumnName("alpha3");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
-                        .HasColumnName("code");
-
-                    b.Property<string>("Dossier")
-                        .IsRequired()
-                        .HasMaxLength(-1)
-                        .HasColumnType("jsonb")
-                        .HasColumnName("dossier");
-
-                    b.ToTable((string)null);
-
-                    b.ToView("country_or_area_dossier", (string)null);
-                });
-
             modelBuilder.Entity("Norse.ReferenceData.Data.Region", b =>
                 {
                     b.Property<Guid>("Id")
@@ -168,7 +137,76 @@ namespace Norse.ReferenceData.Data.Migrations.Migrations
                         .HasForeignKey("ParentRegionId")
                         .HasConstraintName("fk_country_or_areas_region_parent_region_id");
 
+                    b.OwnsOne("Norse.ReferenceData.Data.RegionNode", "RegionAncestry", b1 =>
+                        {
+                            b1.Property<Guid>("CountryOrAreaId");
+
+                            b1.Property<string>("Code")
+                                .IsRequired();
+
+                            b1.Property<string>("Name")
+                                .IsRequired();
+
+                            b1.HasKey("CountryOrAreaId");
+
+                            b1.ToTable("country_or_areas");
+
+                            b1
+                                .ToJson("region_ancestry")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CountryOrAreaId")
+                                .HasConstraintName("fk_country_or_areas_country_or_areas_id");
+
+                            b1.OwnsOne("Norse.ReferenceData.Data.SubregionNode", "Subregion", b2 =>
+                                {
+                                    b2.Property<Guid>("RegionNodeCountryOrAreaId");
+
+                                    b2.Property<string>("Code")
+                                        .IsRequired();
+
+                                    b2.Property<string>("Name")
+                                        .IsRequired();
+
+                                    b2.HasKey("RegionNodeCountryOrAreaId")
+                                        .HasName("pk_country_or_areas");
+
+                                    b2.ToTable("country_or_areas");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("RegionNodeCountryOrAreaId")
+                                        .HasConstraintName("fk_country_or_areas_country_or_areas_region_node_country_or_area_id");
+
+                                    b2.OwnsOne("Norse.ReferenceData.Data.IntermediateRegionNode", "IntermediateRegion", b3 =>
+                                        {
+                                            b3.Property<Guid>("SubregionNodeRegionNodeCountryOrAreaId");
+
+                                            b3.Property<string>("Code")
+                                                .IsRequired();
+
+                                            b3.Property<string>("Name")
+                                                .IsRequired();
+
+                                            b3.HasKey("SubregionNodeRegionNodeCountryOrAreaId")
+                                                .HasName("pk_country_or_areas");
+
+                                            b3.ToTable("country_or_areas");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("SubregionNodeRegionNodeCountryOrAreaId")
+                                                .HasConstraintName("fk_country_or_areas_country_or_areas_subregion_node_region_node_co");
+                                        });
+
+                                    b2.Navigation("IntermediateRegion");
+                                });
+
+                            b1.Navigation("Subregion");
+                        });
+
                     b.Navigation("ParentRegion");
+
+                    b.Navigation("RegionAncestry");
                 });
 
             modelBuilder.Entity("Norse.ReferenceData.Data.Region", b =>
