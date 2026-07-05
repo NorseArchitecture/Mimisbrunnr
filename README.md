@@ -10,7 +10,7 @@ The reference-data store of the Norse Architecture — **`Norse.ReferenceData.Da
 
 ## Status
 
-This realm is currently a bare shell — no code, no specs converged yet. Design happens first: brainstorm → spec → plan, recorded in Glitnir's `docs/Mimisbrunnr/`, before any project is scaffolded here.
+The first seed case — UN M49 reference data (`Region`/`CountryOrArea`) — has its raw-source-to-TSV conversion tooling live: `tools/SeedTool` (a dev-only console app, never packed or AOT-published) reads `seeds/raw/UNSD — Methodology.csv` via Svartalfheim's `Norse.Primitives.Ingestion` and produces the curated `seeds/region.tsv`/`seeds/country-or-area.tsv`, both committed as this realm's real seed data. The EF entities, migration, and seed contributor that will actually load these TSVs into `norse_referencedata` are not yet built — that's the next slice, specced in Glitnir's `docs/Mimisbrunnr/` but not yet planned/coded. Everything beyond this first seed case (currency, language, script, locale, timezone — see the ERD sketch below) remains unconverged; design happens first: brainstorm → spec → plan, recorded in Glitnir's `docs/Mimisbrunnr/`, before any further project is scaffolded here.
 
 ## Initial sketch of reference data plan
 ```mermaid
