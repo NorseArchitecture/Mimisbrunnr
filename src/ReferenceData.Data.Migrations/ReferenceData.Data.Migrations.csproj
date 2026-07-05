@@ -17,5 +17,14 @@
 		<NorseRef Include="EntityFramework.Migrations">
 			<Repo>Urdarbrunnr</Repo>
 		</NorseRef>
+		<NorseRef Include="Primitives">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<NorseRef Include="Primitives.Ingestion">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="../../seeds/*.tsv" CopyToOutputDirectory="PreserveNewest" LinkBase="seeds" />
 	</ItemGroup>
 </Project>
