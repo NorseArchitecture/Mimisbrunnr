@@ -8,6 +8,12 @@
 		<File Path="LICENSE" />
 		<File Path="nuget.config" />
 	</Folder>
+	<Folder Name="/src/">
+		<File Path="src/Directory.Build.props" />
+		<File Path="src/Directory.Build.targets" />
+		<Project Path="src/ReferenceData.Data/ReferenceData.Data.csproj" />
+		<Project Path="src/ReferenceData.Data.Migrations/ReferenceData.Data.Migrations.csproj" />
+	</Folder>
 	<Folder Name="/tools/">
 		<File Path="tools/Directory.Build.props" />
 		<File Path="tools/Directory.Build.targets" />
@@ -15,6 +21,7 @@
 	</Folder>
 	<Folder Name="/tests/">
 		<File Path="tests/Directory.Build.props" />
+		<Project Path="tests/ReferenceData.Data.Tests/ReferenceData.Data.Tests.csproj" />
 		<Project Path="tests/SeedTool.Tests/SeedTool.Tests.csproj" />
 	</Folder>
 </Solution>
