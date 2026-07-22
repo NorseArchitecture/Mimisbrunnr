@@ -1,5 +1,7 @@
 # Norse.Reference.Data.Migrations
 
-Migration contributor, `IDesignTimeDbContextFactory`, checked-in EF migrations, and the `ISeedContributor` that loads the UN M49 TSVs. Migration tooling only — never referenced from a runtime container.
+Migration contributor and `ISeedContributor` that loads the UN M49 TSVs, provider-agnostic. Migration tooling only — never referenced from a runtime container.
+
+Provider-specific `IDesignTimeDbContextFactory` implementations and checked-in EF migrations live in the sibling `Reference.Data.Migrations.PostgreSQL` and `Reference.Data.Migrations.SqlServer` projects, each of which references this one.
 
 Part of the [Norse Architecture](https://github.com/NorseArchitecture) platform.
