@@ -14,6 +14,7 @@
 		<Project Path="src/Reference.Data/Reference.Data.csproj" />
 		<Project Path="src/Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
 		<Project Path="src/Reference.Data.Migrations.PostgreSQL/Reference.Data.Migrations.PostgreSQL.csproj" />
+		<Project Path="src/Reference.Data.Migrations.SqlServer/Reference.Data.Migrations.SqlServer.csproj" />
 	</Folder>
 	<Folder Name="/tools/">
 		<File Path="tools/Directory.Build.props" />
