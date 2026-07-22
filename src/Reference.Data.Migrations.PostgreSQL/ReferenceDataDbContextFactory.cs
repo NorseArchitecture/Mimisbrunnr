@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework.Design.PostgreSQL;
 
-namespace Norse.Reference.Data.Migrations;
+namespace Norse.Reference.Data.Migrations.PostgreSQL;
 
 /// <summary>
 /// Design-time factory for <see cref="ReferenceDataDbContext"/>, used only by <c>dotnet ef</c> tooling

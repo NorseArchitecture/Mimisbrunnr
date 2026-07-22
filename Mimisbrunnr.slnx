@@ -13,6 +13,7 @@
 		<File Path="src/Directory.Build.targets" />
 		<Project Path="src/Reference.Data/Reference.Data.csproj" />
 		<Project Path="src/Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
+		<Project Path="src/Reference.Data.Migrations.PostgreSQL/Reference.Data.Migrations.PostgreSQL.csproj" />
 	</Folder>
 	<Folder Name="/tools/">
 		<File Path="tools/Directory.Build.props" />
