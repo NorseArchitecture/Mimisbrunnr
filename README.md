@@ -6,7 +6,7 @@
 
 *Image credit: [@norsemythologyclips](https://www.instagram.com/norsemythologyclips/) — go follow them.*
 
-The reference-data store of the Norse Architecture — **`Norse.ReferenceData.Data`**: entities, view models, TSV seeders (nietras Sep), and EF migrations for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below; Mímir rides on it.
+The reference-data store of the Norse Architecture — **`Norse.Reference.Data`**: entities, view models, TSV seeders (nietras Sep), and EF migrations for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below; Mímir rides on it.
 
 ## Status
 

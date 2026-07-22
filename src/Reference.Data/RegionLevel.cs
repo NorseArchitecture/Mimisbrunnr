@@ -1,4 +1,4 @@
-namespace Norse.ReferenceData.Data;
+namespace Norse.Reference.Data;
 
 /// <summary>
 /// The hierarchical level of a geographic region per UN M49.

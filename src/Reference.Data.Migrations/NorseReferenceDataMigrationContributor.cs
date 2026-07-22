@@ -1,6 +1,6 @@
-using Norse.EntityFramework.Migrations;
+using Norse.Persistence.EntityFramework.Design;
 
-namespace Norse.ReferenceData.Data.Migrations;
+namespace Norse.Reference.Data.Migrations;
 
 /// <summary>
 /// Migration contributor for <see cref="ReferenceDataDbContext"/>, discovered by the migrations
@@ -8,9 +8,9 @@ namespace Norse.ReferenceData.Data.Migrations;
 /// </summary>
 /// <param name="context">The reference-data context instance resolved from DI.</param>
 [MigrationConnectionString("norse_referencedata")]
-public sealed class NorseReferenceDataMigrationContributor(ReferenceDataDbContext context)
-	: EfMigrationContributor<ReferenceDataDbContext>(context)
+public sealed class NorseReferenceDataMigrationContributor(ReferenceDataDbContext context) :
+	EfMigrationContributor<ReferenceDataDbContext>(context)
 {
 	/// <inheritdoc />
-	public override string Name => "Norse.ReferenceData";
+	public override string Name => "Norse.Reference";
 }

@@ -11,8 +11,8 @@
 	<Folder Name="/src/">
 		<File Path="src/Directory.Build.props" />
 		<File Path="src/Directory.Build.targets" />
-		<Project Path="src/ReferenceData.Data/ReferenceData.Data.csproj" />
-		<Project Path="src/ReferenceData.Data.Migrations/ReferenceData.Data.Migrations.csproj" />
+		<Project Path="src/Reference.Data/Reference.Data.csproj" />
+		<Project Path="src/Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
 	</Folder>
 	<Folder Name="/tools/">
 		<File Path="tools/Directory.Build.props" />
@@ -21,7 +21,7 @@
 	</Folder>
 	<Folder Name="/tests/">
 		<File Path="tests/Directory.Build.props" />
-		<Project Path="tests/ReferenceData.Data.Tests/ReferenceData.Data.Tests.csproj" />
+		<Project Path="tests/Reference.Data.Tests/Reference.Data.Tests.csproj" />
 		<Project Path="tests/SeedTool.Tests/SeedTool.Tests.csproj" />
 	</Folder>
 </Solution>

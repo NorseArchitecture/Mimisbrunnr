@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Npgsql;
 
-namespace Norse.ReferenceData.Data.Tests;
+namespace Norse.Reference.Data.Tests;
 
 [Collection("Postgres")]
 public class PostgresContainerFixtureTests(PostgresContainerFixture fixture)

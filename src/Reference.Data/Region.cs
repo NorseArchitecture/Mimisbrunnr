@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Norse.EntityFramework;
+using Norse.Persistence.EntityFramework;
 
-namespace Norse.ReferenceData.Data;
+namespace Norse.Reference.Data;
 
 /// <summary>
 /// A geographic region per UN M49 (Region, Subregion, or Intermediate Region).
@@ -25,11 +24,10 @@ public sealed class Region : NorseEntityBase<Region>, INorseEntity<Region>
 	/// <summary>Configures the EF entity mapping.</summary>
 	public static void Configure(EntityTypeBuilder<Region> builder)
 	{
-		builder.ToTable("regions");
 		builder.HasKey(r => r.Id);
 		builder.Property(r => r.M49Code).HasMaxLength(3).IsRequired();
 		builder.Property(r => r.Name).HasMaxLength(256).IsRequired();
-		builder.HasIndex(r => r.M49Code).IsUnique().HasDatabaseName("uq_regions_m49_code");
+		builder.HasIndex(r => r.M49Code).IsUnique();
 		builder.HasOne(r => r.ParentRegion).WithMany().HasForeignKey(r => r.ParentRegionId).IsRequired(false);
 	}
 }

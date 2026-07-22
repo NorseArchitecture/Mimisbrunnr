@@ -1,4 +1,4 @@
-# CLAUDE.md — Mímisbrunnr (`Norse.ReferenceData.Data`)
+# CLAUDE.md — Mímisbrunnr (`Norse.Reference.Data`)
 
 ## 0. Wrong Root — Halt
 
@@ -8,7 +8,7 @@ Session root must be **Bifröst**, not this repo directly — org-wide settings 
 
 ## 1. What This Repository Is
 
-Mímisbrunnr is **the reference-data store** — `Norse.ReferenceData.Data`: entities, view models, TSV seeders (nietras Sep — AOT-friendly), and EF migrations for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, IANA time zones; not an exhaustive list. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below, same as every EF-backed realm. It ships as a pure NuGet classlib, spun up from Yggdrasil's composition root — no standalone host, matching the shape the migrations framework already established (declare in a realm, host in Yggdrasil, compose in Bifröst).
+Mímisbrunnr is **the reference-data store** — `Norse.Reference.Data`: entities, view models, TSV seeders (nietras Sep — AOT-friendly), and EF migrations for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, IANA time zones; not an exhaustive list. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below, same as every EF-backed realm. It ships as a pure NuGet classlib, spun up from Yggdrasil's composition root — no standalone host, matching the shape the migrations framework already established (declare in a realm, host in Yggdrasil, compose in Bifröst).
 
 **Mímir is the companion repository** — `Norse.ReferenceData.Components` / `.Web.Server` / `.Worker`: Blazor components, the gRPC service host, and the background worker that keeps data current. The two are split into separate repositories deliberately, not by default. Verified 2026-07-03 against Ginnungagap's release-nuget ceremony (since 2026-07-13, `publish-nuget.yml`): a git tag triggers `dotnet pack` at repo root and publishes every packable project in that repo together — there is no per-project release scoping. That specific packing behavior is unchanged by the 2026-07-13 release-ceremony-fanin redesign; only the surrounding job/release-creation shape moved. Reference-data content (IANA reissues tzdata multiple times a year; ISO adds or redenominates currencies on its own clock) churns far more often than service or component code, so this pair genuinely needs independent release cadence. That is the *only* reason for the split — it is not the platform's default recommendation for every bounded context, and should not be copied reflexively.
 

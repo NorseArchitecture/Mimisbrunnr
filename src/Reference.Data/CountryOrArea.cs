@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Norse.EntityFramework;
+using Norse.Persistence.EntityFramework;
 
-namespace Norse.ReferenceData.Data;
+namespace Norse.Reference.Data;
 
 /// <summary>
 /// A country or area per UN M49 with ISO and LDC classifications.
@@ -40,16 +40,19 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	/// <summary>Configures the EF entity mapping.</summary>
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
 	{
-		builder.ToTable("country_or_areas");
 		builder.HasKey(c => c.Id);
 		builder.Property(c => c.M49Code).HasMaxLength(3).IsRequired();
 		builder.Property(c => c.IsoAlpha2Code).HasMaxLength(2).IsRequired();
 		builder.Property(c => c.IsoAlpha3Code).HasMaxLength(3).IsRequired();
 		builder.Property(c => c.Name).HasMaxLength(256).IsRequired();
-		builder.HasIndex(c => c.M49Code).IsUnique().HasDatabaseName("uq_country_or_areas_m49_code");
-		builder.HasIndex(c => c.IsoAlpha2Code).IsUnique().HasDatabaseName("uq_country_or_areas_iso_alpha2_code");
-		builder.HasIndex(c => c.IsoAlpha3Code).IsUnique().HasDatabaseName("uq_country_or_areas_iso_alpha3_code");
-		builder.HasOne(c => c.ParentRegion).WithMany().HasForeignKey(c => c.ParentRegionId).IsRequired(false);
+		builder.HasIndex(c => c.M49Code).IsUnique();
+		builder.HasIndex(c => c.IsoAlpha2Code).IsUnique();
+		builder.HasIndex(c => c.IsoAlpha3Code).IsUnique();
+		builder
+			.HasOne(c => c.ParentRegion)
+			.WithMany()
+			.HasForeignKey(c => c.ParentRegionId)
+			.IsRequired(false);
 		builder.OwnsOne(c => c.View, region =>
 		{
 			region.ToJson();

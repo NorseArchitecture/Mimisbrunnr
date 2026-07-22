@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Norse.ReferenceData.Data.Tests;
+namespace Norse.Reference.Data.Tests;
 
 public class ReferenceDataDbContextModelTests
 {

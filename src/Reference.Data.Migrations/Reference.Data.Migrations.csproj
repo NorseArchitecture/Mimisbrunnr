@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Description>Norse.Reference.Data.Migrations: migration contributor, IDesignTimeDbContextFactory, checked-in EF migrations, and the ISeedContributor that loads the UN M49 TSVs. Migration tooling only — never referenced from a runtime container.</Description>
+		<!-- EF Core is not AOT/trim-compatible; override the src-level default. -->
+		<IsAotCompatible>false</IsAotCompatible>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="../../seeds/*.tsv" CopyToOutputDirectory="PreserveNewest" LinkBase="seeds" />
+		<NorseRef Include="Persistence.EntityFramework.Design.PostgreSQL">
+			<Repo>Urdarbrunnr</Repo>
+		</NorseRef>
+		<NorseRef Include="Primitives">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<NorseRef Include="Primitives.Ingestion">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.*-*">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<ProjectReference Include="../Reference.Data/Reference.Data.csproj" />
+	</ItemGroup>
+</Project>

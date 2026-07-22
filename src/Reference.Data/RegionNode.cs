@@ -1,4 +1,4 @@
-namespace Norse.ReferenceData.Data;
+namespace Norse.Reference.Data;
 
 /// <summary>
 /// The Region ancestor of a <see cref="CountryOrArea.View"/> graph — an owned JSON document,

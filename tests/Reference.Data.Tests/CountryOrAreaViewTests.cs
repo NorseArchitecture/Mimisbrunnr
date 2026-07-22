@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Norse.EntityFramework;
-using Norse.ReferenceData.Data.Migrations;
+using Norse.Persistence.EntityFramework;
+using Norse.Reference.Data.Migrations;
 
-namespace Norse.ReferenceData.Data.Tests;
+namespace Norse.Reference.Data.Tests;
 
 [Collection("Postgres")]
 public class CountryOrAreaViewTests(PostgresContainerFixture fixture)

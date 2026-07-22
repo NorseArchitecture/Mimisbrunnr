@@ -1,4 +1,4 @@
-namespace Norse.ReferenceData.Data;
+namespace Norse.Reference.Data;
 
 /// <summary>The Subregion ancestor nested within a <see cref="RegionNode"/>.</summary>
 public sealed class SubregionNode

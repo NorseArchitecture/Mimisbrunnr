@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Norse.EntityFramework;
+using Norse.Persistence.EntityFramework;
 using Norse.Primitives.Identifiers;
-using Norse.ReferenceData.Data.Migrations;
+using Norse.Reference.Data.Migrations;
 
-namespace Norse.ReferenceData.Data.Tests;
+namespace Norse.Reference.Data.Tests;
 
 [Collection("Postgres")]
 public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)

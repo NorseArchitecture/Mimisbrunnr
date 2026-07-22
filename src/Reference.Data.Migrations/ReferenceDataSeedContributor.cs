@@ -3,7 +3,7 @@ using Norse.Abstractions.Migrations.Seeding;
 using Norse.Primitives.Identifiers;
 using Norse.Primitives.Ingestion;
 
-namespace Norse.ReferenceData.Data.Migrations;
+namespace Norse.Reference.Data.Migrations;
 
 /// <summary>
 /// Seeds <see cref="Region"/> and <see cref="CountryOrArea"/> rows from the committed UN M49 TSVs
@@ -20,7 +20,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 		new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "country-or-area.m49.referencedata.norse");
 
 	/// <inheritdoc />
-	public string Name => "Norse.ReferenceData";
+	public string Name => "Norse.Reference";
 
 	/// <inheritdoc />
 	public async Task SeedAsync(CancellationToken cancellationToken)
