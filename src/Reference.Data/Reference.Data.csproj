@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Description>Norse.Reference.Data: canonical reference-data entities (Region, CountryOrArea), the ReferenceDataDbContext, and CountryOrArea's RegionAncestry owned-JSON ancestor chain. Runtime library — referenced by the migrations service and, later, Mímir's serving layer.</Description>
-		<!-- EF Core is not AOT/trim-compatible; override the src-level default. -->
-		<IsAotCompatible>false</IsAotCompatible>
 		<!-- Suppress missing XML docs for source-generated methods -->
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
