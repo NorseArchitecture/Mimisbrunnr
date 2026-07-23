@@ -6,9 +6,9 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="../../seeds/*.tsv" CopyToOutputDirectory="PreserveNewest" LinkBase="seeds" />
-		<NorseRef Include="Persistence.EntityFramework.Design">
+		<NorseDesignRef Include="Persistence.EntityFramework.Design">
 			<Repo>Urdarbrunnr</Repo>
-		</NorseRef>
+		</NorseDesignRef>
 		<NorseRef Include="Primitives">
 			<Repo>Svartalfheim</Repo>
 		</NorseRef>
