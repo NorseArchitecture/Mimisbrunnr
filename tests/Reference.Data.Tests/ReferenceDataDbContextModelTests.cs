@@ -14,13 +14,13 @@ public class ReferenceDataDbContextModelTests
 	}
 
 	[Fact]
-	public void Model_configures_Region_with_unique_M49Code_index_and_self_referencing_FK()
+	public void Model_configures_Region_with_unique_Code_index_and_self_referencing_FK()
 	{
 		using var context = CreateContext();
 		IEntityType entityType = context.Model.FindEntityType(typeof(Region))!;
 
 		entityType.ShouldNotBeNull();
-		entityType.GetIndexes().Any(i => i.IsUnique && i.Properties.Single().Name == nameof(Region.M49Code)).ShouldBeTrue();
+		entityType.GetIndexes().Any(i => i.IsUnique && i.Properties.Single().Name == nameof(Region.Code)).ShouldBeTrue();
 		entityType.GetForeignKeys().Single().PrincipalEntityType.ClrType.ShouldBe(typeof(Region));
 	}
 

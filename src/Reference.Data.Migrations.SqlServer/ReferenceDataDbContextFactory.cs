@@ -10,7 +10,7 @@ namespace Norse.Reference.Data.Migrations.SqlServer;
 public sealed class ReferenceDataDbContextFactory : NorseSqlServerDesignTimeDbContextFactory<ReferenceDataDbContext>
 {
 	/// <inheritdoc />
-	protected override string DatabaseName => "norse_referencedata";
+	protected override string DatabaseName => "norse_reference";
 
 	/// <inheritdoc />
 	protected override ReferenceDataDbContext CreateContext(DbContextOptions<ReferenceDataDbContext> options) =>

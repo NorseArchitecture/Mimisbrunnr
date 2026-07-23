@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
 using Norse.Reference.Data.Migrations;
+using Norse.Reference.Data.Migrations.PostgreSQL;
 
 namespace Norse.Reference.Data.Tests;
 
@@ -12,7 +13,7 @@ public class NorseReferenceDataMigrationContributorTests(PostgresContainerFixtur
 	{
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDataDbContext>()
 			.UseNpgsql(fixture.ConnectionString,
-				o => o.MigrationsAssembly(typeof(NorseReferenceDataMigrationContributor).Assembly.GetName().Name));
+				o => o.MigrationsAssembly(typeof(ReferenceDataDbContextFactory).Assembly.GetName().Name));
 		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
 		var options = optionsBuilder.Options;
 		using var context = new ReferenceDataDbContext(options);

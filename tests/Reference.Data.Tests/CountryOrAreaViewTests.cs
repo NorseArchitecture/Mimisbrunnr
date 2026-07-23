@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
 using Norse.Reference.Data.Migrations;
+using Norse.Reference.Data.Migrations.PostgreSQL;
 
 namespace Norse.Reference.Data.Tests;
 
@@ -11,7 +12,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	{
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDataDbContext>()
 			.UseNpgsql(connectionString,
-				o => o.MigrationsAssembly(typeof(NorseReferenceDataMigrationContributor).Assembly.GetName().Name));
+				o => o.MigrationsAssembly(typeof(ReferenceDataDbContextFactory).Assembly.GetName().Name));
 		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
 		var context = new ReferenceDataDbContext(optionsBuilder.Options);
 		await new NorseReferenceDataMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
@@ -30,9 +31,9 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = countryId,
-				M49Code = "566",
-				IsoAlpha2Code = "NG",
-				IsoAlpha3Code = "NGA",
+				Code = "566",
+				Alpha2 = "NG",
+				Alpha3 = "NGA",
 				Name = "Nigeria",
 				View = new RegionNode
 				{
@@ -75,9 +76,9 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = countryId,
-				M49Code = "012",
-				IsoAlpha2Code = "DZ",
-				IsoAlpha3Code = "DZA",
+				Code = "012",
+				Alpha2 = "DZ",
+				Alpha3 = "DZA",
 				Name = "Algeria",
 				View = new RegionNode
 				{
@@ -113,9 +114,9 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = countryId,
-				M49Code = "010",
-				IsoAlpha2Code = "AQ",
-				IsoAlpha3Code = "ATA",
+				Code = "010",
+				Alpha2 = "AQ",
+				Alpha3 = "ATA",
 				Name = "Antarctica",
 				View = null,
 			});

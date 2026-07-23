@@ -7,7 +7,7 @@ namespace Norse.Reference.Data.Migrations;
 /// service and executed at startup to apply pending reference-data schema migrations.
 /// </summary>
 /// <param name="context">The reference-data context instance resolved from DI.</param>
-[MigrationConnectionString("norse_referencedata")]
+[MigrationConnectionString("norse_reference")]
 public sealed class NorseReferenceDataMigrationContributor(ReferenceDataDbContext context) :
 	EfMigrationContributor<ReferenceDataDbContext>(context)
 {

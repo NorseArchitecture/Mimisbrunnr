@@ -33,7 +33,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 	{
 		Dictionary<string, RegionRow> regionsByCode = [];
 
-		using ITabularReader reader = TabularReader.OpenDelimited(
+		using var reader = TabularReader.OpenDelimited(
 			Path.Combine(AppContext.BaseDirectory, "seeds", "region.tsv"), '\t');
 		var m49Ordinal = reader.Ordinal("M49Code");
 		var nameOrdinal = reader.Ordinal("Name");
@@ -62,7 +62,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 			context.Set<Region>().Add(new Region
 			{
 				Id = row.Id,
-				M49Code = row.M49Code,
+				Code = row.M49Code,
 				Name = row.Name,
 				Level = row.Level,
 				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
@@ -118,15 +118,13 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = row.Id,
-				M49Code = row.M49Code,
-				IsoAlpha2Code = row.Alpha2Code,
-				IsoAlpha3Code = row.Alpha3Code,
+				Code = row.M49Code,
+				Alpha2 = row.Alpha2Code,
+				Alpha3 = row.Alpha3Code,
 				Name = row.Name,
 				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
 				View = BuildView(row.ParentM49Code, regionsByCode),
-				IsLeastDevelopedCountry = row.IsLeastDevelopedCountry,
-				IsLandLockedDevelopingCountry = row.IsLandLockedDevelopingCountry,
-				IsSmallIslandDevelopingState = row.IsSmallIslandDevelopingState,
+				Classification = BuildClassification(row.IsLeastDevelopedCountry, row.IsLandLockedDevelopingCountry, row.IsSmallIslandDevelopingState),
 			});
 		}
 
@@ -163,6 +161,11 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 
 		return new RegionNode { Code = regionRow.M49Code, Name = regionRow.Name, Subregion = subregion };
 	}
+
+	static Classification BuildClassification(bool isLeastDevelopedCountry, bool isLandLockedDevelopingCountry, bool isSmallIslandDevelopingState) =>
+		(isLeastDevelopedCountry ? Classification.LeastDevelopedCountry : Classification.None)
+		| (isLandLockedDevelopingCountry ? Classification.LandLockedDevelopingCountry : Classification.None)
+		| (isSmallIslandDevelopingState ? Classification.SmallIslandDevelopingState : Classification.None);
 
 	sealed record RegionRow(Guid Id, string M49Code, string Name, RegionLevel Level, string? ParentM49Code);
 }

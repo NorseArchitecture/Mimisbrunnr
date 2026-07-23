@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
 using Norse.Primitives.Identifiers;
 using Norse.Reference.Data.Migrations;
+using Norse.Reference.Data.Migrations.PostgreSQL;
 
 namespace Norse.Reference.Data.Tests;
 
@@ -12,7 +13,7 @@ public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)
 	{
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDataDbContext>()
 			.UseNpgsql(connectionString,
-				o => o.MigrationsAssembly(typeof(NorseReferenceDataMigrationContributor).Assembly.GetName().Name));
+				o => o.MigrationsAssembly(typeof(ReferenceDataDbContextFactory).Assembly.GetName().Name));
 		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
 		var context = new ReferenceDataDbContext(optionsBuilder.Options);
 		await new NorseReferenceDataMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
@@ -75,7 +76,7 @@ public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)
 		try
 		{
 			await new ReferenceDataSeedContributor(contextA).SeedAsync(cancellationToken);
-			var nigeriaIdFirstRun = await contextA.Set<CountryOrArea>().Where(c => c.M49Code == "566").Select(c => c.Id).SingleAsync(cancellationToken);
+			var nigeriaIdFirstRun = await contextA.Set<CountryOrArea>().Where(c => c.Code == "566").Select(c => c.Id).SingleAsync(cancellationToken);
 
 			nigeriaIdFirstRun.ShouldBe(new DeterministicGuid(
 				new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "country-or-area.m49.referencedata.norse"), "566"));
@@ -98,19 +99,19 @@ public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)
 			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var nigeria = await context.Set<CountryOrArea>().SingleAsync(c => c.M49Code == "566", cancellationToken);
+			var nigeria = await context.Set<CountryOrArea>().SingleAsync(c => c.Code == "566", cancellationToken);
 			nigeria.View.ShouldNotBeNull();
 			nigeria.View.Code.ShouldBe("002");
 			nigeria.View.Subregion.ShouldNotBeNull();
 			nigeria.View.Subregion.IntermediateRegion.ShouldNotBeNull();
 			nigeria.View.Subregion.IntermediateRegion.Code.ShouldBe("011");
 
-			var algeria = await context.Set<CountryOrArea>().SingleAsync(c => c.M49Code == "012", cancellationToken);
+			var algeria = await context.Set<CountryOrArea>().SingleAsync(c => c.Code == "012", cancellationToken);
 			algeria.View.ShouldNotBeNull();
 			algeria.View.Subregion.ShouldNotBeNull();
 			algeria.View.Subregion.IntermediateRegion.ShouldBeNull();
 
-			var antarctica = await context.Set<CountryOrArea>().SingleAsync(c => c.M49Code == "010", cancellationToken);
+			var antarctica = await context.Set<CountryOrArea>().SingleAsync(c => c.Code == "010", cancellationToken);
 			antarctica.View.ShouldBeNull();
 		}
 		finally

@@ -12,23 +12,19 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	/// <summary>The country-or-area identifier.</summary>
 	public Guid Id { get; init; }
 	/// <summary>The UN M49 code (3 digits).</summary>
-	public string M49Code { get; init; } = null!;
+	public string Code { get; init; } = null!;
 	/// <summary>The ISO 3166-1 alpha-2 code (2 letters).</summary>
-	public string IsoAlpha2Code { get; init; } = null!;
+	public string Alpha2 { get; init; } = null!;
 	/// <summary>The ISO 3166-1 alpha-3 code (3 letters).</summary>
-	public string IsoAlpha3Code { get; init; } = null!;
+	public string Alpha3 { get; init; } = null!;
 	/// <summary>The country or area name in English.</summary>
 	public string Name { get; init; } = null!;
 	/// <summary>The parent region identifier, if applicable.</summary>
 	public Guid? ParentRegionId { get; init; }
 	/// <summary>The parent region, if applicable.</summary>
 	public Region ParentRegion { get; init; } = null!;
-	/// <summary>True if this is a Least Developed Country per UN classification.</summary>
-	public bool IsLeastDevelopedCountry { get; init; }
-	/// <summary>True if this is a Land Locked Developing Country per UN classification.</summary>
-	public bool IsLandLockedDevelopingCountry { get; init; }
-	/// <summary>True if this is a Small Island Developing State per UN classification.</summary>
-	public bool IsSmallIslandDevelopingState { get; init; }
+	/// <summary>The UN classification flags this country or area holds. Test with <see cref="Enum.HasFlag"/>.</summary>
+	public Classification Classification { get; init; }
 	/// <summary>
 	/// The denormalized read-model column: the ancestor Region/Subregion/IntermediateRegion chain,
 	/// hydrated by the seed contributor and stored as an owned JSON document — <see langword="null"/>
@@ -41,13 +37,13 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
 	{
 		builder.HasKey(c => c.Id);
-		builder.Property(c => c.M49Code).HasMaxLength(3).IsRequired();
-		builder.Property(c => c.IsoAlpha2Code).HasMaxLength(2).IsRequired();
-		builder.Property(c => c.IsoAlpha3Code).HasMaxLength(3).IsRequired();
+		builder.Property(c => c.Code).HasMaxLength(3).IsRequired();
+		builder.Property(c => c.Alpha2).HasMaxLength(2).IsRequired();
+		builder.Property(c => c.Alpha3).HasMaxLength(3).IsRequired();
 		builder.Property(c => c.Name).HasMaxLength(256).IsRequired();
-		builder.HasIndex(c => c.M49Code).IsUnique();
-		builder.HasIndex(c => c.IsoAlpha2Code).IsUnique();
-		builder.HasIndex(c => c.IsoAlpha3Code).IsUnique();
+		builder.HasIndex(c => c.Code).IsUnique();
+		builder.HasIndex(c => c.Alpha2).IsUnique();
+		builder.HasIndex(c => c.Alpha3).IsUnique();
 		builder
 			.HasOne(c => c.ParentRegion)
 			.WithMany()

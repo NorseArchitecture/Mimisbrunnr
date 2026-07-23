@@ -11,7 +11,7 @@ public sealed class Region : NorseEntityBase<Region>, INorseEntity<Region>
 	/// <summary>The region identifier.</summary>
 	public Guid Id { get; init; }
 	/// <summary>The UN M49 code (3 digits).</summary>
-	public string M49Code { get; init; } = null!;
+	public string Code { get; init; } = null!;
 	/// <summary>The region name in English.</summary>
 	public string Name { get; init; } = null!;
 	/// <summary>The hierarchical level of this region.</summary>
@@ -25,9 +25,9 @@ public sealed class Region : NorseEntityBase<Region>, INorseEntity<Region>
 	public static void Configure(EntityTypeBuilder<Region> builder)
 	{
 		builder.HasKey(r => r.Id);
-		builder.Property(r => r.M49Code).HasMaxLength(3).IsRequired();
+		builder.Property(r => r.Code).HasMaxLength(3).IsRequired();
 		builder.Property(r => r.Name).HasMaxLength(256).IsRequired();
-		builder.HasIndex(r => r.M49Code).IsUnique();
+		builder.HasIndex(r => r.Code).IsUnique();
 		builder.HasOne(r => r.ParentRegion).WithMany().HasForeignKey(r => r.ParentRegionId).IsRequired(false);
 	}
 }
