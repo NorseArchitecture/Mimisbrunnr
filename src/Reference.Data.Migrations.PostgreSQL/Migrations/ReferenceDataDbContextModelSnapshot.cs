@@ -16,7 +16,7 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260722235856_InitialCreate";
+    public override string LastMigrationId => "20260723004348_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -50,10 +50,8 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
                     .HasColumnType("integer")
                     .HasColumnName("classification");
 
-                b.Property<string>("Code")
-                    .IsRequired()
-                    .HasMaxLength(3)
-                    .HasColumnType("character varying(3)")
+                b.Property<int>("Code")
+                    .HasColumnType("integer")
                     .HasColumnName("code");
 
                 b.Property<string>("Name")
@@ -94,10 +92,8 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
                     .HasColumnType("uuid")
                     .HasColumnName("id");
 
-                b.Property<string>("Code")
-                    .IsRequired()
-                    .HasMaxLength(3)
-                    .HasColumnType("character varying(3)")
+                b.Property<int>("Code")
+                    .HasColumnType("integer")
                     .HasColumnName("code");
 
                 b.Property<int>("Level")
@@ -169,10 +165,6 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
 
                                 b2.ToTable("country_or_area");
 
-                                b2
-                                    .ToJson("view")
-                                    .HasColumnType("jsonb");
-
                                 b2.WithOwner()
                                     .HasForeignKey("RegionNodeCountryOrAreaId");
 
@@ -189,10 +181,6 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
                                         b3.HasKey("SubregionNodeRegionNodeCountryOrAreaId");
 
                                         b3.ToTable("country_or_area");
-
-                                        b3
-                                            .ToJson("view")
-                                            .HasColumnType("jsonb");
 
                                         b3.WithOwner()
                                             .HasForeignKey("SubregionNodeRegionNodeCountryOrAreaId");

@@ -16,7 +16,7 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260722235903_InitialCreate";
+    public override string LastMigrationId => "20260723004352_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -46,10 +46,8 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
                 b.Property<int>("Classification")
                     .HasColumnType("int");
 
-                b.Property<string>("Code")
-                    .IsRequired()
-                    .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                b.Property<int>("Code")
+                    .HasColumnType("int");
 
                 b.Property<string>("Name")
                     .IsRequired()
@@ -81,10 +79,8 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
                     .ValueGeneratedOnAdd()
                     .HasColumnType("uniqueidentifier");
 
-                b.Property<string>("Code")
-                    .IsRequired()
-                    .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                b.Property<int>("Code")
+                    .HasColumnType("int");
 
                 b.Property<int>("Level")
                     .HasColumnType("int");

@@ -5,7 +5,7 @@
 -- ============================================================
 CREATE TABLE [Region] (
     [Id] uniqueidentifier NOT NULL,
-    [Code] nvarchar(3) NOT NULL,
+    [Code] int NOT NULL,
     [Name] nvarchar(256) NOT NULL,
     [Level] int NOT NULL,
     [ParentRegionId] uniqueidentifier NULL,
@@ -17,7 +17,7 @@ GO
 
 CREATE TABLE [CountryOrArea] (
     [Id] uniqueidentifier NOT NULL,
-    [Code] nvarchar(3) NOT NULL,
+    [Code] int NOT NULL,
     [Alpha2] nvarchar(2) NOT NULL,
     [Alpha3] nvarchar(3) NOT NULL,
     [Name] nvarchar(256) NOT NULL,

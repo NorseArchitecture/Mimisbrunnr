@@ -12,7 +12,7 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	/// <summary>The country-or-area identifier.</summary>
 	public Guid Id { get; init; }
 	/// <summary>The UN M49 code (3 digits).</summary>
-	public string Code { get; init; } = null!;
+	public ushort Code { get; init; }
 	/// <summary>The ISO 3166-1 alpha-2 code (2 letters).</summary>
 	public string Alpha2 { get; init; } = null!;
 	/// <summary>The ISO 3166-1 alpha-3 code (3 letters).</summary>
@@ -37,7 +37,6 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
 	{
 		builder.HasKey(c => c.Id);
-		builder.Property(c => c.Code).HasMaxLength(3).IsRequired();
 		builder.Property(c => c.Alpha2).HasMaxLength(2).IsRequired();
 		builder.Property(c => c.Alpha3).HasMaxLength(3).IsRequired();
 		builder.Property(c => c.Name).HasMaxLength(256).IsRequired();

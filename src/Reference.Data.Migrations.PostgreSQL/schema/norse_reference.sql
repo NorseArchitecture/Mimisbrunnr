@@ -5,7 +5,7 @@
 -- ============================================================
 CREATE TABLE region (
     id uuid NOT NULL,
-    code character varying(3) NOT NULL,
+    code integer NOT NULL,
     name character varying(256) NOT NULL,
     level integer NOT NULL,
     parent_region_id uuid,
@@ -16,7 +16,7 @@ CREATE TABLE region (
 
 CREATE TABLE country_or_area (
     id uuid NOT NULL,
-    code character varying(3) NOT NULL,
+    code integer NOT NULL,
     alpha2 character varying(2) NOT NULL,
     alpha3 character varying(3) NOT NULL,
     name character varying(256) NOT NULL,

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Norse.Abstractions.Migrations.Seeding;
 using Norse.Primitives.Identifiers;
@@ -62,7 +63,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 			context.Set<Region>().Add(new Region
 			{
 				Id = row.Id,
-				Code = row.M49Code,
+				Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
 				Name = row.Name,
 				Level = row.Level,
 				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
@@ -118,7 +119,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = row.Id,
-				Code = row.M49Code,
+				Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
 				Alpha2 = row.Alpha2Code,
 				Alpha3 = row.Alpha3Code,
 				Name = row.Name,

@@ -2,18 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Norse.Reference.Data;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
+namespace Norse.Reference.Data.Migrations.PostgreSQL.Migrations;
 
 [DbContext(typeof(ReferenceDataDbContext))]
-[Migration("20260722235903_InitialCreate")]
-partial class _20260722235903_InitialCreate
+[Migration("20260723004348_InitialCreate")]
+partial class _20260723004348_InitialCreate
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,95 +21,112 @@ partial class _20260722235903_InitialCreate
 #pragma warning disable 612, 618
         modelBuilder
             .HasAnnotation("ProductVersion", "11.0.0-preview.6.26359.118")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128);
+            .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
         modelBuilder.Entity("Norse.Reference.Data.CountryOrArea", b =>
             {
                 b.Property<Guid>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
+                    .HasColumnType("uuid")
+                    .HasColumnName("id");
 
                 b.Property<string>("Alpha2")
                     .IsRequired()
                     .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    .HasColumnType("character varying(2)")
+                    .HasColumnName("alpha2");
 
                 b.Property<string>("Alpha3")
                     .IsRequired()
                     .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                    .HasColumnType("character varying(3)")
+                    .HasColumnName("alpha3");
 
                 b.Property<int>("Classification")
-                    .HasColumnType("int");
+                    .HasColumnType("integer")
+                    .HasColumnName("classification");
 
-                b.Property<string>("Code")
-                    .IsRequired()
-                    .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                b.Property<int>("Code")
+                    .HasColumnType("integer")
+                    .HasColumnName("code");
 
                 b.Property<string>("Name")
                     .IsRequired()
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("character varying(256)")
+                    .HasColumnName("name");
 
                 b.Property<Guid?>("ParentRegionId")
-                    .HasColumnType("uniqueidentifier");
+                    .HasColumnType("uuid")
+                    .HasColumnName("parent_region_id");
 
-                b.HasKey("Id");
+                b.HasKey("Id")
+                    .HasName("pk_country_or_area");
 
                 b.HasIndex("Alpha2")
-                    .IsUnique();
+                    .IsUnique()
+                    .HasDatabaseName("ix_country_or_area_alpha2");
 
                 b.HasIndex("Alpha3")
-                    .IsUnique();
+                    .IsUnique()
+                    .HasDatabaseName("ix_country_or_area_alpha3");
 
                 b.HasIndex("Code")
-                    .IsUnique();
+                    .IsUnique()
+                    .HasDatabaseName("ix_country_or_area_code");
 
-                b.HasIndex("ParentRegionId");
+                b.HasIndex("ParentRegionId")
+                    .HasDatabaseName("ix_country_or_area_parent_region_id");
 
-                b.ToTable("CountryOrArea");
+                b.ToTable("country_or_area");
             });
 
         modelBuilder.Entity("Norse.Reference.Data.Region", b =>
             {
                 b.Property<Guid>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
+                    .HasColumnType("uuid")
+                    .HasColumnName("id");
 
-                b.Property<string>("Code")
-                    .IsRequired()
-                    .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                b.Property<int>("Code")
+                    .HasColumnType("integer")
+                    .HasColumnName("code");
 
                 b.Property<int>("Level")
-                    .HasColumnType("int");
+                    .HasColumnType("integer")
+                    .HasColumnName("level");
 
                 b.Property<string>("Name")
                     .IsRequired()
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("character varying(256)")
+                    .HasColumnName("name");
 
                 b.Property<Guid?>("ParentRegionId")
-                    .HasColumnType("uniqueidentifier");
+                    .HasColumnType("uuid")
+                    .HasColumnName("parent_region_id");
 
-                b.HasKey("Id");
+                b.HasKey("Id")
+                    .HasName("pk_region");
 
                 b.HasIndex("Code")
-                    .IsUnique();
+                    .IsUnique()
+                    .HasDatabaseName("ix_region_code");
 
-                b.HasIndex("ParentRegionId");
+                b.HasIndex("ParentRegionId")
+                    .HasDatabaseName("ix_region_parent_region_id");
 
-                b.ToTable("Region");
+                b.ToTable("region");
             });
 
         modelBuilder.Entity("Norse.Reference.Data.CountryOrArea", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
                     .WithMany()
-                    .HasForeignKey("ParentRegionId");
+                    .HasForeignKey("ParentRegionId")
+                    .HasConstraintName("fk_country_or_area_region_parent_region_id");
 
                 b.OwnsOne("Norse.Reference.Data.RegionNode", "View", b1 =>
                     {
@@ -123,11 +140,11 @@ partial class _20260722235903_InitialCreate
 
                         b1.HasKey("CountryOrAreaId");
 
-                        b1.ToTable("CountryOrArea");
+                        b1.ToTable("country_or_area");
 
                         b1
-                            .ToJson("View")
-                            .HasColumnType("nvarchar(max)");
+                            .ToJson("view")
+                            .HasColumnType("jsonb");
 
                         b1.WithOwner()
                             .HasForeignKey("CountryOrAreaId");
@@ -144,7 +161,7 @@ partial class _20260722235903_InitialCreate
 
                                 b2.HasKey("RegionNodeCountryOrAreaId");
 
-                                b2.ToTable("CountryOrArea");
+                                b2.ToTable("country_or_area");
 
                                 b2.WithOwner()
                                     .HasForeignKey("RegionNodeCountryOrAreaId");
@@ -161,7 +178,7 @@ partial class _20260722235903_InitialCreate
 
                                         b3.HasKey("SubregionNodeRegionNodeCountryOrAreaId");
 
-                                        b3.ToTable("CountryOrArea");
+                                        b3.ToTable("country_or_area");
 
                                         b3.WithOwner()
                                             .HasForeignKey("SubregionNodeRegionNodeCountryOrAreaId");
@@ -182,7 +199,8 @@ partial class _20260722235903_InitialCreate
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
                     .WithMany()
-                    .HasForeignKey("ParentRegionId");
+                    .HasForeignKey("ParentRegionId")
+                    .HasConstraintName("fk_region_region_parent_region_id");
 
                 b.Navigation("ParentRegion");
             });

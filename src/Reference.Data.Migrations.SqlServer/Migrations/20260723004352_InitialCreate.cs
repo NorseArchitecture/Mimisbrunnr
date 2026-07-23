@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
 
 /// <inheritdoc />
-public partial class _20260722235903_InitialCreate : Migration
+public partial class _20260723004352_InitialCreate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ public partial class _20260722235903_InitialCreate : Migration
             columns: table => new
             {
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                Code = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+                Code = table.Column<int>(type: "int", nullable: false),
                 Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                 Level = table.Column<int>(type: "int", nullable: false),
                 ParentRegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -36,7 +36,7 @@ public partial class _20260722235903_InitialCreate : Migration
             columns: table => new
             {
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                Code = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+                Code = table.Column<int>(type: "int", nullable: false),
                 Alpha2 = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
                 Alpha3 = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                 Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),

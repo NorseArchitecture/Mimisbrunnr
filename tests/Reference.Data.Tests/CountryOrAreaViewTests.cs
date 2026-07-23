@@ -31,7 +31,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = countryId,
-				Code = "566",
+				Code = 566,
 				Alpha2 = "NG",
 				Alpha3 = "NGA",
 				Name = "Nigeria",
@@ -76,7 +76,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = countryId,
-				Code = "012",
+				Code = 12,
 				Alpha2 = "DZ",
 				Alpha3 = "DZA",
 				Name = "Algeria",
@@ -114,7 +114,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = countryId,
-				Code = "010",
+				Code = 10,
 				Alpha2 = "AQ",
 				Alpha3 = "ATA",
 				Name = "Antarctica",
