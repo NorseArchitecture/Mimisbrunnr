@@ -23,7 +23,7 @@ CREATE TABLE [CountryOrArea] (
     [Name] nvarchar(256) NOT NULL,
     [ParentRegionId] uniqueidentifier NULL,
     [Classification] int NOT NULL,
-    [View] nvarchar(max) NULL,
+    [View] json NULL,
     CONSTRAINT [PK_CountryOrArea] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_CountryOrArea_Region_ParentRegionId] FOREIGN KEY ([ParentRegionId]) REFERENCES [Region] ([Id])
 );
