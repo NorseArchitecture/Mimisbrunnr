@@ -16,7 +16,7 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260723004352_InitialCreate";
+    public override string LastMigrationId => "20260723130846_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -125,7 +125,7 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
 
                         b1
                             .ToJson("View")
-                            .HasColumnType("nvarchar(max)");
+                            .HasColumnType("json");
 
                         b1.WithOwner()
                             .HasForeignKey("CountryOrAreaId");

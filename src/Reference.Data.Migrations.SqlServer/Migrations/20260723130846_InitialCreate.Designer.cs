@@ -12,8 +12,8 @@ using Norse.Reference.Data;
 namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
 
 [DbContext(typeof(ReferenceDataDbContext))]
-[Migration("20260723004352_InitialCreate")]
-partial class _20260723004352_InitialCreate
+[Migration("20260723130846_InitialCreate")]
+partial class _20260723130846_InitialCreate
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,7 +123,7 @@ partial class _20260723004352_InitialCreate
 
                         b1
                             .ToJson("View")
-                            .HasColumnType("nvarchar(max)");
+                            .HasColumnType("json");
 
                         b1.WithOwner()
                             .HasForeignKey("CountryOrAreaId");

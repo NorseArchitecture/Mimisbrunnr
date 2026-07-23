@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
 
 /// <inheritdoc />
-public partial class _20260723004352_InitialCreate : Migration
+public partial class _20260723130846_InitialCreate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,7 +42,7 @@ public partial class _20260723004352_InitialCreate : Migration
                 Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                 ParentRegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                 Classification = table.Column<int>(type: "int", nullable: false),
-                View = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                View = table.Column<string>(type: "json", nullable: true)
             },
             constraints: table =>
             {
