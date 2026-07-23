@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Description>Norse.Reference.Data.Migrations: the migration contributor and ISeedContributor that loads the UN M49 TSVs, provider-agnostic. Migration tooling only — never referenced from a runtime container.</Description>
+		<!-- EF Core is not AOT/trim-compatible; override the src-level default. -->
+		<IsAotCompatible>false</IsAotCompatible>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="../../seeds/*.tsv" CopyToOutputDirectory="PreserveNewest" LinkBase="seeds" />
+		<NorseRef Include="Persistence.EntityFramework.Design">
+			<Repo>Urdarbrunnr</Repo>
+		</NorseRef>
+		<NorseRef Include="Primitives">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<NorseRef Include="Primitives.Ingestion">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<ProjectReference Include="../Reference.Data/Reference.Data.csproj" />
+	</ItemGroup>
+</Project>
