@@ -7,7 +7,7 @@ CREATE TABLE [Region] (
     [Id] uniqueidentifier NOT NULL,
     [Code] int NOT NULL,
     [Name] nvarchar(256) NOT NULL,
-    [Level] int NOT NULL,
+    [Level] tinyint NOT NULL,
     [ParentRegionId] uniqueidentifier NULL,
     CONSTRAINT [PK_Region] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Region_Region_ParentRegionId] FOREIGN KEY ([ParentRegionId]) REFERENCES [Region] ([Id])
@@ -22,7 +22,7 @@ CREATE TABLE [CountryOrArea] (
     [Alpha3] nvarchar(3) NOT NULL,
     [Name] nvarchar(256) NOT NULL,
     [ParentRegionId] uniqueidentifier NULL,
-    [Classification] int NOT NULL,
+    [Classification] tinyint NOT NULL,
     [View] json NULL,
     CONSTRAINT [PK_CountryOrArea] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_CountryOrArea_Region_ParentRegionId] FOREIGN KEY ([ParentRegionId]) REFERENCES [Region] ([Id])

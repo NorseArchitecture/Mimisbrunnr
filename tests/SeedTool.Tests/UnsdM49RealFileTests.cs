@@ -10,7 +10,7 @@ public sealed class UnsdM49RealFileTests
 	[Fact]
 	void Map_produces_the_expected_counts_and_known_rows_from_the_real_source()
 	{
-		using ITabularReader reader = TabularReader.OpenDelimited(SourcePath, ';');
+		using var reader = TabularReader.OpenDelimited(SourcePath, ';');
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		// 5 Regions + 17 Sub-regions + 7 Intermediate Regions, per the approved M49 spec's

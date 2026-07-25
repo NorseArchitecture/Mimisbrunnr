@@ -6,18 +6,18 @@ using Norse.Reference.Data.Migrations.PostgreSQL;
 namespace Norse.Reference.Data.Tests;
 
 [Collection("Postgres")]
-public class NorseReferenceDataMigrationContributorTests(PostgresContainerFixture fixture)
+public class NorseReferenceMigrationContributorTests(PostgresContainerFixture fixture)
 {
 	[Fact]
 	public async Task MigrateAsync_creates_regions_and_country_or_areas_tables()
 	{
-		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDataDbContext>()
-			.UseNpgsql(fixture.ConnectionString,
-				o => o.MigrationsAssembly(typeof(ReferenceDataDbContextFactory).Assembly.GetName().Name));
+		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
+			.UseNpgsql(fixture.ConnectionString, o =>
+				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
 		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
 		var options = optionsBuilder.Options;
-		using var context = new ReferenceDataDbContext(options);
-		var contributor = new NorseReferenceDataMigrationContributor(context);
+		using ReferenceDbContext context = new(options);
+		NorseReferenceMigrationContributor contributor = new(context);
 
 		await contributor.MigrateAsync(TestContext.Current.CancellationToken);
 

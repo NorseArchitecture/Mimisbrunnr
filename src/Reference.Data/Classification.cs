@@ -6,14 +6,14 @@ namespace Norse.Reference.Data;
 /// a country or area can hold in combination. Test membership via <see cref="Enum.HasFlag"/>.
 /// </summary>
 [Flags]
-public enum Classification
+public enum Classification : byte
 {
 	/// <summary>No UN classification applies.</summary>
 	None = 0,
 	/// <summary>Least Developed Country.</summary>
-	LeastDevelopedCountry = 1,
+	LeastDevelopedCountry = 1 << 0,
 	/// <summary>Land Locked Developing Country.</summary>
-	LandLockedDevelopingCountry = 2,
+	LandLockedDevelopingCountry = 1 << 1,
 	/// <summary>Small Island Developing State.</summary>
-	SmallIslandDevelopingState = 4,
+	SmallIslandDevelopingState = 1 << 2
 }

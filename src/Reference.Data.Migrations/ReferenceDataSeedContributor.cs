@@ -12,7 +12,7 @@ namespace Norse.Reference.Data.Migrations;
 /// <see cref="CountryOrArea.View"/> from the same region rows.
 /// </summary>
 /// <param name="context">The reference-data context instance resolved from DI.</param>
-public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context) : ISeedContributor
+public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : ISeedContributor
 {
 	static readonly Guid _namespaceRegion =
 		new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "region.m49.referencedata.norse");
@@ -55,11 +55,8 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 
 		var existingIds = (await context.Set<Region>().Select(r => r.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
 
-		foreach (var row in regionsByCode.Values)
+		foreach (var row in regionsByCode.Values.Where(row => !existingIds.Contains(row.Id)))
 		{
-			if (existingIds.Contains(row.Id))
-				continue;
-
 			context.Set<Region>().Add(new Region
 			{
 				Id = row.Id,
@@ -76,7 +73,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 
 	async Task SeedCountriesAsync(Dictionary<string, RegionRow> regionsByCode, CancellationToken cancellationToken)
 	{
-		using ITabularReader reader = TabularReader.OpenDelimited(
+		using var reader = TabularReader.OpenDelimited(
 			Path.Combine(AppContext.BaseDirectory, "seeds", "country-or-area.tsv"), '\t');
 		var m49Ordinal = reader.Ordinal("M49Code");
 		var alpha2Ordinal = reader.Ordinal("IsoAlpha2Code");
@@ -111,11 +108,8 @@ public sealed class ReferenceDataSeedContributor(ReferenceDataDbContext context)
 
 		var existingIds = (await context.Set<CountryOrArea>().Select(c => c.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
 
-		foreach (var row in rows)
+		foreach (var row in rows.Where(row => !existingIds.Contains(row.Id)))
 		{
-			if (existingIds.Contains(row.Id))
-				continue;
-
 			context.Set<CountryOrArea>().Add(new CountryOrArea
 			{
 				Id = row.Id,

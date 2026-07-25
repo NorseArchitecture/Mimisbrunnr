@@ -10,13 +10,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Norse.Reference.Data.Migrations.PostgreSQL.Migrations;
 
-[DbContext(typeof(ReferenceDataDbContext))]
-partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
+[DbContext(typeof(ReferenceDbContext))]
+partial class ReferenceDbContextModelSnapshot : ModelSnapshot
 {
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260723004348_InitialCreate";
+    public override string LastMigrationId => "20260725023555_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -46,8 +46,8 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
                     .HasColumnType("character varying(3)")
                     .HasColumnName("alpha3");
 
-                b.Property<int>("Classification")
-                    .HasColumnType("integer")
+                b.Property<byte>("Classification")
+                    .HasColumnType("smallint")
                     .HasColumnName("classification");
 
                 b.Property<int>("Code")
@@ -96,8 +96,8 @@ partial class ReferenceDataDbContextModelSnapshot : ModelSnapshot
                     .HasColumnType("integer")
                     .HasColumnName("code");
 
-                b.Property<int>("Level")
-                    .HasColumnType("integer")
+                b.Property<byte>("Level")
+                    .HasColumnType("smallint")
                     .HasColumnName("level");
 
                 b.Property<string>("Name")
