@@ -3,6 +3,17 @@
 		<NorseDesignRef Include="Persistence.EntityFramework.Design">
 			<Repo>Urdarbrunnr</Repo>
 		</NorseDesignRef>
+		<!-- Needed directly, not just transitively via the ProjectReferences below: those mark
+		     their own NorseDesignRef to this package PrivateAssets="all" (correctly, so runtime
+		     consumers of the Migrations packages don't inherit design-time tooling), which also
+		     blocks it from flowing here. ReferenceDbContextFactory (in Migrations.PostgreSQL) and
+		     NorseReferenceMigrationContributor (in Migrations, via EfMigrationContributor<T>) both
+		     derive from Design-chassis base types living in the SAME assembly the tests instantiate
+		     and EF's MigrationsAssembly scanner reflects over — so it's a genuine runtime dependency
+		     for this leaf project even though it's design-time-only everywhere else. -->
+		<NorseDesignRef Include="Persistence.EntityFramework.Design.PostgreSQL">
+			<Repo>Urdarbrunnr</Repo>
+		</NorseDesignRef>
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.*-*" />
 		<PackageReference Include="Testcontainers.PostgreSql" Version="*" />
 		<ProjectReference Include="..\..\src\Reference.Data\Reference.Data.csproj" />
