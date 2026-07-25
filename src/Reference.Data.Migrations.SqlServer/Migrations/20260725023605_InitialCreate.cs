@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
 
 /// <inheritdoc />
-public partial class _20260723130846_InitialCreate : Migration
+public partial class _20260725023605_InitialCreate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ public partial class _20260723130846_InitialCreate : Migration
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                 Code = table.Column<int>(type: "int", nullable: false),
                 Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                Level = table.Column<int>(type: "int", nullable: false),
+                Level = table.Column<byte>(type: "tinyint", nullable: false),
                 ParentRegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
             },
             constraints: table =>
@@ -41,7 +41,7 @@ public partial class _20260723130846_InitialCreate : Migration
                 Alpha3 = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                 Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                 ParentRegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                Classification = table.Column<int>(type: "int", nullable: false),
+                Classification = table.Column<byte>(type: "tinyint", nullable: false),
                 View = table.Column<string>(type: "json", nullable: true)
             },
             constraints: table =>

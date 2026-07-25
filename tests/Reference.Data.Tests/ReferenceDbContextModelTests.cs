@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Norse.Reference.Data.Tests;
 
-public class ReferenceDataDbContextModelTests
+public class ReferenceDbContextModelTests
 {
-	static ReferenceDataDbContext CreateContext()
+	static ReferenceDbContext CreateContext()
 	{
-		var options = new DbContextOptionsBuilder<ReferenceDataDbContext>()
+		var options = new DbContextOptionsBuilder<ReferenceDbContext>()
 			.UseNpgsql("Host=localhost;Database=model-build-only")
 			.Options;
-		return new ReferenceDataDbContext(options);
+		return new ReferenceDbContext(options);
 	}
 
 	[Fact]

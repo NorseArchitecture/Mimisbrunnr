@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Norse.Reference.Data;
 
@@ -11,12 +10,15 @@ using Norse.Reference.Data;
 
 namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
 
-[DbContext(typeof(ReferenceDataDbContext))]
-[Migration("20260723130846_InitialCreate")]
-partial class _20260723130846_InitialCreate
+[DbContext(typeof(ReferenceDbContext))]
+partial class ReferenceDbContextModelSnapshot : ModelSnapshot
 {
-    /// <inheritdoc />
-    protected override void BuildTargetModel(ModelBuilder modelBuilder)
+    // If you encounter a merge conflict in the line below, it means you need to
+    // discard one of the migration branches and recreate its migrations on top of
+    // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
+    public override string LastMigrationId => "20260725023605_InitialCreate";
+
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
@@ -41,8 +43,8 @@ partial class _20260723130846_InitialCreate
                     .HasMaxLength(3)
                     .HasColumnType("nvarchar(3)");
 
-                b.Property<int>("Classification")
-                    .HasColumnType("int");
+                b.Property<byte>("Classification")
+                    .HasColumnType("tinyint");
 
                 b.Property<int>("Code")
                     .HasColumnType("int");
@@ -80,8 +82,8 @@ partial class _20260723130846_InitialCreate
                 b.Property<int>("Code")
                     .HasColumnType("int");
 
-                b.Property<int>("Level")
-                    .HasColumnType("int");
+                b.Property<byte>("Level")
+                    .HasColumnType("tinyint");
 
                 b.Property<string>("Name")
                     .IsRequired()

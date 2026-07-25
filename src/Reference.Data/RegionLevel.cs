@@ -3,12 +3,12 @@ namespace Norse.Reference.Data;
 /// <summary>
 /// The hierarchical level of a geographic region per UN M49.
 /// </summary>
-public enum RegionLevel
+public enum RegionLevel : byte
 {
 	/// <summary>Region level.</summary>
 	Region = 1,
 	/// <summary>Subregion level.</summary>
 	Subregion = 2,
 	/// <summary>Intermediate region level.</summary>
-	IntermediateRegion = 3,
+	IntermediateRegion = 3
 }

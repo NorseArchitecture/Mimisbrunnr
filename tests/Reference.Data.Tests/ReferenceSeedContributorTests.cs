@@ -7,16 +7,16 @@ using Norse.Reference.Data.Migrations.PostgreSQL;
 namespace Norse.Reference.Data.Tests;
 
 [Collection("Postgres")]
-public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)
+public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 {
-	static async Task<ReferenceDataDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
+	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
 	{
-		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDataDbContext>()
-			.UseNpgsql(connectionString,
-				o => o.MigrationsAssembly(typeof(ReferenceDataDbContextFactory).Assembly.GetName().Name));
+		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
+			.UseNpgsql(connectionString, o =>
+				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
 		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
-		var context = new ReferenceDataDbContext(optionsBuilder.Options);
-		await new NorseReferenceDataMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
+		ReferenceDbContext context = new(optionsBuilder.Options);
+		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
 		return context;
 	}
 
@@ -48,7 +48,7 @@ public class ReferenceDataSeedContributorTests(PostgresContainerFixture fixture)
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-		var contributor = new ReferenceDataSeedContributor(context);
+		ReferenceDataSeedContributor contributor = new(context);
 
 		try
 		{

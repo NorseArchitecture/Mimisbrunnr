@@ -7,7 +7,7 @@ CREATE TABLE region (
     id uuid NOT NULL,
     code integer NOT NULL,
     name character varying(256) NOT NULL,
-    level integer NOT NULL,
+    level smallint NOT NULL,
     parent_region_id uuid,
     CONSTRAINT pk_region PRIMARY KEY (id),
     CONSTRAINT fk_region_region_parent_region_id FOREIGN KEY (parent_region_id) REFERENCES region (id)
@@ -21,7 +21,7 @@ CREATE TABLE country_or_area (
     alpha3 character varying(3) NOT NULL,
     name character varying(256) NOT NULL,
     parent_region_id uuid,
-    classification integer NOT NULL,
+    classification smallint NOT NULL,
     view jsonb,
     CONSTRAINT pk_country_or_area PRIMARY KEY (id),
     CONSTRAINT fk_country_or_area_region_parent_region_id FOREIGN KEY (parent_region_id) REFERENCES region (id)

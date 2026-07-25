@@ -8,14 +8,14 @@ namespace Norse.Reference.Data.Tests;
 [Collection("Postgres")]
 public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 {
-	static async Task<ReferenceDataDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
+	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
 	{
-		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDataDbContext>()
-			.UseNpgsql(connectionString,
-				o => o.MigrationsAssembly(typeof(ReferenceDataDbContextFactory).Assembly.GetName().Name));
-		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
-		var context = new ReferenceDataDbContext(optionsBuilder.Options);
-		await new NorseReferenceDataMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
+		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
+			.UseNpgsql(connectionString, o =>
+				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
+		optionsBuilder.ApplyNorseConventions();
+		ReferenceDbContext context = new(optionsBuilder.Options);
+		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
 		return context;
 	}
 
@@ -25,32 +25,32 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
 		var countryId = Guid.NewGuid();
-
+		var set = context.Set<CountryOrArea>();
 		try
 		{
-			context.Set<CountryOrArea>().Add(new CountryOrArea
+			set.Add(new()
 			{
 				Id = countryId,
 				Code = 566,
 				Alpha2 = "NG",
 				Alpha3 = "NGA",
 				Name = "Nigeria",
-				View = new RegionNode
+				View = new()
 				{
 					Code = "002",
 					Name = "Africa",
-					Subregion = new SubregionNode
+					Subregion = new()
 					{
 						Code = "202",
 						Name = "Sub-Saharan Africa",
-						IntermediateRegion = new IntermediateRegionNode { Code = "011", Name = "Western Africa" },
-					},
-				},
+						IntermediateRegion = new() { Code = "011", Name = "Western Africa" }
+					}
+				}
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var reread = await context.Set<CountryOrArea>().SingleAsync(c => c.Id == countryId, cancellationToken);
+			var reread = await set.SingleAsync(c => c.Id == countryId, cancellationToken);
 
 			reread.View.ShouldNotBeNull();
 			reread.View.Code.ShouldBe("002");
@@ -60,7 +60,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 		}
 		finally
 		{
-			await context.Set<CountryOrArea>().Where(c => c.Id == countryId).ExecuteDeleteAsync(cancellationToken);
+			await set.Where(c => c.Id == countryId).ExecuteDeleteAsync(cancellationToken);
 		}
 	}
 
@@ -70,27 +70,27 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
 		var countryId = Guid.NewGuid();
-
+		var set = context.Set<CountryOrArea>();
 		try
 		{
-			context.Set<CountryOrArea>().Add(new CountryOrArea
+			set.Add(new()
 			{
 				Id = countryId,
 				Code = 12,
 				Alpha2 = "DZ",
 				Alpha3 = "DZA",
 				Name = "Algeria",
-				View = new RegionNode
+				View = new()
 				{
 					Code = "002",
 					Name = "Africa",
-					Subregion = new SubregionNode { Code = "015", Name = "Northern Africa", IntermediateRegion = null },
+					Subregion = new() { Code = "015", Name = "Northern Africa", IntermediateRegion = null },
 				},
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var reread = await context.Set<CountryOrArea>().SingleAsync(c => c.Id == countryId, cancellationToken);
+			var reread = await set.SingleAsync(c => c.Id == countryId, cancellationToken);
 
 			reread.View.ShouldNotBeNull();
 			reread.View.Subregion.ShouldNotBeNull();
@@ -98,7 +98,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 		}
 		finally
 		{
-			await context.Set<CountryOrArea>().Where(c => c.Id == countryId).ExecuteDeleteAsync(cancellationToken);
+			await set.Where(c => c.Id == countryId).ExecuteDeleteAsync(cancellationToken);
 		}
 	}
 
@@ -108,10 +108,10 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 		var cancellationToken = TestContext.Current.CancellationToken;
 		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
 		var countryId = Guid.NewGuid();
-
+		var set = context.Set<CountryOrArea>();
 		try
 		{
-			context.Set<CountryOrArea>().Add(new CountryOrArea
+			set.Add(new()
 			{
 				Id = countryId,
 				Code = 10,
@@ -123,13 +123,13 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var reread = await context.Set<CountryOrArea>().SingleAsync(c => c.Id == countryId, cancellationToken);
+			var reread = await set.SingleAsync(c => c.Id == countryId, cancellationToken);
 
 			reread.View.ShouldBeNull();
 		}
 		finally
 		{
-			await context.Set<CountryOrArea>().Where(c => c.Id == countryId).ExecuteDeleteAsync(cancellationToken);
+			await set.Where(c => c.Id == countryId).ExecuteDeleteAsync(cancellationToken);
 		}
 	}
 }
