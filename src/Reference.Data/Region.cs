@@ -1,15 +1,16 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Norse.Persistence.EntityFramework;
+using Norse.Primitives.Identifiers;
 
 namespace Norse.Reference.Data;
 
 /// <summary>
 /// A geographic region per UN M49 (Region, Subregion, or Intermediate Region).
 /// </summary>
-public sealed class Region : NorseEntityBase<Region>, INorseEntity<Region>
+public sealed record Region : NorseEntityBase<Region>, INorseEntity<Region>
 {
 	/// <summary>The region identifier.</summary>
-	public Guid Id { get; init; }
+	public DeterministicGuid Id { get; init; }
 	/// <summary>The UN M49 code (3 digits).</summary>
 	public ushort Code { get; init; }
 	/// <summary>The region name in English.</summary>
@@ -17,7 +18,7 @@ public sealed class Region : NorseEntityBase<Region>, INorseEntity<Region>
 	/// <summary>The hierarchical level of this region.</summary>
 	public RegionLevel Level { get; init; }
 	/// <summary>The parent region identifier, if this region is a child.</summary>
-	public Guid? ParentRegionId { get; init; }
+	public DeterministicGuid? ParentRegionId { get; init; }
 	/// <summary>The parent region, if this region is a child.</summary>
 	public Region ParentRegion { get; init; } = null!;
 

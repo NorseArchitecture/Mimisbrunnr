@@ -16,7 +16,7 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260725023605_InitialCreate";
+    public override string LastMigrationId => "20260726192513_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -30,7 +30,6 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("Norse.Reference.Data.CountryOrArea", b =>
             {
                 b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
                     .HasColumnType("uniqueidentifier");
 
                 b.Property<string>("Alpha2")
@@ -76,7 +75,6 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("Norse.Reference.Data.Region", b =>
             {
                 b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
                     .HasColumnType("uniqueidentifier");
 
                 b.Property<int>("Code")
@@ -109,12 +107,21 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                     .WithMany()
                     .HasForeignKey("ParentRegionId");
 
-                b.OwnsOne("Norse.Reference.Data.RegionNode", "View", b1 =>
+                b.OwnsOne("Norse.Reference.Data.CountryOrAreaView", "View", b1 =>
                     {
                         b1.Property<Guid>("CountryOrAreaId");
 
-                        b1.Property<string>("Code")
+                        b1.Property<string>("Alpha2")
                             .IsRequired();
+
+                        b1.Property<string>("Alpha3")
+                            .IsRequired();
+
+                        b1.Property<byte>("Classification");
+
+                        b1.Property<int>("Code");
+
+                        b1.Property<Guid>("Id");
 
                         b1.Property<string>("Name")
                             .IsRequired();
@@ -130,50 +137,77 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                         b1.WithOwner()
                             .HasForeignKey("CountryOrAreaId");
 
-                        b1.OwnsOne("Norse.Reference.Data.SubregionNode", "Subregion", b2 =>
+                        b1.OwnsOne("Norse.Reference.Data.RegionNode", "Region", b2 =>
                             {
-                                b2.Property<Guid>("RegionNodeCountryOrAreaId");
+                                b2.Property<Guid>("CountryOrAreaViewCountryOrAreaId");
 
                                 b2.Property<string>("Code")
                                     .IsRequired();
 
+                                b2.Property<Guid>("Id");
+
                                 b2.Property<string>("Name")
                                     .IsRequired();
 
-                                b2.HasKey("RegionNodeCountryOrAreaId");
+                                b2.HasKey("CountryOrAreaViewCountryOrAreaId");
 
                                 b2.ToTable("CountryOrArea");
 
                                 b2.WithOwner()
-                                    .HasForeignKey("RegionNodeCountryOrAreaId");
+                                    .HasForeignKey("CountryOrAreaViewCountryOrAreaId");
 
-                                b2.OwnsOne("Norse.Reference.Data.IntermediateRegionNode", "IntermediateRegion", b3 =>
+                                b2.OwnsOne("Norse.Reference.Data.SubregionNode", "Subregion", b3 =>
                                     {
-                                        b3.Property<Guid>("SubregionNodeRegionNodeCountryOrAreaId");
+                                        b3.Property<Guid>("RegionNodeCountryOrAreaViewCountryOrAreaId");
 
                                         b3.Property<string>("Code")
                                             .IsRequired();
 
+                                        b3.Property<Guid>("Id");
+
                                         b3.Property<string>("Name")
                                             .IsRequired();
 
-                                        b3.HasKey("SubregionNodeRegionNodeCountryOrAreaId");
+                                        b3.HasKey("RegionNodeCountryOrAreaViewCountryOrAreaId");
 
                                         b3.ToTable("CountryOrArea");
 
                                         b3.WithOwner()
-                                            .HasForeignKey("SubregionNodeRegionNodeCountryOrAreaId");
+                                            .HasForeignKey("RegionNodeCountryOrAreaViewCountryOrAreaId");
+
+                                        b3.OwnsOne("Norse.Reference.Data.IntermediateRegionNode", "IntermediateRegion", b4 =>
+                                            {
+                                                b4.Property<Guid>("SubregionNodeRegionNodeCountryOrAreaViewCountryOrAreaId");
+
+                                                b4.Property<string>("Code")
+                                                    .IsRequired();
+
+                                                b4.Property<Guid>("Id");
+
+                                                b4.Property<string>("Name")
+                                                    .IsRequired();
+
+                                                b4.HasKey("SubregionNodeRegionNodeCountryOrAreaViewCountryOrAreaId");
+
+                                                b4.ToTable("CountryOrArea");
+
+                                                b4.WithOwner()
+                                                    .HasForeignKey("SubregionNodeRegionNodeCountryOrAreaViewCountryOrAreaId");
+                                            });
+
+                                        b3.Navigation("IntermediateRegion");
                                     });
 
-                                b2.Navigation("IntermediateRegion");
+                                b2.Navigation("Subregion");
                             });
 
-                        b1.Navigation("Subregion");
+                        b1.Navigation("Region");
                     });
 
                 b.Navigation("ParentRegion");
 
-                b.Navigation("View");
+                b.Navigation("View")
+                    .IsRequired();
             });
 
         modelBuilder.Entity("Norse.Reference.Data.Region", b =>

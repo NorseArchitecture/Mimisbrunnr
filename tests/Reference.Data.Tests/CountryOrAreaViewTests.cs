@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
+using Norse.Primitives.Identifiers;
 using Norse.Reference.Data.Migrations;
 using Norse.Reference.Data.Migrations.PostgreSQL;
 
@@ -14,6 +15,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			.UseNpgsql(connectionString, o =>
 				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
 		optionsBuilder.ApplyNorseConventions();
+		optionsBuilder.ApplyNorseTrackingBehavior();
 		ReferenceDbContext context = new(optionsBuilder.Options);
 		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
 		return context;
@@ -23,8 +25,11 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	public async Task View_round_trips_all_three_levels_for_Nigeria_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
-		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-		var countryId = Guid.NewGuid();
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		DeterministicGuid countryId = new(DeterministicGuid.Namespaces.Dns, "NG");
+		DeterministicGuid regionId = new(DeterministicGuid.Namespaces.Dns, "002");
+		DeterministicGuid subregionId = new(DeterministicGuid.Namespaces.Dns, "202");
+		DeterministicGuid intermediateRegionId = new(DeterministicGuid.Namespaces.Dns, "011");
 		var set = context.Set<CountryOrArea>();
 		try
 		{
@@ -37,26 +42,48 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				Name = "Nigeria",
 				View = new()
 				{
-					Code = "002",
-					Name = "Africa",
-					Subregion = new()
+					Id = countryId,
+					Code = 566,
+					Alpha2 = "NG",
+					Alpha3 = "NGA",
+					Name = "Nigeria",
+					Classification = Classification.None,
+					Region = new()
 					{
-						Code = "202",
-						Name = "Sub-Saharan Africa",
-						IntermediateRegion = new() { Code = "011", Name = "Western Africa" }
+						Id = regionId,
+						Code = "002",
+						Name = "Africa",
+						Subregion = new()
+						{
+							Id = subregionId,
+							Code = "202",
+							Name = "Sub-Saharan Africa",
+							IntermediateRegion = new()
+							{
+								Id = intermediateRegionId,
+								Code = "011",
+								Name = "Western Africa"
+							}
+						}
 					}
 				}
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var reread = await set.SingleAsync(c => c.Id == countryId, cancellationToken);
+			var reread = await set.Where(c => c.Id == countryId).Select(c => c.View).SingleAsync(cancellationToken);
 
-			reread.View.ShouldNotBeNull();
-			reread.View.Code.ShouldBe("002");
-			reread.View.Subregion.ShouldNotBeNull();
-			reread.View.Subregion.IntermediateRegion.ShouldNotBeNull();
-			reread.View.Subregion.IntermediateRegion.Code.ShouldBe("011");
+			reread.ShouldNotBeNull();
+			reread.Id.ShouldBe(countryId);
+			reread.Alpha2.ShouldBe("NG");
+			reread.Region.ShouldNotBeNull();
+			reread.Region.Id.ShouldBe(regionId);
+			reread.Region.Code.ShouldBe("002");
+			reread.Region.Subregion.ShouldNotBeNull();
+			reread.Region.Subregion.Id.ShouldBe(subregionId);
+			reread.Region.Subregion.IntermediateRegion.ShouldNotBeNull();
+			reread.Region.Subregion.IntermediateRegion.Id.ShouldBe(intermediateRegionId);
+			reread.Region.Subregion.IntermediateRegion.Code.ShouldBe("011");
 		}
 		finally
 		{
@@ -68,8 +95,10 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	public async Task View_has_null_intermediate_region_for_Algeria_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
-		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-		var countryId = Guid.NewGuid();
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		DeterministicGuid countryId = new(DeterministicGuid.Namespaces.Dns, "DZ");
+		DeterministicGuid regionId = new(DeterministicGuid.Namespaces.Dns, "002");
+		DeterministicGuid subregionId = new(DeterministicGuid.Namespaces.Dns, "015");
 		var set = context.Set<CountryOrArea>();
 		try
 		{
@@ -82,19 +111,30 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				Name = "Algeria",
 				View = new()
 				{
-					Code = "002",
-					Name = "Africa",
-					Subregion = new() { Code = "015", Name = "Northern Africa", IntermediateRegion = null },
+					Id = countryId,
+					Code = 12,
+					Alpha2 = "DZ",
+					Alpha3 = "DZA",
+					Name = "Algeria",
+					Classification = Classification.None,
+					Region = new()
+					{
+						Id = regionId,
+						Code = "002",
+						Name = "Africa",
+						Subregion = new() { Id = subregionId, Code = "015", Name = "Northern Africa", IntermediateRegion = null },
+					}
 				},
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var reread = await set.SingleAsync(c => c.Id == countryId, cancellationToken);
+			var reread = await set.Where(c => c.Id == countryId).Select(c => c.View).SingleAsync(cancellationToken);
 
-			reread.View.ShouldNotBeNull();
-			reread.View.Subregion.ShouldNotBeNull();
-			reread.View.Subregion.IntermediateRegion.ShouldBeNull();
+			reread.ShouldNotBeNull();
+			reread.Region.ShouldNotBeNull();
+			reread.Region.Subregion.ShouldNotBeNull();
+			reread.Region.Subregion.IntermediateRegion.ShouldBeNull();
 		}
 		finally
 		{
@@ -103,11 +143,11 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task View_is_null_for_Antarctica_shape()
+	public async Task View_has_null_region_for_Antarctica_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
-		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-		var countryId = Guid.NewGuid();
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		DeterministicGuid countryId = new(DeterministicGuid.Namespaces.Dns, "AQ");
 		var set = context.Set<CountryOrArea>();
 		try
 		{
@@ -118,14 +158,26 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				Alpha2 = "AQ",
 				Alpha3 = "ATA",
 				Name = "Antarctica",
-				View = null,
+				View = new()
+				{
+					Id = countryId,
+					Code = 10,
+					Alpha2 = "AQ",
+					Alpha3 = "ATA",
+					Name = "Antarctica",
+					Classification = Classification.None,
+					Region = null,
+				},
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var reread = await set.SingleAsync(c => c.Id == countryId, cancellationToken);
+			var reread = await set.Where(c => c.Id == countryId).Select(c => c.View).SingleAsync(cancellationToken);
 
-			reread.View.ShouldBeNull();
+			reread.ShouldNotBeNull();
+			reread.Id.ShouldBe(countryId);
+			reread.Alpha2.ShouldBe("AQ");
+			reread.Region.ShouldBeNull();
 		}
 		finally
 		{

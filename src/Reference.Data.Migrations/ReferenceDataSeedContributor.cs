@@ -48,16 +48,17 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 			// not a numeric value — written that way by tools/SeedTool's UnsdM49Writer.
 			var level = Enum.Parse<RegionLevel>(reader[levelOrdinal]);
 			var parentCode = reader[parentOrdinal].ToString();
-			var id = new DeterministicGuid(_namespaceRegion, m49Code);
+			DeterministicGuid id = new(_namespaceRegion, m49Code);
 
-			regionsByCode[m49Code] = new RegionRow(id, m49Code, reader[nameOrdinal].ToString(), level, parentCode.Length == 0 ? null : parentCode);
+			regionsByCode[m49Code] = new(id, m49Code, reader[nameOrdinal].ToString(), level, parentCode.Length == 0 ? null : parentCode);
 		}
 
-		var existingIds = (await context.Set<Region>().Select(r => r.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
+		var set = context.Set<Region>();
+		HashSet<DeterministicGuid> existingIds = [.. await set.Select(r => r.Id).ToListAsync(cancellationToken).ConfigureAwait(false)];
 
 		foreach (var row in regionsByCode.Values.Where(row => !existingIds.Contains(row.Id)))
 		{
-			context.Set<Region>().Add(new Region
+			set.Add(new()
 			{
 				Id = row.Id,
 				Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
@@ -84,12 +85,12 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		var lldcOrdinal = reader.Ordinal("IsLandLockedDevelopingCountry");
 		var sidsOrdinal = reader.Ordinal("IsSmallIslandDevelopingState");
 
-		List<(Guid Id, string M49Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState)> rows = [];
-
+		IList<(DeterministicGuid Id, string M49Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState)> rows = [];
+		var set = context.Set<CountryOrArea>();
 		while (reader.Read())
 		{
 			var m49Code = reader[m49Ordinal].ToString();
-			var id = new DeterministicGuid(_namespaceCountryOrArea, m49Code);
+			DeterministicGuid id = new(_namespaceCountryOrArea, m49Code);
 			var parentCode = reader[parentOrdinal].ToString();
 
 			rows.Add((
@@ -106,11 +107,12 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 				bool.Parse(reader[sidsOrdinal])));
 		}
 
-		var existingIds = (await context.Set<CountryOrArea>().Select(c => c.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
+		var existingIds = (await set.Select(c => c.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
 
 		foreach (var row in rows.Where(row => !existingIds.Contains(row.Id)))
 		{
-			context.Set<CountryOrArea>().Add(new CountryOrArea
+			var classification = BuildClassification(row.IsLeastDevelopedCountry, row.IsLandLockedDevelopingCountry, row.IsSmallIslandDevelopingState);
+			set.Add(new()
 			{
 				Id = row.Id,
 				Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
@@ -118,8 +120,8 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 				Alpha3 = row.Alpha3Code,
 				Name = row.Name,
 				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
-				View = BuildView(row.ParentM49Code, regionsByCode),
-				Classification = BuildClassification(row.IsLeastDevelopedCountry, row.IsLandLockedDevelopingCountry, row.IsSmallIslandDevelopingState),
+				View = BuildView(row, classification, regionsByCode),
+				Classification = classification,
 			});
 		}
 
@@ -127,34 +129,48 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 	}
 
 	/// <summary>
-	/// Walks <paramref name="leafCode"/> up through <paramref name="regionsByCode"/> via each row's own
-	/// <c>ParentM49Code</c>, then re-nests the chain from the root down (Region contains Subregion
-	/// contains IntermediateRegion), classifying each ancestor by its own <see cref="RegionLevel"/>
-	/// rather than assuming a fixed position — a country's direct parent may be a Subregion or an
-	/// IntermediateRegion, never a bare positional offset.
+	/// Walks the country row's own <c>ParentM49Code</c> up through <paramref name="regionsByCode"/> via
+	/// each ancestor's own <c>ParentM49Code</c>, then re-nests the chain from the root down (Region
+	/// contains Subregion contains IntermediateRegion), classifying each ancestor by its own
+	/// <see cref="RegionLevel"/> rather than assuming a fixed position — a country's direct parent may
+	/// be a Subregion or an IntermediateRegion, never a bare positional offset. <see cref="CountryOrAreaView.Region"/>
+	/// is <see langword="null"/> only for Antarctica, the one UN M49 row with no ancestor at all.
 	/// </summary>
-	static RegionNode? BuildView(string? leafCode, Dictionary<string, RegionRow> regionsByCode)
+	static CountryOrAreaView BuildView(
+		(DeterministicGuid Id, string M49Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState) row,
+		Classification classification,
+		Dictionary<string, RegionRow> regionsByCode)
 	{
-		if (leafCode is null)
-			return null;
-
-		List<RegionRow> chain = [];
-		for (var code = leafCode; code is not null; code = regionsByCode[code].ParentM49Code)
+		IList<RegionRow> chain = [];
+		for (var code = row.ParentM49Code; code is not null; code = regionsByCode[code].ParentM49Code)
 			chain.Add(regionsByCode[code]);
 
 		var intermediateRow = chain.SingleOrDefault(r => r.Level == RegionLevel.IntermediateRegion);
 		var subregionRow = chain.SingleOrDefault(r => r.Level == RegionLevel.Subregion);
-		var regionRow = chain.Single(r => r.Level == RegionLevel.Region);
+		var regionRow = chain.SingleOrDefault(r => r.Level == RegionLevel.Region);
 
-		var intermediate = intermediateRow is null
+		IntermediateRegionNode? intermediate = intermediateRow is null
 			? null
-			: new IntermediateRegionNode { Code = intermediateRow.M49Code, Name = intermediateRow.Name };
+			: new() { Id = intermediateRow.Id, Code = intermediateRow.M49Code, Name = intermediateRow.Name };
 
-		var subregion = subregionRow is null
+		SubregionNode? subregion = subregionRow is null
 			? null
-			: new SubregionNode { Code = subregionRow.M49Code, Name = subregionRow.Name, IntermediateRegion = intermediate };
+			: new() { Id = subregionRow.Id, Code = subregionRow.M49Code, Name = subregionRow.Name, IntermediateRegion = intermediate };
 
-		return new RegionNode { Code = regionRow.M49Code, Name = regionRow.Name, Subregion = subregion };
+		RegionNode? region = regionRow is null
+			? null
+			: new() { Id = regionRow.Id, Code = regionRow.M49Code, Name = regionRow.Name, Subregion = subregion };
+
+		return new()
+		{
+			Id = row.Id,
+			Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
+			Alpha2 = row.Alpha2Code,
+			Alpha3 = row.Alpha3Code,
+			Name = row.Name,
+			Classification = classification,
+			Region = region,
+		};
 	}
 
 	static Classification BuildClassification(bool isLeastDevelopedCountry, bool isLandLockedDevelopingCountry, bool isSmallIslandDevelopingState) =>
@@ -162,5 +178,5 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		| (isLandLockedDevelopingCountry ? Classification.LandLockedDevelopingCountry : Classification.None)
 		| (isSmallIslandDevelopingState ? Classification.SmallIslandDevelopingState : Classification.None);
 
-	sealed record RegionRow(Guid Id, string M49Code, string Name, RegionLevel Level, string? ParentM49Code);
+	sealed record RegionRow(DeterministicGuid Id, string M49Code, string Name, RegionLevel Level, string? ParentM49Code);
 }

@@ -14,7 +14,8 @@ public class NorseReferenceMigrationContributorTests(PostgresContainerFixture fi
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
 			.UseNpgsql(fixture.ConnectionString, o =>
 				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
-		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
+		optionsBuilder.ApplyNorseConventions();
+		optionsBuilder.ApplyNorseTrackingBehavior();
 		var options = optionsBuilder.Options;
 		using ReferenceDbContext context = new(options);
 		NorseReferenceMigrationContributor contributor = new(context);
