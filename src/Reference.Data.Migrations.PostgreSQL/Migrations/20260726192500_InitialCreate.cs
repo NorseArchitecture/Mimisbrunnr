@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Norse.Reference.Data.Migrations.PostgreSQL.Migrations;
 
 /// <inheritdoc />
-public partial class _20260725023555_InitialCreate : Migration
+public partial class _20260726192500_InitialCreate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,7 +42,7 @@ public partial class _20260725023555_InitialCreate : Migration
                 name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                 parent_region_id = table.Column<Guid>(type: "uuid", nullable: true),
                 classification = table.Column<byte>(type: "smallint", nullable: false),
-                view = table.Column<string>(type: "jsonb", nullable: true)
+                view = table.Column<string>(type: "jsonb", nullable: false)
             },
             constraints: table =>
             {

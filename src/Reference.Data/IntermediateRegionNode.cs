@@ -1,8 +1,12 @@
+using Norse.Primitives.Identifiers;
+
 namespace Norse.Reference.Data;
 
 /// <summary>The Intermediate Region ancestor nested within a <see cref="SubregionNode"/>.</summary>
 public sealed record IntermediateRegionNode
 {
+	/// <summary>The Intermediate Region's identifier.</summary>
+	public DeterministicGuid Id { get; init; }
 	/// <summary>The Intermediate Region's UN M49 code.</summary>
 	public string Code { get; init; } = null!;
 	/// <summary>The Intermediate Region's name.</summary>

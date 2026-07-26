@@ -111,6 +111,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 
 		foreach (var row in rows.Where(row => !existingIds.Contains(row.Id)))
 		{
+			var classification = BuildClassification(row.IsLeastDevelopedCountry, row.IsLandLockedDevelopingCountry, row.IsSmallIslandDevelopingState);
 			set.Add(new()
 			{
 				Id = row.Id,
@@ -119,8 +120,8 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 				Alpha3 = row.Alpha3Code,
 				Name = row.Name,
 				ParentRegionId = row.ParentM49Code is null ? null : regionsByCode[row.ParentM49Code].Id,
-				View = BuildView(row.ParentM49Code, regionsByCode),
-				Classification = BuildClassification(row.IsLeastDevelopedCountry, row.IsLandLockedDevelopingCountry, row.IsSmallIslandDevelopingState),
+				View = BuildView(row, classification, regionsByCode),
+				Classification = classification,
 			});
 		}
 
@@ -128,34 +129,48 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 	}
 
 	/// <summary>
-	/// Walks <paramref name="leafCode"/> up through <paramref name="regionsByCode"/> via each row's own
-	/// <c>ParentM49Code</c>, then re-nests the chain from the root down (Region contains Subregion
-	/// contains IntermediateRegion), classifying each ancestor by its own <see cref="RegionLevel"/>
-	/// rather than assuming a fixed position — a country's direct parent may be a Subregion or an
-	/// IntermediateRegion, never a bare positional offset.
+	/// Walks the country row's own <c>ParentM49Code</c> up through <paramref name="regionsByCode"/> via
+	/// each ancestor's own <c>ParentM49Code</c>, then re-nests the chain from the root down (Region
+	/// contains Subregion contains IntermediateRegion), classifying each ancestor by its own
+	/// <see cref="RegionLevel"/> rather than assuming a fixed position — a country's direct parent may
+	/// be a Subregion or an IntermediateRegion, never a bare positional offset. <see cref="CountryOrAreaView.Region"/>
+	/// is <see langword="null"/> only for Antarctica, the one UN M49 row with no ancestor at all.
 	/// </summary>
-	static RegionNode? BuildView(string? leafCode, Dictionary<string, RegionRow> regionsByCode)
+	static CountryOrAreaView BuildView(
+		(DeterministicGuid Id, string M49Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState) row,
+		Classification classification,
+		Dictionary<string, RegionRow> regionsByCode)
 	{
-		if (leafCode is null)
-			return null;
-
 		IList<RegionRow> chain = [];
-		for (var code = leafCode; code is not null; code = regionsByCode[code].ParentM49Code)
+		for (var code = row.ParentM49Code; code is not null; code = regionsByCode[code].ParentM49Code)
 			chain.Add(regionsByCode[code]);
 
 		var intermediateRow = chain.SingleOrDefault(r => r.Level == RegionLevel.IntermediateRegion);
 		var subregionRow = chain.SingleOrDefault(r => r.Level == RegionLevel.Subregion);
-		var regionRow = chain.Single(r => r.Level == RegionLevel.Region);
+		var regionRow = chain.SingleOrDefault(r => r.Level == RegionLevel.Region);
 
 		IntermediateRegionNode? intermediate = intermediateRow is null
 			? null
-			: new() { Code = intermediateRow.M49Code, Name = intermediateRow.Name };
+			: new() { Id = intermediateRow.Id, Code = intermediateRow.M49Code, Name = intermediateRow.Name };
 
 		SubregionNode? subregion = subregionRow is null
 			? null
-			: new() { Code = subregionRow.M49Code, Name = subregionRow.Name, IntermediateRegion = intermediate };
+			: new() { Id = subregionRow.Id, Code = subregionRow.M49Code, Name = subregionRow.Name, IntermediateRegion = intermediate };
 
-		return new() { Code = regionRow.M49Code, Name = regionRow.Name, Subregion = subregion };
+		RegionNode? region = regionRow is null
+			? null
+			: new() { Id = regionRow.Id, Code = regionRow.M49Code, Name = regionRow.Name, Subregion = subregion };
+
+		return new()
+		{
+			Id = row.Id,
+			Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
+			Alpha2 = row.Alpha2Code,
+			Alpha3 = row.Alpha3Code,
+			Name = row.Name,
+			Classification = classification,
+			Region = region,
+		};
 	}
 
 	static Classification BuildClassification(bool isLeastDevelopedCountry, bool isLandLockedDevelopingCountry, bool isSmallIslandDevelopingState) =>

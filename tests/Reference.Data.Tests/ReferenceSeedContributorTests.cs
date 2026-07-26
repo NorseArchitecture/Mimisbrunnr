@@ -9,7 +9,8 @@ namespace Norse.Reference.Data.Tests;
 [Collection("Postgres")]
 public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 {
-	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
+	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString,
+		CancellationToken cancellationToken)
 	{
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
 			.UseNpgsql(connectionString, o =>
@@ -77,10 +78,12 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 		try
 		{
 			await new ReferenceDataSeedContributor(contextA).SeedAsync(cancellationToken);
-			var nigeriaIdFirstRun = await set.Where(c => c.Code == 566).Select(c => c.Id).SingleAsync(cancellationToken);
+			var nigeriaIdFirstRun =
+				await set.Where(c => c.Code == 566).Select(c => c.Id).SingleAsync(cancellationToken);
 
 			nigeriaIdFirstRun.ShouldBe(new(
-				new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "country-or-area.m49.referencedata.norse"), "566"));
+				new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "country-or-area.m49.referencedata.norse"),
+				"566"));
 		}
 		finally
 		{
@@ -100,25 +103,66 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var nigeria = await set.SingleAsync(c => c.Code == 566, cancellationToken);
-			nigeria.View.ShouldNotBeNull();
-			nigeria.View.Code.ShouldBe("002");
-			nigeria.View.Subregion.ShouldNotBeNull();
-			nigeria.View.Subregion.IntermediateRegion.ShouldNotBeNull();
-			nigeria.View.Subregion.IntermediateRegion.Code.ShouldBe("011");
+			var nigeria = await set.Where(c => c.Code == 566).Select(c => c.View).SingleAsync(cancellationToken);
+			nigeria.ShouldNotBeNull();
+			nigeria.Id.ShouldBe(nigeria.Id);
+			nigeria.Alpha2.ShouldBe("NG");
+			nigeria.Region.ShouldNotBeNull();
+			nigeria.Region.Code.ShouldBe("002");
+			nigeria.Region.Subregion.ShouldNotBeNull();
+			nigeria.Region.Subregion.IntermediateRegion.ShouldNotBeNull();
+			nigeria.Region.Subregion.IntermediateRegion.Code.ShouldBe("011");
 
-			var algeria = await set.SingleAsync(c => c.Code == 12, cancellationToken);
-			algeria.View.ShouldNotBeNull();
-			algeria.View.Subregion.ShouldNotBeNull();
-			algeria.View.Subregion.IntermediateRegion.ShouldBeNull();
+			var algeria = await set.Where(c => c.Code == 12).Select(c => c.View).SingleAsync(cancellationToken);
+			algeria.ShouldNotBeNull();
+			algeria.Region.ShouldNotBeNull();
+			algeria.Region.Subregion.ShouldNotBeNull();
+			algeria.Region.Subregion.IntermediateRegion.ShouldBeNull();
 
-			var antarctica = await set.SingleAsync(c => c.Code == 10, cancellationToken);
-			antarctica.View.ShouldBeNull();
+			var antarctica = await set.Where(c => c.Code == 10).Select(c => c.View).SingleAsync(cancellationToken);
+			antarctica.ShouldNotBeNull();
+			antarctica.Id.ShouldBe(antarctica.Id);
+			antarctica.Alpha2.ShouldBe("AQ");
+			antarctica.Region.ShouldBeNull();
 		}
 		finally
 		{
 			await set.ExecuteDeleteAsync(cancellationToken);
 			await context.Set<Region>().ExecuteDeleteAsync(cancellationToken);
+		}
+	}
+
+	[Fact]
+	public async Task SeedAsync_hydrates_matching_Region_ids_at_every_View_level()
+	{
+		var cancellationToken = TestContext.Current.CancellationToken;
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		var countrySet = context.Set<CountryOrArea>();
+		var regionSet = context.Set<Region>();
+		try
+		{
+			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
+			context.ChangeTracker.Clear();
+
+			var nigeria = await countrySet.Where(c => c.Code == 566).Select(c => c.View).SingleAsync(cancellationToken);
+			nigeria.Region.ShouldNotBeNull();
+			nigeria.Region.Subregion.ShouldNotBeNull();
+			nigeria.Region.Subregion.IntermediateRegion.ShouldNotBeNull();
+
+			var africaId = await regionSet.Where(r => r.Code == 2).Select(r => r.Id).SingleAsync(cancellationToken);
+			var subSaharanAfricaId =
+				await regionSet.Where(r => r.Code == 202).Select(r => r.Id).SingleAsync(cancellationToken);
+			var westernAfricaId =
+				await regionSet.Where(r => r.Code == 11).Select(r => r.Id).SingleAsync(cancellationToken);
+
+			nigeria.Region.Id.ShouldBe(africaId);
+			nigeria.Region.Subregion.Id.ShouldBe(subSaharanAfricaId);
+			nigeria.Region.Subregion.IntermediateRegion.Id.ShouldBe(westernAfricaId);
+		}
+		finally
+		{
+			await countrySet.ExecuteDeleteAsync(cancellationToken);
+			await regionSet.ExecuteDeleteAsync(cancellationToken);
 		}
 	}
 }

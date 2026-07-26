@@ -26,13 +26,16 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 	public Region ParentRegion { get; init; } = null!;
 	/// <summary>The UN classification flags this country or area holds. Test with <see cref="Enum.HasFlag"/>.</summary>
 	public Classification Classification { get; init; }
+
 	/// <summary>
-	/// The denormalized read-model column: the ancestor Region/Subregion/IntermediateRegion chain,
-	/// hydrated by the seed contributor and stored as an owned JSON document — <see langword="null"/>
-	/// only for Antarctica. Named <c>View</c> as a deliberate homage to the SQL view it replaced: this
-	/// is the platform's first "peer + ancestry" read column, one per entity, queried without joins.
+	/// The denormalized read-model column: this row's own scalar fields alongside the ancestor
+	/// Region/Subregion/IntermediateRegion chain, hydrated by the seed contributor and stored as an
+	/// owned JSON document. Always present — only <see cref="CountryOrAreaView.Region"/> is
+	/// <see langword="null"/>, and only for Antarctica, which has no ancestor at all. Named
+	/// <c>View</c> as a deliberate homage to the SQL view it replaced: this is the platform's first
+	/// "peer + ancestry" read column, one per entity, queried without joins.
 	/// </summary>
-	public RegionNode? View { get; init; }
+	public CountryOrAreaView View { get; init; } = null!;
 
 	/// <summary>Configures the EF entity mapping.</summary>
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
@@ -49,10 +52,11 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 			.WithMany()
 			.HasForeignKey(c => c.ParentRegionId)
 			.IsRequired(false);
-		builder.OwnsOne(c => c.View, region =>
+		builder.OwnsOne(c => c.View, view =>
 		{
-			region.ToJson();
-			region.OwnsOne(r => r.Subregion, sub => sub.OwnsOne(s => s.IntermediateRegion));
+			view.ToJson();
+			view.OwnsOne(v => v.Region, region => region.OwnsOne(r => r.Subregion, sub => sub.OwnsOne(s => s.IntermediateRegion)));
 		});
+		builder.Navigation(c => c.View).IsRequired();
 	}
 }

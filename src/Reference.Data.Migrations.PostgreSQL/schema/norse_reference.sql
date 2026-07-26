@@ -22,7 +22,7 @@ CREATE TABLE country_or_area (
     name character varying(256) NOT NULL,
     parent_region_id uuid,
     classification smallint NOT NULL,
-    view jsonb,
+    view jsonb NOT NULL,
     CONSTRAINT pk_country_or_area PRIMARY KEY (id),
     CONSTRAINT fk_country_or_area_region_parent_region_id FOREIGN KEY (parent_region_id) REFERENCES region (id)
 );
