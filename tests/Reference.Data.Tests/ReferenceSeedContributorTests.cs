@@ -16,6 +16,7 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 			.UseNpgsql(connectionString, o =>
 				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
 		optionsBuilder.ApplyNorseConventions();
+		optionsBuilder.ApplyNorseTrackingBehavior();
 		ReferenceDbContext context = new(optionsBuilder.Options);
 		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
 		return context;
