@@ -14,7 +14,7 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
 			.UseNpgsql(connectionString, o =>
 				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
-		NorseDbContextOptionsExtensions.ApplyNorseConventions(optionsBuilder);
+		optionsBuilder.ApplyNorseConventions();
 		ReferenceDbContext context = new(optionsBuilder.Options);
 		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
 		return context;
@@ -24,7 +24,7 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	public async Task SeedAsync_loads_248_countries_and_their_region_ancestors()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
-		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
 
 		try
 		{
@@ -47,22 +47,23 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	public async Task SeedAsync_is_idempotent_on_a_second_run()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
-		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
 		ReferenceDataSeedContributor contributor = new(context);
 
+		var set = context.Set<CountryOrArea>();
 		try
 		{
 			await contributor.SeedAsync(cancellationToken);
-			var firstRunCount = await context.Set<CountryOrArea>().CountAsync(cancellationToken);
+			var firstRunCount = await set.CountAsync(cancellationToken);
 
 			await contributor.SeedAsync(cancellationToken);
-			var secondRunCount = await context.Set<CountryOrArea>().CountAsync(cancellationToken);
+			var secondRunCount = await set.CountAsync(cancellationToken);
 
 			secondRunCount.ShouldBe(firstRunCount);
 		}
 		finally
 		{
-			await context.Set<CountryOrArea>().ExecuteDeleteAsync(cancellationToken);
+			await set.ExecuteDeleteAsync(cancellationToken);
 			await context.Set<Region>().ExecuteDeleteAsync(cancellationToken);
 		}
 	}
@@ -71,19 +72,19 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	public async Task Reseeding_from_scratch_produces_byte_identical_ids()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
-		using var contextA = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-
+		await using var contextA = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		var set = contextA.Set<CountryOrArea>();
 		try
 		{
 			await new ReferenceDataSeedContributor(contextA).SeedAsync(cancellationToken);
-			var nigeriaIdFirstRun = await contextA.Set<CountryOrArea>().Where(c => c.Code == 566).Select(c => c.Id).SingleAsync(cancellationToken);
+			var nigeriaIdFirstRun = await set.Where(c => c.Code == 566).Select(c => c.Id).SingleAsync(cancellationToken);
 
-			nigeriaIdFirstRun.ShouldBe(new DeterministicGuid(
+			nigeriaIdFirstRun.ShouldBe(new(
 				new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "country-or-area.m49.referencedata.norse"), "566"));
 		}
 		finally
 		{
-			await contextA.Set<CountryOrArea>().ExecuteDeleteAsync(cancellationToken);
+			await set.ExecuteDeleteAsync(cancellationToken);
 			await contextA.Set<Region>().ExecuteDeleteAsync(cancellationToken);
 		}
 	}
@@ -92,31 +93,31 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	public async Task SeedAsync_hydrates_View_for_all_three_verified_shapes()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
-		using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		var set = context.Set<CountryOrArea>();
 		try
 		{
 			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var nigeria = await context.Set<CountryOrArea>().SingleAsync(c => c.Code == 566, cancellationToken);
+			var nigeria = await set.SingleAsync(c => c.Code == 566, cancellationToken);
 			nigeria.View.ShouldNotBeNull();
 			nigeria.View.Code.ShouldBe("002");
 			nigeria.View.Subregion.ShouldNotBeNull();
 			nigeria.View.Subregion.IntermediateRegion.ShouldNotBeNull();
 			nigeria.View.Subregion.IntermediateRegion.Code.ShouldBe("011");
 
-			var algeria = await context.Set<CountryOrArea>().SingleAsync(c => c.Code == 12, cancellationToken);
+			var algeria = await set.SingleAsync(c => c.Code == 12, cancellationToken);
 			algeria.View.ShouldNotBeNull();
 			algeria.View.Subregion.ShouldNotBeNull();
 			algeria.View.Subregion.IntermediateRegion.ShouldBeNull();
 
-			var antarctica = await context.Set<CountryOrArea>().SingleAsync(c => c.Code == 10, cancellationToken);
+			var antarctica = await set.SingleAsync(c => c.Code == 10, cancellationToken);
 			antarctica.View.ShouldBeNull();
 		}
 		finally
 		{
-			await context.Set<CountryOrArea>().ExecuteDeleteAsync(cancellationToken);
+			await set.ExecuteDeleteAsync(cancellationToken);
 			await context.Set<Region>().ExecuteDeleteAsync(cancellationToken);
 		}
 	}

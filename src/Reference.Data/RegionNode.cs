@@ -4,7 +4,7 @@ namespace Norse.Reference.Data;
 /// The Region ancestor of a <see cref="CountryOrArea.View"/> graph — an owned JSON document,
 /// never a separately-queried table or view. Hydrated by the seed contributor at seed time.
 /// </summary>
-public sealed class RegionNode
+public sealed record RegionNode
 {
 	/// <summary>The Region's UN M49 code.</summary>
 	public string Code { get; init; } = null!;

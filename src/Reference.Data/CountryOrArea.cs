@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Norse.Persistence.EntityFramework;
+using Norse.Primitives.Identifiers;
 
 namespace Norse.Reference.Data;
 
 /// <summary>
 /// A country or area per UN M49 with ISO and LDC classifications.
 /// </summary>
-public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity<CountryOrArea>
+public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity<CountryOrArea>
 {
 	/// <summary>The country-or-area identifier.</summary>
-	public Guid Id { get; init; }
+	public DeterministicGuid Id { get; init; }
 	/// <summary>The UN M49 code (3 digits).</summary>
 	public ushort Code { get; init; }
 	/// <summary>The ISO 3166-1 alpha-2 code (2 letters).</summary>
@@ -20,7 +21,7 @@ public sealed class CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity
 	/// <summary>The country or area name in English.</summary>
 	public string Name { get; init; } = null!;
 	/// <summary>The parent region identifier, if applicable.</summary>
-	public Guid? ParentRegionId { get; init; }
+	public DeterministicGuid? ParentRegionId { get; init; }
 	/// <summary>The parent region, if applicable.</summary>
 	public Region ParentRegion { get; init; } = null!;
 	/// <summary>The UN classification flags this country or area holds. Test with <see cref="Enum.HasFlag"/>.</summary>
