@@ -50,13 +50,14 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 		builder
 			.HasOne(c => c.ParentRegion)
 			.WithMany(c => c.CountriesOrAreas)
-			.HasForeignKey(c => c.ParentRegionId)
-			.IsRequired(false);
+			.HasForeignKey(c => c.ParentRegionId);
+		// View model map
 		builder.OwnsOne(c => c.View, view =>
 		{
 			view.ToJson();
-			view.OwnsOne(v => v.Region, region => region.OwnsOne(r => r.Subregion, sub => sub.OwnsOne(s => s.IntermediateRegion)));
+			view.OwnsOne(v => v.Region, region =>
+				region.OwnsOne(r => r.Subregion,
+					sub => sub.OwnsOne(s => s.IntermediateRegion)));
 		});
-		builder.Navigation(c => c.View).IsRequired();
 	}
 }
