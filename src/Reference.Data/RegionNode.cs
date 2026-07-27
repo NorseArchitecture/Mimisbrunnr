@@ -9,11 +9,11 @@ namespace Norse.Reference.Data;
 public sealed record RegionNode
 {
 	/// <summary>The Region's identifier.</summary>
-	public DeterministicGuid Id { get; init; }
+	public required DeterministicGuid Id { get; init; }
 	/// <summary>The Region's UN M49 code.</summary>
-	public string Code { get; init; } = null!;
+	public required string Code { get; init; }
 	/// <summary>The Region's name.</summary>
-	public string Name { get; init; } = null!;
+	public required string Name { get; init; }
 
 	/// <summary>The Subregion beneath this Region, if the leaf country resolved through one.</summary>
 	public SubregionNode? Subregion { get; init; }

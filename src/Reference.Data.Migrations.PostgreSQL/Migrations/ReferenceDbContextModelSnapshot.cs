@@ -16,7 +16,7 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260726192500_InitialCreate";
+    public override string LastMigrationId => "20260727013819_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -124,7 +124,7 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("Norse.Reference.Data.CountryOrArea", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("CountriesOrAreas")
                     .HasForeignKey("ParentRegionId")
                     .HasConstraintName("fk_country_or_area_region_parent_region_id");
 
@@ -234,11 +234,18 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("Norse.Reference.Data.Region", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("ChildRegions")
                     .HasForeignKey("ParentRegionId")
                     .HasConstraintName("fk_region_region_parent_region_id");
 
                 b.Navigation("ParentRegion");
+            });
+
+        modelBuilder.Entity("Norse.Reference.Data.Region", b =>
+            {
+                b.Navigation("ChildRegions");
+
+                b.Navigation("CountriesOrAreas");
             });
 #pragma warning restore 612, 618
     }

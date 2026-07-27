@@ -6,9 +6,9 @@ namespace Norse.Reference.Data;
 public sealed record IntermediateRegionNode
 {
 	/// <summary>The Intermediate Region's identifier.</summary>
-	public DeterministicGuid Id { get; init; }
+	public required DeterministicGuid Id { get; init; }
 	/// <summary>The Intermediate Region's UN M49 code.</summary>
-	public string Code { get; init; } = null!;
+	public required string Code { get; init; }
 	/// <summary>The Intermediate Region's name.</summary>
-	public string Name { get; init; } = null!;
+	public required string Name { get; init; }
 }

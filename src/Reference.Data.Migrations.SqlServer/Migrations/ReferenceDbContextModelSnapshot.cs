@@ -16,7 +16,7 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260726192513_InitialCreate";
+    public override string LastMigrationId => "20260727013831_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -35,12 +35,14 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                 b.Property<string>("Alpha2")
                     .IsRequired()
                     .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    .HasColumnType("nchar(2)")
+                    .IsFixedLength();
 
                 b.Property<string>("Alpha3")
                     .IsRequired()
                     .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                    .HasColumnType("nchar(3)")
+                    .IsFixedLength();
 
                 b.Property<byte>("Classification")
                     .HasColumnType("tinyint");
@@ -104,7 +106,7 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("Norse.Reference.Data.CountryOrArea", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("CountriesOrAreas")
                     .HasForeignKey("ParentRegionId");
 
                 b.OwnsOne("Norse.Reference.Data.CountryOrAreaView", "View", b1 =>
@@ -213,10 +215,17 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("Norse.Reference.Data.Region", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("ChildRegions")
                     .HasForeignKey("ParentRegionId");
 
                 b.Navigation("ParentRegion");
+            });
+
+        modelBuilder.Entity("Norse.Reference.Data.Region", b =>
+            {
+                b.Navigation("ChildRegions");
+
+                b.Navigation("CountriesOrAreas");
             });
 #pragma warning restore 612, 618
     }

@@ -40,6 +40,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				Alpha2 = "NG",
 				Alpha3 = "NGA",
 				Name = "Nigeria",
+				Classification = Classification.None,
 				View = new()
 				{
 					Id = countryId,
@@ -109,6 +110,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				Alpha2 = "DZ",
 				Alpha3 = "DZA",
 				Name = "Algeria",
+				Classification = Classification.None,
 				View = new()
 				{
 					Id = countryId,
@@ -122,9 +124,9 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 						Id = regionId,
 						Code = "002",
 						Name = "Africa",
-						Subregion = new() { Id = subregionId, Code = "015", Name = "Northern Africa", IntermediateRegion = null },
+						Subregion = new() { Id = subregionId, Code = "015", Name = "Northern Africa" }
 					}
-				},
+				}
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
@@ -158,6 +160,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				Alpha2 = "AQ",
 				Alpha3 = "ATA",
 				Name = "Antarctica",
+				Classification = Classification.None,
 				View = new()
 				{
 					Id = countryId,
@@ -165,9 +168,8 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 					Alpha2 = "AQ",
 					Alpha3 = "ATA",
 					Name = "Antarctica",
-					Classification = Classification.None,
-					Region = null,
-				},
+					Classification = Classification.None
+				}
 			});
 			await context.SaveChangesAsync(cancellationToken);
 			context.ChangeTracker.Clear();
