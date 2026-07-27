@@ -16,5 +16,5 @@ public sealed record RegionNode
 	public required string Name { get; init; }
 
 	/// <summary>The Subregion beneath this Region, if the leaf country resolved through one.</summary>
-	public SubregionNode Subregion { get; init; } = null!;
+	public SubregionNode? Subregion { get; init; }
 }

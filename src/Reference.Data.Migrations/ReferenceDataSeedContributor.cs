@@ -149,16 +149,16 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		var subregionRow = chain.SingleOrDefault(r => r.Level == RegionLevel.Subregion);
 		var regionRow = chain.SingleOrDefault(r => r.Level == RegionLevel.Region);
 
-		IntermediateRegionNode intermediate = intermediateRow is null
-			? null!
+		IntermediateRegionNode? intermediate = intermediateRow is null
+			? null
 			: new() { Id = intermediateRow.Id, Code = intermediateRow.M49Code, Name = intermediateRow.Name };
 
-		SubregionNode subregion = subregionRow is null
-			? null!
+		SubregionNode ?subregion = subregionRow is null
+			? null
 			: new() { Id = subregionRow.Id, Code = subregionRow.M49Code, Name = subregionRow.Name, IntermediateRegion = intermediate };
 
-		RegionNode region = regionRow is null
-			? null!
+		RegionNode? region = regionRow is null
+			? null
 			: new() { Id = regionRow.Id, Code = regionRow.M49Code, Name = regionRow.Name, Subregion = subregion };
 
 		return new()
