@@ -153,7 +153,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 			? null
 			: new() { Id = intermediateRow.Id, Code = intermediateRow.M49Code, Name = intermediateRow.Name };
 
-		SubregionNode ?subregion = subregionRow is null
+		SubregionNode? subregion = subregionRow is null
 			? null
 			: new() { Id = subregionRow.Id, Code = subregionRow.M49Code, Name = subregionRow.Name, IntermediateRegion = intermediate };
 
