@@ -27,10 +27,11 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-		DeterministicGuid countryId = new(DeterministicGuid.Namespaces.Dns, "NG");
-		DeterministicGuid regionId = new(DeterministicGuid.Namespaces.Dns, "002");
-		DeterministicGuid subregionId = new(DeterministicGuid.Namespaces.Dns, "202");
-		DeterministicGuid intermediateRegionId = new(DeterministicGuid.Namespaces.Dns, "011");
+		DeterministicGuid
+			countryId = new(DeterministicGuid.Namespaces.Dns, "NG"),
+			regionId = new(DeterministicGuid.Namespaces.Dns, "002"),
+			subregionId = new(DeterministicGuid.Namespaces.Dns, "202"),
+			intermediateRegionId = new(DeterministicGuid.Namespaces.Dns, "011");
 		var set = context.Set<CountryOrArea>();
 		try
 		{
@@ -98,9 +99,10 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
-		DeterministicGuid countryId = new(DeterministicGuid.Namespaces.Dns, "DZ");
-		DeterministicGuid regionId = new(DeterministicGuid.Namespaces.Dns, "002");
-		DeterministicGuid subregionId = new(DeterministicGuid.Namespaces.Dns, "015");
+		DeterministicGuid
+			countryId = new(DeterministicGuid.Namespaces.Dns, "DZ"),
+			regionId = new(DeterministicGuid.Namespaces.Dns, "002"),
+			subregionId = new(DeterministicGuid.Namespaces.Dns, "015");
 		var set = context.Set<CountryOrArea>();
 		try
 		{
