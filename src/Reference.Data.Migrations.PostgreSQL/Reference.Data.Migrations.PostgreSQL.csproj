@@ -13,7 +13,6 @@
 		<NorseDesignRef Include="Persistence.EntityFramework.Design.PostgreSQL">
 			<Repo>Urdarbrunnr</Repo>
 		</NorseDesignRef>
-		<ProjectReference Include="../Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
 		<!-- dotnet-ef requires this directly on the tooling entry-point project — Urdarbrunnr's
 		     Design chassis marks its own EFCore.Design reference PrivateAssets="all" so runtime
 		     consumers never pull in design-time tooling, which also stops it reaching this leaf
@@ -21,5 +20,6 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.*-*">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<ProjectReference Include="../Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
 	</ItemGroup>
 </Project>
