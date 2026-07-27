@@ -10,17 +10,17 @@ namespace Norse.Reference.Data;
 public sealed record CountryOrAreaView
 {
 	/// <summary>The country-or-area identifier.</summary>
-	public DeterministicGuid Id { get; init; }
+	public required DeterministicGuid Id { get; init; }
 	/// <summary>The UN M49 code (3 digits).</summary>
-	public ushort Code { get; init; }
+	public required ushort Code { get; init; }
 	/// <summary>The ISO 3166-1 alpha-2 code (2 letters).</summary>
-	public string Alpha2 { get; init; } = null!;
+	public required string Alpha2 { get; init; }
 	/// <summary>The ISO 3166-1 alpha-3 code (3 letters).</summary>
-	public string Alpha3 { get; init; } = null!;
+	public required string Alpha3 { get; init; }
 	/// <summary>The country or area name in English.</summary>
-	public string Name { get; init; } = null!;
+	public required string Name { get; init; }
 	/// <summary>The UN classification flags this country or area holds. Test with <see cref="Enum.HasFlag"/>.</summary>
-	public Classification Classification { get; init; }
+	public required Classification Classification { get; init; }
 	/// <summary>The ancestor Region, if the country resolves through one — <see langword="null"/> only for Antarctica.</summary>
 	public RegionNode? Region { get; init; }
 }

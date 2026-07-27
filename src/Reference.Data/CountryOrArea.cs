@@ -11,21 +11,21 @@ namespace Norse.Reference.Data;
 public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity<CountryOrArea>
 {
 	/// <summary>The country-or-area identifier.</summary>
-	public DeterministicGuid Id { get; init; }
+	public required DeterministicGuid Id { get; init; }
 	/// <summary>The UN M49 code (3 digits).</summary>
-	public ushort Code { get; init; }
+	public required ushort Code { get; init; }
 	/// <summary>The ISO 3166-1 alpha-2 code (2 letters).</summary>
-	public string Alpha2 { get; init; } = null!;
+	public required string Alpha2 { get; init; }
 	/// <summary>The ISO 3166-1 alpha-3 code (3 letters).</summary>
-	public string Alpha3 { get; init; } = null!;
+	public required string Alpha3 { get; init; }
 	/// <summary>The country or area name in English.</summary>
-	public string Name { get; init; } = null!;
+	public required string Name { get; init; }
 	/// <summary>The parent region identifier, if applicable.</summary>
 	public DeterministicGuid? ParentRegionId { get; init; }
 	/// <summary>The parent region, if applicable.</summary>
 	public Region ParentRegion { get; init; } = null!;
 	/// <summary>The UN classification flags this country or area holds. Test with <see cref="Enum.HasFlag"/>.</summary>
-	public Classification Classification { get; init; }
+	public required Classification Classification { get; init; }
 
 	/// <summary>
 	/// The denormalized read-model column: this row's own scalar fields alongside the ancestor
@@ -35,7 +35,7 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 	/// <c>View</c> as a deliberate homage to the SQL view it replaced: this is the platform's first
 	/// "peer + ancestry" read column, one per entity, queried without joins.
 	/// </summary>
-	public CountryOrAreaView View { get; init; } = null!;
+	public required CountryOrAreaView View { get; init; }
 
 	/// <summary>Configures the EF entity mapping.</summary>
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
