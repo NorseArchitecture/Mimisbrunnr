@@ -18,8 +18,8 @@ GO
 CREATE TABLE [CountryOrArea] (
     [Id] uniqueidentifier NOT NULL,
     [Code] int NOT NULL,
-    [Alpha2] nvarchar(2) NOT NULL,
-    [Alpha3] nvarchar(3) NOT NULL,
+    [Alpha2] nchar(2) NOT NULL,
+    [Alpha3] nchar(3) NOT NULL,
     [Name] nvarchar(256) NOT NULL,
     [ParentRegionId] uniqueidentifier NULL,
     [Classification] tinyint NOT NULL,

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Norse.Reference.Data.Migrations.PostgreSQL.Migrations;
 
 /// <inheritdoc />
-public partial class _20260726192500_InitialCreate : Migration
+public partial class _20260727013819_InitialCreate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)

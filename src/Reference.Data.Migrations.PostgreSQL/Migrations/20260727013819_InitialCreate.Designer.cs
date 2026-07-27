@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Norse.Reference.Data.Migrations.PostgreSQL.Migrations;
 
 [DbContext(typeof(ReferenceDbContext))]
-[Migration("20260726192500_InitialCreate")]
-partial class _20260726192500_InitialCreate
+[Migration("20260727013819_InitialCreate")]
+partial class _20260727013819_InitialCreate
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,7 +122,7 @@ partial class _20260726192500_InitialCreate
         modelBuilder.Entity("Norse.Reference.Data.CountryOrArea", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("CountriesOrAreas")
                     .HasForeignKey("ParentRegionId")
                     .HasConstraintName("fk_country_or_area_region_parent_region_id");
 
@@ -232,11 +232,18 @@ partial class _20260726192500_InitialCreate
         modelBuilder.Entity("Norse.Reference.Data.Region", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("ChildRegions")
                     .HasForeignKey("ParentRegionId")
                     .HasConstraintName("fk_region_region_parent_region_id");
 
                 b.Navigation("ParentRegion");
+            });
+
+        modelBuilder.Entity("Norse.Reference.Data.Region", b =>
+            {
+                b.Navigation("ChildRegions");
+
+                b.Navigation("CountriesOrAreas");
             });
 #pragma warning restore 612, 618
     }

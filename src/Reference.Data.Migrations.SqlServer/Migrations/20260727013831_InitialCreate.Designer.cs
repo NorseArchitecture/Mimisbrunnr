@@ -12,8 +12,8 @@ using Norse.Reference.Data;
 namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
 
 [DbContext(typeof(ReferenceDbContext))]
-[Migration("20260726192513_InitialCreate")]
-partial class _20260726192513_InitialCreate
+[Migration("20260727013831_InitialCreate")]
+partial class _20260727013831_InitialCreate
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,12 +33,14 @@ partial class _20260726192513_InitialCreate
                 b.Property<string>("Alpha2")
                     .IsRequired()
                     .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    .HasColumnType("nchar(2)")
+                    .IsFixedLength();
 
                 b.Property<string>("Alpha3")
                     .IsRequired()
                     .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                    .HasColumnType("nchar(3)")
+                    .IsFixedLength();
 
                 b.Property<byte>("Classification")
                     .HasColumnType("tinyint");
@@ -102,7 +104,7 @@ partial class _20260726192513_InitialCreate
         modelBuilder.Entity("Norse.Reference.Data.CountryOrArea", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("CountriesOrAreas")
                     .HasForeignKey("ParentRegionId");
 
                 b.OwnsOne("Norse.Reference.Data.CountryOrAreaView", "View", b1 =>
@@ -211,10 +213,17 @@ partial class _20260726192513_InitialCreate
         modelBuilder.Entity("Norse.Reference.Data.Region", b =>
             {
                 b.HasOne("Norse.Reference.Data.Region", "ParentRegion")
-                    .WithMany()
+                    .WithMany("ChildRegions")
                     .HasForeignKey("ParentRegionId");
 
                 b.Navigation("ParentRegion");
+            });
+
+        modelBuilder.Entity("Norse.Reference.Data.Region", b =>
+            {
+                b.Navigation("ChildRegions");
+
+                b.Navigation("CountriesOrAreas");
             });
 #pragma warning restore 612, 618
     }
