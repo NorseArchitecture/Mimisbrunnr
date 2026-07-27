@@ -49,7 +49,7 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 		builder.HasIndex(c => c.Alpha3).IsUnique();
 		builder
 			.HasOne(c => c.ParentRegion)
-			.WithMany()
+			.WithMany(c => c.CountriesOrAreas)
 			.HasForeignKey(c => c.ParentRegionId)
 			.IsRequired(false);
 		builder.OwnsOne(c => c.View, view =>
