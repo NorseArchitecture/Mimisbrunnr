@@ -43,8 +43,6 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 	public static void Configure(EntityTypeBuilder<CountryOrArea> builder)
 	{
 		builder.HasKey(c => c.Id);
-		builder.Property(c => c.Alpha2);
-		builder.Property(c => c.Alpha3);
 		builder.Property(c => c.Name).HasMaxLength(256);
 		builder.HasIndex(c => c.Code).IsUnique();
 		builder.HasIndex(c => c.Alpha2).IsUnique();
