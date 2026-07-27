@@ -69,10 +69,12 @@ static class UnsdM49Mapper
 				IsSmallIslandDevelopingState: ValidateFlag(reader[sidsOrdinal], rowNumber, "Small Island Developing States (SIDS)")));
 		}
 
-		var orderedRegions = regions.Values
-			.OrderBy(r => _levelRank[r.Level])
-			.ThenBy(r => r.M49Code, StringComparer.Ordinal)
-			.ToList();
+		List<RegionRow> orderedRegions =
+		[
+			.. regions.Values
+				.OrderBy(r => _levelRank[r.Level])
+				.ThenBy(r => r.M49Code, StringComparer.Ordinal),
+		];
 
 		return (orderedRegions, countries);
 	}

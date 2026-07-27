@@ -8,13 +8,15 @@ public sealed class PostgresContainerFixture : IAsyncLifetime
 		.WithDatabase("norse_reference")
 		.Build();
 
+	// null! justified: hydrated by InitializeAsync before xUnit hands the fixture to any test.
 	public string ConnectionString { get; private set; } = null!;
 
 	public async ValueTask InitializeAsync()
 	{
-		await _container.StartAsync().ConfigureAwait(false);
+		await _container.StartAsync();
 		ConnectionString = _container.GetConnectionString();
 	}
 
-	public async ValueTask DisposeAsync() => await _container.DisposeAsync().ConfigureAwait(false);
+	public ValueTask DisposeAsync() =>
+		_container.DisposeAsync();
 }

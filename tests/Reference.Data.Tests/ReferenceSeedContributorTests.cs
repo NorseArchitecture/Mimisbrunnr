@@ -7,7 +7,7 @@ using Norse.Reference.Data.Migrations.PostgreSQL;
 namespace Norse.Reference.Data.Tests;
 
 [Collection("Postgres")]
-public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
+public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 {
 	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString,
 		CancellationToken cancellationToken)
@@ -15,15 +15,16 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
 			.UseNpgsql(connectionString, o =>
 				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
-		optionsBuilder.ApplyNorseConventions();
-		optionsBuilder.ApplyNorseTrackingBehavior();
+		optionsBuilder
+			.ApplyNorseConventions()
+			.ApplyNorseTrackingBehavior();
 		ReferenceDbContext context = new(optionsBuilder.Options);
-		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
+		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken);
 		return context;
 	}
 
 	[Fact]
-	public async Task SeedAsync_loads_248_countries_and_their_region_ancestors()
+	async Task SeedAsync_loads_248_countries_and_their_region_ancestors()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -46,7 +47,7 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task SeedAsync_is_idempotent_on_a_second_run()
+	async Task SeedAsync_is_idempotent_on_a_second_run()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -71,7 +72,7 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task Reseeding_from_scratch_produces_byte_identical_ids()
+	async Task Reseeding_from_scratch_produces_byte_identical_ids()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var contextA = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -94,7 +95,7 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task SeedAsync_hydrates_View_for_all_three_verified_shapes()
+	async Task SeedAsync_hydrates_View_for_all_three_verified_shapes()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -134,7 +135,7 @@ public class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task SeedAsync_hydrates_matching_Region_ids_at_every_View_level()
+	async Task SeedAsync_hydrates_matching_Region_ids_at_every_View_level()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);

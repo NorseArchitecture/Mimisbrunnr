@@ -3,18 +3,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Norse.Reference.Data.Tests;
 
-public class ReferenceDbContextModelTests
+public sealed class ReferenceDbContextModelTests
 {
 	static ReferenceDbContext CreateContext()
 	{
 		var options = new DbContextOptionsBuilder<ReferenceDbContext>()
 			.UseNpgsql("Host=localhost;Database=model-build-only")
 			.Options;
-		return new ReferenceDbContext(options);
+		return new(options);
 	}
 
 	[Fact]
-	public void Model_configures_Region_with_unique_Code_index_and_self_referencing_FK()
+	void Model_configures_Region_with_unique_Code_index_and_self_referencing_FK()
 	{
 		using var context = CreateContext();
 		IEntityType entityType = context.Model.FindEntityType(typeof(Region))!;
@@ -25,7 +25,7 @@ public class ReferenceDbContextModelTests
 	}
 
 	[Fact]
-	public void Model_configures_CountryOrArea_with_three_unique_indexes_and_FK_to_Region()
+	void Model_configures_CountryOrArea_with_three_unique_indexes_and_FK_to_Region()
 	{
 		using var context = CreateContext();
 		IEntityType entityType = context.Model.FindEntityType(typeof(CountryOrArea))!;

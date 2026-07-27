@@ -7,22 +7,23 @@ using Norse.Reference.Data.Migrations.PostgreSQL;
 namespace Norse.Reference.Data.Tests;
 
 [Collection("Postgres")]
-public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
+public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 {
 	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
 	{
 		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
 			.UseNpgsql(connectionString, o =>
 				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
-		optionsBuilder.ApplyNorseConventions();
-		optionsBuilder.ApplyNorseTrackingBehavior();
+		optionsBuilder
+			.ApplyNorseConventions()
+			.ApplyNorseTrackingBehavior();
 		ReferenceDbContext context = new(optionsBuilder.Options);
-		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken).ConfigureAwait(false);
+		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken);
 		return context;
 	}
 
 	[Fact]
-	public async Task View_round_trips_all_three_levels_for_Nigeria_shape()
+	async Task View_round_trips_all_three_levels_for_Nigeria_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -93,7 +94,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task View_has_null_intermediate_region_for_Algeria_shape()
+	async Task View_has_null_intermediate_region_for_Algeria_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
@@ -145,7 +146,7 @@ public class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 	}
 
 	[Fact]
-	public async Task View_has_null_region_for_Antarctica_shape()
+	async Task View_has_null_region_for_Antarctica_shape()
 	{
 		var cancellationToken = TestContext.Current.CancellationToken;
 		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);

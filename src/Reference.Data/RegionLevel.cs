@@ -5,6 +5,8 @@ namespace Norse.Reference.Data;
 /// </summary>
 public enum RegionLevel : byte
 {
+	/// <summary>Sentinel CLR default — never a valid level; a region always declares its tier.</summary>
+	Unspecified = 0,
 	/// <summary>Region level.</summary>
 	Region = 1,
 	/// <summary>Subregion level.</summary>
