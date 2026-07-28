@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
 using Norse.Persistence.EntityFramework.PostgreSQL;
-using Norse.Reference.Data.Migrations;
 using Norse.Reference.Data.Migrations.PostgreSQL;
 
-namespace Norse.Reference.Data.Tests;
+namespace Norse.Reference.Data.Migrations.Tests;
 
 [Collection("Postgres")]
 public sealed class NorseReferenceMigrationContributorTests(PostgresContainerFixture fixture)
