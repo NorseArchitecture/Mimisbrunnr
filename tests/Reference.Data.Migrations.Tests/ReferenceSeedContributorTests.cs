@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
+using Norse.Persistence.EntityFramework.PostgreSQL;
 using Norse.Primitives.Identifiers;
-using Norse.Reference.Data.Migrations;
 using Norse.Reference.Data.Migrations.PostgreSQL;
 
-namespace Norse.Reference.Data.Tests;
+namespace Norse.Reference.Data.Migrations.Tests;
 
 [Collection("Postgres")]
 public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixture)
@@ -12,12 +12,9 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString,
 		CancellationToken cancellationToken)
 	{
-		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
-			.UseNpgsql(connectionString, o =>
-				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
-		optionsBuilder
-			.ApplyNorseConventions()
-			.ApplyNorseTrackingBehavior();
+		DbContextOptionsBuilder<ReferenceDbContext> optionsBuilder = new();
+		optionsBuilder.ApplyNorseProviderOptions(NorsePostgresEfProvider.Instance,
+			connectionString, typeof(ReferenceDbContextFactory).Assembly.GetName().Name);
 		ReferenceDbContext context = new(optionsBuilder.Options);
 		await new NorseReferenceMigrationContributor(context).MigrateAsync(cancellationToken);
 		return context;

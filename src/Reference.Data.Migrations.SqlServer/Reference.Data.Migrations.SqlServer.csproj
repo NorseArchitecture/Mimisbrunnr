@@ -10,9 +10,15 @@
 		<EmbeddedResource Include="schema/*.sql">
 			<LogicalName>CreateScript.sql</LogicalName>
 		</EmbeddedResource>
-		<NorseDesignRef Include="Persistence.EntityFramework.Design.SqlServer">
+		<NorseDesignRef Include="Persistence.EntityFramework.Design">
 			<Repo>Urdarbrunnr</Repo>
 		</NorseDesignRef>
+		<!-- Plain NorseRef, deliberately not NorseDesignRef: flows the SqlServer binding to the
+		     migrations service — the seam generator discovers bindings through this closure, and a
+		     PrivateAssets-blocked binding means NORSE030 (zero bindings found) in Yggdrasil. -->
+		<NorseRef Include="Persistence.EntityFramework.SqlServer">
+			<Repo>Urdarbrunnr</Repo>
+		</NorseRef>
 		<!-- dotnet-ef requires this directly on the tooling entry-point project — Urdarbrunnr's
 		     Design chassis marks its own EFCore.Design reference PrivateAssets="all" so runtime
 		     consumers never pull in design-time tooling, which also stops it reaching this leaf
