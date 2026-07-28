@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
+using Norse.Persistence.EntityFramework.PostgreSQL;
 using Norse.Reference.Data.Migrations;
 using Norse.Reference.Data.Migrations.PostgreSQL;
 
@@ -11,14 +12,10 @@ public sealed class NorseReferenceMigrationContributorTests(PostgresContainerFix
 	[Fact]
 	async Task MigrateAsync_creates_regions_and_country_or_areas_tables()
 	{
-		var optionsBuilder = new DbContextOptionsBuilder<ReferenceDbContext>()
-			.UseNpgsql(fixture.ConnectionString, o =>
-				o.MigrationsAssembly(typeof(ReferenceDbContextFactory).Assembly.GetName().Name));
-		optionsBuilder
-			.ApplyNorseConventions()
-			.ApplyNorseTrackingBehavior();
-		var options = optionsBuilder.Options;
-		using ReferenceDbContext context = new(options);
+		DbContextOptionsBuilder<ReferenceDbContext> optionsBuilder = new();
+		optionsBuilder.ApplyNorseProviderOptions(NorsePostgresEfProvider.Instance,
+			fixture.ConnectionString, typeof(ReferenceDbContextFactory).Assembly.GetName().Name);
+		using ReferenceDbContext context = new(optionsBuilder.Options);
 		NorseReferenceMigrationContributor contributor = new(context);
 
 		await contributor.MigrateAsync(TestContext.Current.CancellationToken);

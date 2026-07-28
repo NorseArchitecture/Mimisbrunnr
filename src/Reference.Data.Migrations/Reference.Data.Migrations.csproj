@@ -4,9 +4,12 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="../../seeds/*.tsv" CopyToOutputDirectory="PreserveNewest" LinkBase="seeds" />
-		<NorseDesignRef Include="Persistence.EntityFramework.Design">
+		<!-- Plain NorseRef, deliberately not NorseDesignRef: EfMigrationContributor<T> and the
+		     migration-host choreography live here and must flow to the migrations service — the
+		     seam generator also discovers contributors through this closure. -->
+		<NorseRef Include="Persistence.EntityFramework.Migrations">
 			<Repo>Urdarbrunnr</Repo>
-		</NorseDesignRef>
+		</NorseRef>
 		<NorseRef Include="Primitives">
 			<Repo>Svartalfheim</Repo>
 		</NorseRef>
