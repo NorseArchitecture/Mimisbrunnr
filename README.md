@@ -129,6 +129,34 @@ erDiagram
   timezone }o--o| timezone : "alias of"
 ```
 
+## Migrations CLI
+
+Both provider migrations projects (`src/Reference.Data.Migrations.PostgreSQL`, `src/Reference.Data.Migrations.SqlServer`) carry a design-time factory that supplies an inert placeholder connection string, so the EF CLI runs entirely offline — no database, no network, ever. Applying migrations against a real database is the migrations service's job, not this CLI's.
+
+First, restore the pinned `dotnet-ef` tool:
+
+```
+dotnet tool restore
+```
+
+Then, per provider:
+
+```
+dotnet ef migrations add <Name> --project src/Reference.Data.Migrations.PostgreSQL --startup-project src/Reference.Data.Migrations.PostgreSQL
+dotnet ef migrations add <Name> --project src/Reference.Data.Migrations.SqlServer --startup-project src/Reference.Data.Migrations.SqlServer
+```
+
+Every `add` (and `remove`) auto-refreshes the provider's embedded `schema/norse_reference.sql` — that file is DDL emitted by the scaffolder, never hand-edited.
+
+Platform law (squash migrations until the provider-defaults chassis settles) keeps exactly one `InitialCreate` per provider. A schema change is not a new migration stacked on top — delete the provider's `Migrations/` folder and re-add `InitialCreate`:
+
+```
+rm src/Reference.Data.Migrations.PostgreSQL/Migrations/*
+dotnet ef migrations add InitialCreate --project src/Reference.Data.Migrations.PostgreSQL --startup-project src/Reference.Data.Migrations.PostgreSQL
+```
+
+(and the SqlServer twin).
+
 ## Why two repos
 
 Mímisbrunnr and Mímir are one bounded context split across two repositories for a specific, verified reason: reference-data content (IANA reissuing time zone data, ISO adding or redenominating currencies) changes far more often than the service and component code that serves it, and the platform's release tooling only supports repo-scoped tags — packing and publishing happen for an entire repo at once, not per project. Splitting the repository is what lets `Data` cut a release without dragging `Components`/`Web.Server`/`Worker` along, and vice versa. This pair is a template for anyone whose own reference data has the same shape — not a pattern the platform applies by default.
