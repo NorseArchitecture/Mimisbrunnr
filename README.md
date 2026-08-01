@@ -2,7 +2,9 @@
 
 > Mímisbrunnr — the well of wisdom at Yggdrasil's roots, guarded by Mímir, where Odin traded an eye for a single drink of it.
 
-![Mímisbrunnr — the well of wisdom at Yggdrasil's roots, guarded by Mímir, where Odin traded an eye for a single drink of it](https://github.com/user-attachments/assets/d3af978b-2608-4975-8559-2531b0e87aa1 "Mímisbrunnr — the well Odin paid an eye to drink from")
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d3af978b-2608-4975-8559-2531b0e87aa1" alt="Mímisbrunnr — the well of wisdom at Yggdrasil's roots, guarded by Mímir, where Odin traded an eye for a single drink of it" title="Mímisbrunnr — the well Odin paid an eye to drink from" />
+</p>
 
 *Image credit: [@norsemythologyclips](https://www.instagram.com/norsemythologyclips/) — go follow them.*
 
