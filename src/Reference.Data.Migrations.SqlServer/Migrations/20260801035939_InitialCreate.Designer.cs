@@ -12,8 +12,8 @@ using Norse.Reference.Data;
 namespace Norse.Reference.Data.Migrations.SqlServer.Migrations;
 
 [DbContext(typeof(ReferenceDbContext))]
-[Migration("20260727013831_InitialCreate")]
-partial class _20260727013831_InitialCreate
+[Migration("20260801035939_InitialCreate")]
+partial class _20260801035939_InitialCreate
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -11,8 +11,8 @@ public sealed record CountryOrAreaView
 {
 	/// <summary>The country-or-area identifier.</summary>
 	public required DeterministicGuid Id { get; init; }
-	/// <summary>The UN M49 code (3 digits).</summary>
-	public required ushort Code { get; init; }
+	/// <summary>The ISO 3166-1 country/area identifier (UN M49 numeric code as the enum's underlying value).</summary>
+	public required IsoCountryCode Code { get; init; }
 	/// <summary>The ISO 3166-1 alpha-2 code (2 letters).</summary>
 	public required string Alpha2 { get; init; }
 	/// <summary>The ISO 3166-1 alpha-3 code (3 letters).</summary>

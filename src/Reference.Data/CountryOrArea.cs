@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Norse.Abstractions.Backend;
 using Norse.Persistence.EntityFramework;
 using Norse.Primitives.Identifiers;
 
@@ -8,12 +9,12 @@ namespace Norse.Reference.Data;
 /// <summary>
 /// A country or area per UN M49 with ISO and LDC classifications.
 /// </summary>
-public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity<CountryOrArea>
+public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity<CountryOrArea>, IViewBearer<CountryOrAreaView>
 {
 	/// <summary>The country-or-area identifier.</summary>
 	public required DeterministicGuid Id { get; init; }
-	/// <summary>The UN M49 code (3 digits).</summary>
-	public required ushort Code { get; init; }
+	/// <summary>The ISO 3166-1 country/area identifier (UN M49 numeric code as the enum's underlying value).</summary>
+	public required IsoCountryCode Code { get; init; }
 	/// <summary>The ISO 3166-1 alpha-2 code (2 letters).</summary>
 	[FixedLength(2)]
 	public required string Alpha2 { get; init; }
@@ -44,6 +45,7 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 	{
 		builder.HasKey(c => c.Id);
 		builder.Property(c => c.Name).HasMaxLength(256);
+		builder.Property(c => c.Code).HasConversion<ushort>();
 		builder.HasIndex(c => c.Code).IsUnique();
 		builder.HasIndex(c => c.Alpha2).IsUnique();
 		builder.HasIndex(c => c.Alpha3).IsUnique();
@@ -55,6 +57,7 @@ public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntit
 		builder.OwnsOne(c => c.View, view =>
 		{
 			view.ToJson();
+			view.Property(v => v.Code).HasConversion<ushort>();
 			view.OwnsOne(v => v.Region, region =>
 				region.OwnsOne(r => r.Subregion,
 					sub => sub.OwnsOne(s => s.IntermediateRegion)));
