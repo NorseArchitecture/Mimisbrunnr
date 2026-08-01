@@ -18,6 +18,18 @@ public sealed class ReferenceDbContextFactoryTests
 	}
 
 	[Fact]
+	void CreateDbContext_stores_the_IsoCountryCode_conversion_as_a_SqlServer_int_column()
+	{
+		ReferenceDbContextFactory factory = new();
+		using var context = factory.CreateDbContext([]);
+
+		var entityType = context.Model.FindEntityType(typeof(CountryOrArea));
+
+		entityType.ShouldNotBeNull();
+		entityType.FindProperty(nameof(CountryOrArea.Code))!.GetColumnType().ShouldBe("int");
+	}
+
+	[Fact]
 	void CreateDbContext_forces_no_tracking()
 	{
 		ReferenceDbContextFactory factory = new();

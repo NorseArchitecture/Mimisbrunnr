@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Norse.Reference.Data.Migrations.PostgreSQL.Migrations;
 
 [DbContext(typeof(ReferenceDbContext))]
-[Migration("20260727013819_InitialCreate")]
-partial class _20260727013819_InitialCreate
+[Migration("20260801035923_InitialCreate")]
+partial class _20260801035923_InitialCreate
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)

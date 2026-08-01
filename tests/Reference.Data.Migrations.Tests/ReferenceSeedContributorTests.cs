@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
 using Norse.Persistence.EntityFramework.PostgreSQL;
-using Norse.Primitives.Identifiers;
 using Norse.Reference.Data.Migrations.PostgreSQL;
 
 namespace Norse.Reference.Data.Migrations.Tests;
@@ -78,16 +77,38 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 		{
 			await new ReferenceDataSeedContributor(contextA).SeedAsync(cancellationToken);
 			var nigeriaIdFirstRun =
-				await set.Where(c => c.Code == 566).Select(c => c.Id).SingleAsync(cancellationToken);
+				await set.Where(c => c.Code == IsoCountryCode.Nigeria).Select(c => c.Id).SingleAsync(cancellationToken);
 
-			nigeriaIdFirstRun.ShouldBe(new(
-				new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "country-or-area.m49.referencedata.norse"),
-				"566"));
+			nigeriaIdFirstRun.Value.ShouldBe(Iso3166.Ids[IsoCountryCode.Nigeria]);
 		}
 		finally
 		{
 			await set.ExecuteDeleteAsync(cancellationToken);
 			await contextA.Set<Region>().ExecuteDeleteAsync(cancellationToken);
+		}
+	}
+
+	[Fact]
+	async Task SeedAsync_re_keys_the_United_States_row_to_the_generated_v5_identifier()
+	{
+		var cancellationToken = TestContext.Current.CancellationToken;
+		await using var context = await MigratedContextAsync(fixture.ConnectionString, cancellationToken);
+		var set = context.Set<CountryOrArea>();
+		try
+		{
+			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
+
+			var unitedStates = await set
+				.Where(c => c.Code == IsoCountryCode.UnitedStatesOfAmerica)
+				.SingleAsync(cancellationToken);
+
+			unitedStates.Id.Value.ShouldBe(Iso3166.Ids[IsoCountryCode.UnitedStatesOfAmerica]);
+			unitedStates.View.Id.ShouldBe(unitedStates.Id);
+		}
+		finally
+		{
+			await set.ExecuteDeleteAsync(cancellationToken);
+			await context.Set<Region>().ExecuteDeleteAsync(cancellationToken);
 		}
 	}
 
@@ -102,7 +123,7 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var nigeria = await set.Where(c => c.Code == 566).Select(c => c.View).SingleAsync(cancellationToken);
+			var nigeria = await set.Where(c => c.Code == IsoCountryCode.Nigeria).Select(c => c.View).SingleAsync(cancellationToken);
 			nigeria.ShouldNotBeNull();
 			nigeria.Id.ShouldBe(nigeria.Id);
 			nigeria.Alpha2.ShouldBe("NG");
@@ -112,13 +133,13 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 			nigeria.Region.Subregion.IntermediateRegion.ShouldNotBeNull();
 			nigeria.Region.Subregion.IntermediateRegion.Code.ShouldBe("011");
 
-			var algeria = await set.Where(c => c.Code == 12).Select(c => c.View).SingleAsync(cancellationToken);
+			var algeria = await set.Where(c => c.Code == IsoCountryCode.Algeria).Select(c => c.View).SingleAsync(cancellationToken);
 			algeria.ShouldNotBeNull();
 			algeria.Region.ShouldNotBeNull();
 			algeria.Region.Subregion.ShouldNotBeNull();
 			algeria.Region.Subregion.IntermediateRegion.ShouldBeNull();
 
-			var antarctica = await set.Where(c => c.Code == 10).Select(c => c.View).SingleAsync(cancellationToken);
+			var antarctica = await set.Where(c => c.Code == IsoCountryCode.Antarctica).Select(c => c.View).SingleAsync(cancellationToken);
 			antarctica.ShouldNotBeNull();
 			antarctica.Id.ShouldBe(antarctica.Id);
 			antarctica.Alpha2.ShouldBe("AQ");
@@ -143,7 +164,7 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var nigeria = await countrySet.Where(c => c.Code == 566).Select(c => c.View).SingleAsync(cancellationToken);
+			var nigeria = await countrySet.Where(c => c.Code == IsoCountryCode.Nigeria).Select(c => c.View).SingleAsync(cancellationToken);
 			nigeria.Region.ShouldNotBeNull();
 			nigeria.Region.Subregion.ShouldNotBeNull();
 			nigeria.Region.Subregion.IntermediateRegion.ShouldNotBeNull();

@@ -36,7 +36,7 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			set.Add(new()
 			{
 				Id = countryId,
-				Code = 566,
+				Code = IsoCountryCode.Nigeria,
 				Alpha2 = "NG",
 				Alpha3 = "NGA",
 				Name = "Nigeria",
@@ -44,7 +44,7 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				View = new()
 				{
 					Id = countryId,
-					Code = 566,
+					Code = IsoCountryCode.Nigeria,
 					Alpha2 = "NG",
 					Alpha3 = "NGA",
 					Name = "Nigeria",
@@ -107,7 +107,7 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			set.Add(new()
 			{
 				Id = countryId,
-				Code = 12,
+				Code = IsoCountryCode.Algeria,
 				Alpha2 = "DZ",
 				Alpha3 = "DZA",
 				Name = "Algeria",
@@ -115,7 +115,7 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				View = new()
 				{
 					Id = countryId,
-					Code = 12,
+					Code = IsoCountryCode.Algeria,
 					Alpha2 = "DZ",
 					Alpha3 = "DZA",
 					Name = "Algeria",
@@ -157,7 +157,7 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 			set.Add(new()
 			{
 				Id = countryId,
-				Code = 10,
+				Code = IsoCountryCode.Antarctica,
 				Alpha2 = "AQ",
 				Alpha3 = "ATA",
 				Name = "Antarctica",
@@ -165,7 +165,7 @@ public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 				View = new()
 				{
 					Id = countryId,
-					Code = 10,
+					Code = IsoCountryCode.Antarctica,
 					Alpha2 = "AQ",
 					Alpha3 = "ATA",
 					Name = "Antarctica",

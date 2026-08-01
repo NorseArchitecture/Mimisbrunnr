@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Norse.Abstractions.Migrations.Seeding;
+using Norse.Primitives;
 using Norse.Primitives.Identifiers;
 using Norse.Primitives.Ingestion;
 
@@ -9,7 +10,10 @@ namespace Norse.Reference.Data.Migrations;
 /// <summary>
 /// Seeds <see cref="Region"/> and <see cref="CountryOrArea"/> rows from the committed UN M49 TSVs
 /// (<c>seeds/region.tsv</c>, <c>seeds/country-or-area.tsv</c>), idempotently, and hydrates each
-/// <see cref="CountryOrArea.View"/> from the same region rows.
+/// <see cref="CountryOrArea.View"/> from the same region rows. Each country row's <see cref="CountryOrArea.Id"/>
+/// resolves through Mímir's generated <see cref="IsoCountryCode"/> surface (<see cref="Iso3166.Ids"/>) rather
+/// than an ad-hoc namespace hash — a TSV row whose M49 code is unknown to that generated surface fails the
+/// seed loudly (spec §9.11 drift guard) rather than minting an ungoverned identifier.
 /// </summary>
 /// <param name="context">The reference-data context instance resolved from DI.</param>
 public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : ISeedContributor
@@ -17,8 +21,20 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 	static readonly Guid _namespaceRegion =
 		new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "region.m49.referencedata.norse");
 
-	static readonly Guid _namespaceCountryOrArea =
-		new DeterministicGuid(DeterministicGuid.Namespaces.Dns, "country-or-area.m49.referencedata.norse");
+	/// <summary>
+	/// Resolves a TSV row's raw M49 code through Mímir's generated ISO 3166-1 surface. Never falls back to
+	/// an ad-hoc identifier — a code the generated surface doesn't recognize is a drift signal, not a value
+	/// to seed around.
+	/// </summary>
+	/// <param name="m49Code">The raw, unpadded M49 numeric code text read from the TSV row.</param>
+	/// <returns>The resolved <see cref="IsoCountryCode"/> member.</returns>
+	/// <exception cref="InvalidOperationException">
+	/// <paramref name="m49Code"/> is unknown to the generated ISO 3166-1 surface.
+	/// </exception>
+	internal static IsoCountryCode ResolveCountryCode(string m49Code) =>
+		IsoCountryCodes.Parse(m49Code).TryGetValue(out Success<IsoCountryCode> success)
+			? success.Value
+			: throw new InvalidOperationException($"TSV row {m49Code} is unknown to the generated ISO 3166-1 surface");
 
 	/// <inheritdoc />
 	public string Name => "Norse.Reference";
@@ -85,17 +101,18 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		var lldcOrdinal = reader.Ordinal("IsLandLockedDevelopingCountry");
 		var sidsOrdinal = reader.Ordinal("IsSmallIslandDevelopingState");
 
-		IList<(DeterministicGuid Id, string M49Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState)> rows = [];
+		IList<(DeterministicGuid Id, IsoCountryCode Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState)> rows = [];
 		var set = context.Set<CountryOrArea>();
 		while (reader.Read())
 		{
 			var m49Code = reader[m49Ordinal].ToString();
-			DeterministicGuid id = new(_namespaceCountryOrArea, m49Code);
+			var code = ResolveCountryCode(m49Code);
+			DeterministicGuid id = new(Iso3166.Ids[code]);
 			var parentCode = reader[parentOrdinal].ToString();
 
 			rows.Add((
 				id,
-				m49Code,
+				code,
 				reader[alpha2Ordinal].ToString(),
 				reader[alpha3Ordinal].ToString(),
 				reader[nameOrdinal].ToString(),
@@ -115,7 +132,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 			set.Add(new()
 			{
 				Id = row.Id,
-				Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
+				Code = row.Code,
 				Alpha2 = row.Alpha2Code,
 				Alpha3 = row.Alpha3Code,
 				Name = row.Name,
@@ -137,7 +154,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 	/// is <see langword="null"/> only for Antarctica, the one UN M49 row with no ancestor at all.
 	/// </summary>
 	static CountryOrAreaView BuildView(
-		(DeterministicGuid Id, string M49Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState) row,
+		(DeterministicGuid Id, IsoCountryCode Code, string Alpha2Code, string Alpha3Code, string Name, string? ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool IsSmallIslandDevelopingState) row,
 		Classification classification,
 		Dictionary<string, RegionRow> regionsByCode)
 	{
@@ -164,7 +181,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		return new()
 		{
 			Id = row.Id,
-			Code = ushort.Parse(row.M49Code, CultureInfo.InvariantCulture),
+			Code = row.Code,
 			Alpha2 = row.Alpha2Code,
 			Alpha3 = row.Alpha3Code,
 			Name = row.Name,
