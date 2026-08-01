@@ -9,5 +9,8 @@
 		<NorseRef Include="Primitives.Ingestion">
 			<Repo>Svartalfheim</Repo>
 		</NorseRef>
+		<NorseRef Include="Reference.Seeds">
+			<Repo>Mimir</Repo>
+		</NorseRef>
 	</ItemGroup>
 </Project>
