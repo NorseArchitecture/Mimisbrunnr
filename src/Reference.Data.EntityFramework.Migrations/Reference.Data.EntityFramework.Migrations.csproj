@@ -3,7 +3,13 @@
 		<Description>Norse.Reference.Data.EntityFramework.Migrations: the migration contributor and ISeedContributor that loads the UN M49 TSVs, provider-agnostic. Migration tooling only — never referenced from a runtime container.</Description>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Include="../../seeds/*.tsv" CopyToOutputDirectory="PreserveNewest" LinkBase="seeds" />
+		<!-- Embedded, not shipped as loose content: a package-mode consumer (PackageReference, not
+		     ProjectReference) never reliably gets loose content files copied to its own output
+		     directory — mirrors schema/*.sql's EmbeddedResource treatment in the sibling .PostgreSQL
+		     project. ReferenceDataSeedContributor reads these back via GetManifestResourceStream. -->
+		<EmbeddedResource Include="../../seeds/*.tsv">
+			<LogicalName>%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
 		<!-- Plain NorseRef, deliberately not NorseDesignRef: EfMigrationContributor<T> and the
 		     migration-host choreography live here and must flow to the migrations service — the
 		     seam generator also discovers contributors through this closure. -->
