@@ -8,7 +8,7 @@
 
 *Image credit: [@norsemythologyclips](https://www.instagram.com/norsemythologyclips/) — go follow them.*
 
-The reference-data store of the Norse Architecture — **`Norse.Reference.Data`**: entities, view models, TSV seeders (nietras Sep), and EF migrations for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below; Mímir rides on it.
+The reference-data store of the Norse Architecture — **`Norse.Reference.Data`**: the generated, browser-supported `Reference.Data.Primitives` and `Reference.Data.Namespaces` surfaces, the `Reference.Data.EntityFramework` entities and view models, TSV seeders (nietras Sep), and the `Reference.Data.EntityFramework.Migrations`/`.PostgreSQL`/`.SqlServer` family for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below; Mímir rides on it.
 
 ## Status
 
@@ -133,7 +133,7 @@ erDiagram
 
 ## Migrations CLI
 
-Both provider migrations projects (`src/Reference.Data.Migrations.PostgreSQL`, `src/Reference.Data.Migrations.SqlServer`) carry a design-time factory that supplies an inert placeholder connection string, so the EF CLI runs entirely offline — no database, no network, ever. Applying migrations against a real database is the migrations service's job, not this CLI's.
+Both provider migrations projects (`src/Reference.Data.EntityFramework.Migrations.PostgreSQL`, `src/Reference.Data.EntityFramework.Migrations.SqlServer`) carry a design-time factory that supplies an inert placeholder connection string, so the EF CLI runs entirely offline — no database, no network, ever. Applying migrations against a real database is the migrations service's job, not this CLI's.
 
 First, restore the pinned `dotnet-ef` tool:
 
@@ -144,8 +144,8 @@ dotnet tool restore
 Then, per provider:
 
 ```
-dotnet ef migrations add <Name> --project src/Reference.Data.Migrations.PostgreSQL --startup-project src/Reference.Data.Migrations.PostgreSQL
-dotnet ef migrations add <Name> --project src/Reference.Data.Migrations.SqlServer --startup-project src/Reference.Data.Migrations.SqlServer
+dotnet ef migrations add <Name> --project src/Reference.Data.EntityFramework.Migrations.PostgreSQL --startup-project src/Reference.Data.EntityFramework.Migrations.PostgreSQL
+dotnet ef migrations add <Name> --project src/Reference.Data.EntityFramework.Migrations.SqlServer --startup-project src/Reference.Data.EntityFramework.Migrations.SqlServer
 ```
 
 Every `add` (and `remove`) auto-refreshes the provider's embedded `schema/norse_reference.sql` — that file is DDL emitted by the scaffolder, never hand-edited.
@@ -153,8 +153,8 @@ Every `add` (and `remove`) auto-refreshes the provider's embedded `schema/norse_
 Platform law (squash migrations until the provider-defaults chassis settles) keeps exactly one `InitialCreate` per provider. A schema change is not a new migration stacked on top — delete the provider's `Migrations/` folder and re-add `InitialCreate`:
 
 ```
-rm src/Reference.Data.Migrations.PostgreSQL/Migrations/*
-dotnet ef migrations add InitialCreate --project src/Reference.Data.Migrations.PostgreSQL --startup-project src/Reference.Data.Migrations.PostgreSQL
+rm src/Reference.Data.EntityFramework.Migrations.PostgreSQL/Migrations/*
+dotnet ef migrations add InitialCreate --project src/Reference.Data.EntityFramework.Migrations.PostgreSQL --startup-project src/Reference.Data.EntityFramework.Migrations.PostgreSQL
 ```
 
 (and the SqlServer twin).

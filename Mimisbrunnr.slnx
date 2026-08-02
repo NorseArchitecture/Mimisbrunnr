@@ -12,9 +12,9 @@
 		<File Path="src/Directory.Build.props" />
 		<File Path="src/Directory.Build.targets" />
 		<Project Path="src/Reference.Data.EntityFramework/Reference.Data.EntityFramework.csproj" />
-		<Project Path="src/Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
-		<Project Path="src/Reference.Data.Migrations.PostgreSQL/Reference.Data.Migrations.PostgreSQL.csproj" />
-		<Project Path="src/Reference.Data.Migrations.SqlServer/Reference.Data.Migrations.SqlServer.csproj" />
+		<Project Path="src/Reference.Data.EntityFramework.Migrations/Reference.Data.EntityFramework.Migrations.csproj" />
+		<Project Path="src/Reference.Data.EntityFramework.Migrations.PostgreSQL/Reference.Data.EntityFramework.Migrations.PostgreSQL.csproj" />
+		<Project Path="src/Reference.Data.EntityFramework.Migrations.SqlServer/Reference.Data.EntityFramework.Migrations.SqlServer.csproj" />
 		<Project Path="src/Reference.Data.Namespaces/Reference.Data.Namespaces.csproj" />
 		<Project Path="src/Reference.Data.Primitives/Reference.Data.Primitives.csproj" />
 	</Folder>
@@ -30,10 +30,10 @@
 	</Folder>
 	<Folder Name="/tests/">
 		<File Path="tests/Directory.Build.props" />
+		<Project Path="tests/Reference.Data.EntityFramework.Migrations.PostgreSQL.Tests/Reference.Data.EntityFramework.Migrations.PostgreSQL.Tests.csproj" />
+		<Project Path="tests/Reference.Data.EntityFramework.Migrations.SqlServer.Tests/Reference.Data.EntityFramework.Migrations.SqlServer.Tests.csproj" />
+		<Project Path="tests/Reference.Data.EntityFramework.Migrations.Tests/Reference.Data.EntityFramework.Migrations.Tests.csproj" />
 		<Project Path="tests/Reference.Data.EntityFramework.Tests/Reference.Data.EntityFramework.Tests.csproj" />
-		<Project Path="tests/Reference.Data.Migrations.PostgreSQL.Tests/Reference.Data.Migrations.PostgreSQL.Tests.csproj" />
-		<Project Path="tests/Reference.Data.Migrations.SqlServer.Tests/Reference.Data.Migrations.SqlServer.Tests.csproj" />
-		<Project Path="tests/Reference.Data.Migrations.Tests/Reference.Data.Migrations.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Namespaces.Tests/Reference.Data.Namespaces.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Primitives.Generator.Tests/Reference.Data.Primitives.Generator.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Primitives.Tests/Reference.Data.Primitives.Tests.csproj" />
