@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="*">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<NorseRef Include="Primitives">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<ProjectReference Include="../../gen/Reference.Data.Primitives.Generator/Reference.Data.Primitives.Generator.csproj" />
+	</ItemGroup>
+</Project>

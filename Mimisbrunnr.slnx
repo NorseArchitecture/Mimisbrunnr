@@ -21,11 +21,17 @@
 		<File Path="tools/Directory.Build.targets" />
 		<Project Path="tools/SeedTool/SeedTool.csproj" />
 	</Folder>
+	<Folder Name="/gen/">
+		<File Path="gen/Directory.Build.props" />
+		<File Path="gen/Directory.Build.targets" />
+		<Project Path="gen/Reference.Data.Primitives.Generator/Reference.Data.Primitives.Generator.csproj" />
+	</Folder>
 	<Folder Name="/tests/">
 		<File Path="tests/Directory.Build.props" />
 		<Project Path="tests/Reference.Data.Migrations.PostgreSQL.Tests/Reference.Data.Migrations.PostgreSQL.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Migrations.SqlServer.Tests/Reference.Data.Migrations.SqlServer.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Migrations.Tests/Reference.Data.Migrations.Tests.csproj" />
+		<Project Path="tests/Reference.Data.Primitives.Generator.Tests/Reference.Data.Primitives.Generator.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Tests/Reference.Data.Tests.csproj" />
 		<Project Path="tests/SeedTool.Tests/SeedTool.Tests.csproj" />
 	</Folder>
