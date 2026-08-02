@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using Norse.Primitives.Ingestion;
-using Norse.Reference.Seeds;
 using Norse.SeedTool.Mappers;
 using Spectre.Console.Cli;
 
@@ -13,11 +12,15 @@ sealed class GenerateUnsdM49Command : Command<GenerateUnsdM49Command.Settings>
 		[CommandArgument(0, "[outputDirectory]")]
 		[Description("Directory to write region.tsv and country-or-area.tsv into.")]
 		public string OutputDirectory { get; init; } = "seeds";
+
+		[CommandArgument(1, "[inputFile]")]
+		[Description("Path to the raw UNSD M49 methodology CSV.")]
+		public string InputFile { get; init; } = Path.Combine("seeds", "raw", "UNSD — Methodology.csv");
 	}
 
 	protected override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
 	{
-		using ITabularReader reader = TabularReader.OpenDelimited(RawDatasets.UnsdM49(), ';');
+		using ITabularReader reader = TabularReader.OpenDelimited(settings.InputFile, ';');
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		var regionPath = Path.Combine(settings.OutputDirectory, "region.tsv");

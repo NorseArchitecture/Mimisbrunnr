@@ -1,18 +1,18 @@
 using Norse.Primitives.Ingestion;
-using Norse.Reference.Seeds;
 using Norse.SeedTool.Mappers;
 
 namespace Norse.SeedTool.Tests;
 
 public sealed class UnsdM49RealFileTests
 {
+	const string RawCsvPath = "../../../../../seeds/raw/UNSD — Methodology.csv";
 	const string RegionTsvPath = "../../../../../seeds/region.tsv";
 	const string CountryOrAreaTsvPath = "../../../../../seeds/country-or-area.tsv";
 
 	[Fact]
 	void Map_produces_the_expected_counts_and_known_rows_from_the_real_source()
 	{
-		using var reader = TabularReader.OpenDelimited(RawDatasets.UnsdM49(), ';');
+		using var reader = TabularReader.OpenDelimited(RawCsvPath, ';');
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		// 5 Regions + 17 Sub-regions + 7 Intermediate Regions, per the approved M49 spec's
@@ -27,7 +27,7 @@ public sealed class UnsdM49RealFileTests
 	[Fact]
 	void Map_emits_byte_identical_tsv_output_against_the_committed_seed_files()
 	{
-		using var reader = TabularReader.OpenDelimited(RawDatasets.UnsdM49(), ';');
+		using var reader = TabularReader.OpenDelimited(RawCsvPath, ';');
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		var regionPath = Path.GetTempFileName();
