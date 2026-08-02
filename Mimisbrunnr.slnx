@@ -15,6 +15,7 @@
 		<Project Path="src/Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
 		<Project Path="src/Reference.Data.Migrations.PostgreSQL/Reference.Data.Migrations.PostgreSQL.csproj" />
 		<Project Path="src/Reference.Data.Migrations.SqlServer/Reference.Data.Migrations.SqlServer.csproj" />
+		<Project Path="src/Reference.Data.Primitives/Reference.Data.Primitives.csproj" />
 	</Folder>
 	<Folder Name="/tools/">
 		<File Path="tools/Directory.Build.props" />
@@ -32,6 +33,7 @@
 		<Project Path="tests/Reference.Data.Migrations.SqlServer.Tests/Reference.Data.Migrations.SqlServer.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Migrations.Tests/Reference.Data.Migrations.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Primitives.Generator.Tests/Reference.Data.Primitives.Generator.Tests.csproj" />
+		<Project Path="tests/Reference.Data.Primitives.Tests/Reference.Data.Primitives.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Tests/Reference.Data.Tests.csproj" />
 		<Project Path="tests/SeedTool.Tests/SeedTool.Tests.csproj" />
 	</Folder>

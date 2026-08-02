@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="../../src/Reference.Data.Primitives/Reference.Data.Primitives.csproj" />
+	</ItemGroup>
+</Project>
