@@ -11,7 +11,7 @@
 	<Folder Name="/src/">
 		<File Path="src/Directory.Build.props" />
 		<File Path="src/Directory.Build.targets" />
-		<Project Path="src/Reference.Data/Reference.Data.csproj" />
+		<Project Path="src/Reference.Data.EntityFramework/Reference.Data.EntityFramework.csproj" />
 		<Project Path="src/Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
 		<Project Path="src/Reference.Data.Migrations.PostgreSQL/Reference.Data.Migrations.PostgreSQL.csproj" />
 		<Project Path="src/Reference.Data.Migrations.SqlServer/Reference.Data.Migrations.SqlServer.csproj" />
@@ -30,13 +30,13 @@
 	</Folder>
 	<Folder Name="/tests/">
 		<File Path="tests/Directory.Build.props" />
+		<Project Path="tests/Reference.Data.EntityFramework.Tests/Reference.Data.EntityFramework.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Migrations.PostgreSQL.Tests/Reference.Data.Migrations.PostgreSQL.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Migrations.SqlServer.Tests/Reference.Data.Migrations.SqlServer.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Migrations.Tests/Reference.Data.Migrations.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Namespaces.Tests/Reference.Data.Namespaces.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Primitives.Generator.Tests/Reference.Data.Primitives.Generator.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Primitives.Tests/Reference.Data.Primitives.Tests.csproj" />
-		<Project Path="tests/Reference.Data.Tests/Reference.Data.Tests.csproj" />
 		<Project Path="tests/SeedTool.Tests/SeedTool.Tests.csproj" />
 	</Folder>
 </Solution>

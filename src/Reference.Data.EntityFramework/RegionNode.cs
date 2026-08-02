@@ -1,6 +1,6 @@
 using Norse.Primitives.Identifiers;
 
-namespace Norse.Reference.Data;
+namespace Norse.Reference.Data.EntityFramework;
 
 /// <summary>
 /// The Region ancestor of a <see cref="CountryOrAreaView"/> graph — an owned JSON document,

@@ -1,4 +1,5 @@
 using Norse.Persistence.EntityFramework.Migrations;
+using Norse.Reference.Data.EntityFramework;
 
 namespace Norse.Reference.Data.Migrations;
 

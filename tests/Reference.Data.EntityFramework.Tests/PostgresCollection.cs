@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Norse.Reference.Data.Tests;
+namespace Norse.Reference.Data.EntityFramework.Tests;
 
 [CollectionDefinition("Postgres")]
 [SuppressMessage("Design", "CA1711:Identifiers should not have incorrect suffix", Justification = "xUnit collection fixture naming convention")]

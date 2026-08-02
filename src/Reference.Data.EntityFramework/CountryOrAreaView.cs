@@ -1,6 +1,6 @@
 using Norse.Primitives.Identifiers;
 
-namespace Norse.Reference.Data;
+namespace Norse.Reference.Data.EntityFramework;
 
 /// <summary>
 /// The denormalized "peer + ancestry" read-model for a <see cref="CountryOrArea"/> — its own scalar

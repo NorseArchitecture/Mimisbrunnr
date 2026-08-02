@@ -16,6 +16,6 @@
 		<NorseRef Include="Primitives.Ingestion">
 			<Repo>Svartalfheim</Repo>
 		</NorseRef>
-		<ProjectReference Include="../Reference.Data/Reference.Data.csproj" />
+		<ProjectReference Include="../Reference.Data.EntityFramework/Reference.Data.EntityFramework.csproj" />
 	</ItemGroup>
 </Project>

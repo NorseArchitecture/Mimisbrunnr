@@ -4,6 +4,7 @@ using Norse.Abstractions.Migrations.Seeding;
 using Norse.Primitives;
 using Norse.Primitives.Identifiers;
 using Norse.Primitives.Ingestion;
+using Norse.Reference.Data.EntityFramework;
 
 namespace Norse.Reference.Data.Migrations;
 

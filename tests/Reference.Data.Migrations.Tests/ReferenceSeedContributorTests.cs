@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Norse.Persistence.EntityFramework;
 using Norse.Persistence.EntityFramework.PostgreSQL;
+using Norse.Reference.Data.EntityFramework;
 using Norse.Reference.Data.Migrations.PostgreSQL;
 
 namespace Norse.Reference.Data.Migrations.Tests;

@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace Norse.Reference.Data.Tests;
+namespace Norse.Reference.Data.EntityFramework.Tests;
 
 [Collection("Postgres")]
 public sealed class PostgresContainerFixtureTests(PostgresContainerFixture fixture)

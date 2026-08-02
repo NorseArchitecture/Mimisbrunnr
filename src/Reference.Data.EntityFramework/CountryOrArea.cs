@@ -4,7 +4,7 @@ using Norse.Abstractions.Backend;
 using Norse.Persistence.EntityFramework;
 using Norse.Primitives.Identifiers;
 
-namespace Norse.Reference.Data;
+namespace Norse.Reference.Data.EntityFramework;
 
 /// <summary>
 /// A country or area per UN M49 with ISO and LDC classifications.

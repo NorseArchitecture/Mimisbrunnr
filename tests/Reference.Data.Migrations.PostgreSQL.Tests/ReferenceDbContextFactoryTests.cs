@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Norse.Reference.Data.EntityFramework;
 
 namespace Norse.Reference.Data.Migrations.PostgreSQL.Tests;
 

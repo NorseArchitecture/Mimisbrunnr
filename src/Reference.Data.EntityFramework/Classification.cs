@@ -1,4 +1,4 @@
-namespace Norse.Reference.Data;
+namespace Norse.Reference.Data.EntityFramework;
 
 /// <summary>
 /// UN classification flags for a <see cref="CountryOrArea"/> — Least Developed Country, Land Locked

@@ -5,7 +5,7 @@ using Norse.Primitives.Identifiers;
 using Norse.Reference.Data.Migrations;
 using Norse.Reference.Data.Migrations.PostgreSQL;
 
-namespace Norse.Reference.Data.Tests;
+namespace Norse.Reference.Data.EntityFramework.Tests;
 
 [Collection("Postgres")]
 public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)

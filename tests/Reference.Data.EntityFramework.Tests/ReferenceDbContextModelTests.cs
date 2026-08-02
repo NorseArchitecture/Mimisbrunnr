@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Norse.Abstractions.Backend;
 
-namespace Norse.Reference.Data.Tests;
+namespace Norse.Reference.Data.EntityFramework.Tests;
 
 public sealed class ReferenceDbContextModelTests
 {

@@ -1,6 +1,6 @@
 using Testcontainers.PostgreSql;
 
-namespace Norse.Reference.Data.Tests;
+namespace Norse.Reference.Data.EntityFramework.Tests;
 
 public sealed class PostgresContainerFixture : IAsyncLifetime
 {

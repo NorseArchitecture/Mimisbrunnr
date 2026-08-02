@@ -1,6 +1,6 @@
 using Norse.Primitives.Identifiers;
 
-namespace Norse.Reference.Data;
+namespace Norse.Reference.Data.EntityFramework;
 
 /// <summary>The Intermediate Region ancestor nested within a <see cref="SubregionNode"/>.</summary>
 public sealed record IntermediateRegionNode

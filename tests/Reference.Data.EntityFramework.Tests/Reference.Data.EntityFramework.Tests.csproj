@@ -5,8 +5,8 @@
 		</NorseDesignRef>
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.*-*" />
 		<PackageReference Include="Testcontainers.PostgreSql" Version="*" />
-		<ProjectReference Include="..\..\src\Reference.Data\Reference.Data.csproj" />
-		<ProjectReference Include="..\..\src\Reference.Data.Migrations\Reference.Data.Migrations.csproj" />
-		<ProjectReference Include="..\..\src\Reference.Data.Migrations.PostgreSQL\Reference.Data.Migrations.PostgreSQL.csproj" />
+		<ProjectReference Include="../../src/Reference.Data.EntityFramework/Reference.Data.EntityFramework.csproj" />
+		<ProjectReference Include="../../src/Reference.Data.Migrations/Reference.Data.Migrations.csproj" />
+		<ProjectReference Include="../../src/Reference.Data.Migrations.PostgreSQL/Reference.Data.Migrations.PostgreSQL.csproj" />
 	</ItemGroup>
 </Project>
