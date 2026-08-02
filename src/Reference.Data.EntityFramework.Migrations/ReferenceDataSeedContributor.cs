@@ -36,6 +36,13 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 			? success.Value
 			: throw new InvalidOperationException($"TSV row {m49Code} is unknown to the generated ISO 3166-1 surface");
 
+	// Embedded (EmbeddedResource, LogicalName = bare file name), not shipped as loose content: a
+	// package-mode consumer (PackageReference, not ProjectReference) never reliably gets loose
+	// content files copied to its own output directory.
+	static Stream OpenSeedStream(string fileName) =>
+		typeof(ReferenceDataSeedContributor).Assembly.GetManifestResourceStream(fileName)
+			?? throw new InvalidOperationException($"Embedded seed resource '{fileName}' was not found.");
+
 	/// <inheritdoc />
 	public string Name => "Norse.Reference";
 
@@ -50,8 +57,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 	{
 		Dictionary<string, RegionRow> regionsByCode = [];
 
-		using var reader = TabularReader.OpenDelimited(
-			Path.Combine(AppContext.BaseDirectory, "seeds", "region.tsv"), '\t');
+		using var reader = TabularReader.OpenDelimited(OpenSeedStream("region.tsv"), '\t');
 		var m49Ordinal = reader.Ordinal("M49Code");
 		var nameOrdinal = reader.Ordinal("Name");
 		var levelOrdinal = reader.Ordinal("Level");
@@ -90,8 +96,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 
 	async Task SeedCountriesAsync(Dictionary<string, RegionRow> regionsByCode, CancellationToken cancellationToken)
 	{
-		using var reader = TabularReader.OpenDelimited(
-			Path.Combine(AppContext.BaseDirectory, "seeds", "country-or-area.tsv"), '\t');
+		using var reader = TabularReader.OpenDelimited(OpenSeedStream("country-or-area.tsv"), '\t');
 		var m49Ordinal = reader.Ordinal("M49Code");
 		var alpha2Ordinal = reader.Ordinal("IsoAlpha2Code");
 		var alpha3Ordinal = reader.Ordinal("IsoAlpha3Code");
