@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Description>Norse.Reference.Data.Namespaces: the generated ReferenceNamespaces constants — the realm's single hand-minted v5 root and every dataset namespace chained from it (sovereign namespace doctrine). Server, tooling, and tests only: the browser never computes what Primitives already bakes.</Description>
+		<!-- Same shared "Norse.Reference" namespace as the rest of the generated surface. -->
+		<RootNamespace>Norse.Reference</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="../../gen/Reference.Data.Primitives.Generator/Reference.Data.Primitives.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+</Project>

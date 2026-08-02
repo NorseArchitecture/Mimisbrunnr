@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<NorseDesignRef Include="Persistence.EntityFramework.Design">
+			<Repo>Urdarbrunnr</Repo>
+		</NorseDesignRef>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.*-*" />
+		<PackageReference Include="Testcontainers.PostgreSql" Version="*" />
+		<ProjectReference Include="../../src/Reference.Data.EntityFramework/Reference.Data.EntityFramework.csproj" />
+		<ProjectReference Include="../../src/Reference.Data.EntityFramework.Migrations/Reference.Data.EntityFramework.Migrations.csproj" />
+		<ProjectReference Include="../../src/Reference.Data.EntityFramework.Migrations.PostgreSQL/Reference.Data.EntityFramework.Migrations.PostgreSQL.csproj" />
+	</ItemGroup>
+</Project>

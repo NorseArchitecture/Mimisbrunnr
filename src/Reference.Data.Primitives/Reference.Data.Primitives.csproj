@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Description>Norse.Reference.Data.Primitives: the browser-supported generated reference-data surface — the IsoCountryCode enum with tri-form (numeric/alpha-2/alpha-3) span parsing and the Iso3166 dataset with precomputed v5 identifiers. Reference-data primitives in Svartálfheim's sense, driven by third-party canonical datasets. No EF, no server types, no namespace constants — ever.</Description>
+		<!-- Generated output lands in "Norse.Reference" (not "Norse.Reference.Data.Primitives") so
+		     cross-context consumers reach IsoCountryCode/Iso3166 without a ".Data.Primitives"
+		     segment — the shared-namespace convention between the two reference realms; the
+		     override keeps IDE0130 aligned for any hand-written file that ever lands here. -->
+		<RootNamespace>Norse.Reference</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="../../seeds/raw/UNSD — Methodology.csv" />
+		<NorseRef Include="Primitives">
+			<Repo>Svartalfheim</Repo>
+		</NorseRef>
+		<ProjectReference Include="../../gen/Reference.Data.Primitives.Generator/Reference.Data.Primitives.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Description>Norse.Reference.Data.Primitives.Generator: the Roslyn IIncrementalGenerator that parses the UNSD M49 raw CSV at compile time and emits the IsoCountryCode enum with its tri-form (numeric/alpha-2/alpha-3) span-based parser and the Iso3166 dataset into Reference.Data.Primitives, and the ReferenceNamespaces constants into Reference.Data.Namespaces — dispatching on compilation assembly name.</Description>
+	</PropertyGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+		<AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+		<NorseRef Include="Abstractions.Emit">
+			<Repo>Asgard</Repo>
+		</NorseRef>
+	</ItemGroup>
+</Project>
