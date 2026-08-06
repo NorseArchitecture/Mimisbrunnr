@@ -5,9 +5,11 @@ using Norse.Primitives.Identifiers;
 namespace Norse.Reference.Data.EntityFramework;
 
 /// <summary>
-/// A geographic region per UN M49 (Region, Subregion, or Intermediate Region).
+/// A geographic region per UN M49 (Region, Subregion, or Intermediate Region). System-versioned: UN
+/// canon changes rarely, and the record of when a region was renamed or re-parented is exactly what
+/// system-time history is for.
 /// </summary>
-public sealed record Region : NorseEntityBase<Region>, INorseEntity<Region>
+public sealed record Region : NorseEntityBase<Region>, INorseEntity<Region>, ITemporalEntity
 {
 	/// <summary>The region identifier.</summary>
 	public required DeterministicGuid Id { get; init; }

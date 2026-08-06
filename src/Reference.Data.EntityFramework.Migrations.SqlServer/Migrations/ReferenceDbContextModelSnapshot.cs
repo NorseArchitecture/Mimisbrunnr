@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Norse.Reference.Data.EntityFramework;
 
 #nullable disable
 
@@ -15,7 +16,7 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260802014858_InitialCreate";
+    public override string LastMigrationId => "20260805233728_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -57,6 +58,16 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                 b.Property<Guid?>("ParentRegionId")
                     .HasColumnType("uniqueidentifier");
 
+                b.Property<DateTime>("SystemPeriodEnd")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodEnd");
+
+                b.Property<DateTime>("SystemPeriodStart")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodStart");
+
                 b.HasKey("Id");
 
                 b.HasIndex("Alpha2")
@@ -71,6 +82,19 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                 b.HasIndex("ParentRegionId");
 
                 b.ToTable("CountryOrArea");
+
+                b
+                    .ToTable(tb => tb.IsTemporal(ttb =>
+                        {
+                            ttb.UseHistoryTable("CountryOrAreaHistory");
+                            ttb
+                                .HasPeriodStart("SystemPeriodStart")
+                                .HasColumnName("SystemPeriodStart");
+                            ttb
+                                .HasPeriodEnd("SystemPeriodEnd")
+                                .HasColumnName("SystemPeriodEnd");
+                        }))
+                    .HasAnnotation("Norse:Temporal", true);
             });
 
         modelBuilder.Entity("Norse.Reference.Data.EntityFramework.Region", b =>
@@ -92,6 +116,16 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                 b.Property<Guid?>("ParentRegionId")
                     .HasColumnType("uniqueidentifier");
 
+                b.Property<DateTime>("SystemPeriodEnd")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodEnd");
+
+                b.Property<DateTime>("SystemPeriodStart")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodStart");
+
                 b.HasKey("Id");
 
                 b.HasIndex("Code")
@@ -100,6 +134,19 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                 b.HasIndex("ParentRegionId");
 
                 b.ToTable("Region");
+
+                b
+                    .ToTable(tb => tb.IsTemporal(ttb =>
+                        {
+                            ttb.UseHistoryTable("RegionHistory");
+                            ttb
+                                .HasPeriodStart("SystemPeriodStart")
+                                .HasColumnName("SystemPeriodStart");
+                            ttb
+                                .HasPeriodEnd("SystemPeriodEnd")
+                                .HasColumnName("SystemPeriodEnd");
+                        }))
+                    .HasAnnotation("Norse:Temporal", true);
             });
 
         modelBuilder.Entity("Norse.Reference.Data.EntityFramework.CountryOrArea", b =>

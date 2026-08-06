@@ -12,7 +12,13 @@ The reference-data store of the Norse Architecture — **`Norse.Reference.Data`*
 
 ## Status
 
-The first seed case — UN M49 reference data (`Region`/`CountryOrArea`) — has its raw-source-to-TSV conversion tooling live: `tools/SeedTool` (a dev-only console app, never packed or AOT-published) reads `seeds/raw/UNSD — Methodology.csv` via Svartálfheim's `Norse.Primitives.Ingestion` and produces the curated `seeds/region.tsv`/`seeds/country-or-area.tsv`, both committed as this realm's real seed data. The EF entities (`Region`, `CountryOrArea`, the `RegionNode` hierarchy), `ReferenceDbContext`, the `InitialCreate` migration, `NorseReferenceMigrationContributor`, and `ReferenceDataSeedContributor` are all live and load these TSVs into `norse_reference` (specced in Glitnir's `docs/Mimisbrunnr/`). Everything beyond this first seed case (currency, language, script, locale, timezone — see the ERD sketch below) remains unconverged; design happens first: brainstorm → spec → plan, recorded in Glitnir's `docs/Mimisbrunnr/`, before any further project is scaffolded here.
+The first seed case — UN M49 reference data (`Region`/`CountryOrArea`) — has its raw-source-to-TSV conversion tooling live: `tools/SeedTool` (a dev-only console app, never packed or AOT-published) reads `seeds/raw/UNSD — Methodology.csv` via Svartálfheim's `Norse.Primitives.Ingestion` and produces the curated `seeds/region.tsv`/`seeds/country-or-area.tsv`, both committed as this realm's real seed data. The EF entities (`Region`, `CountryOrArea`, the `RegionNode` hierarchy), `ReferenceDbContext`, the `InitialCreate` migration (temporal apparatus and all), `NorseReferenceMigrationContributor`, and `ReferenceDataSeedContributor` are all live and load these TSVs into `norse_reference` (specced in Glitnir's `docs/Mimisbrunnr/`). Everything beyond this first seed case (currency, language, script, locale, timezone — see the ERD sketch below) remains unconverged; design happens first: brainstorm → spec → plan, recorded in Glitnir's `docs/Mimisbrunnr/`, before any further project is scaffolded here.
+
+## Reference data is system-versioned (2026-08-05)
+
+Both root tables carry Urðarbrunnr's `ITemporalEntity` marker — and that marker plus a re-issued migration is the *entire* adoption. This repository contains zero hand-written temporal SQL. ISO/UN canon is static data that changes rarely, and the record of when it changed — a country renamed, a code redenominated, a region re-parented — is exactly what system-time history is for. There is no non-temporal side here: the realm holds no secret stores, counters, or prunable runtime state. The owned `CountryOrAreaView` jsonb document graph takes no marker of its own, because owned and JSON-mapped types sit outside the temporal contract and the `view` column's contents ride the owner's history like any other column.
+
+On PostgreSQL the apparatus is a database-owned `system_period`, a `{table}_history` table under a `WITHOUT OVERLAPS` primary key, a `SECURITY DEFINER` versioning function with insert/update/delete triggers bound to it, and a `{table}_timeline` view; on SQL Server it is engine-native `SYSTEM_VERSIONING = ON`. Seeding never versions — an INSERT opens a version, it does not close one — so the TSV seed mints zero history rows and every seeded row is a current version. The first amendment to a seeded row is the first history row.
 
 ## Initial sketch of reference data plan
 ```mermaid
@@ -158,6 +164,10 @@ dotnet ef migrations add InitialCreate --project src/Reference.Data.EntityFramew
 ```
 
 (and the SqlServer twin).
+
+Re-issuing `InitialCreate` mints a new migration id, which orphans any database that already applied the prior one — `MigrateAsync` sees the new id as pending and fails on `CREATE TABLE region` with "relation already exists", naming neither cause nor cure. Drop the `norse_reference` database (or Bifröst's `norse-pg-primary` volume) before the next run; migration plus seed restores full state by construction, which is exactly why this realm can afford the squash posture until the preview-7 V1 memorialization.
+
+Temporal enablement was squashed in exactly that way, so the apparatus arrives at table birth alongside `CREATE TABLE` rather than bolted on by a stacked enable migration — nothing here carries a backfill `UPDATE … SET system_period`. The consequence for tests is worth stating outright: never assert on a migration *name*. The container facts assert on the PostgreSQL catalog (`pg_class`/`pg_proc`/`pg_trigger`), which survives every squash.
 
 ## Why two repos
 
