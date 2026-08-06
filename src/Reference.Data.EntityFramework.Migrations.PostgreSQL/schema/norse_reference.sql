@@ -3,6 +3,30 @@
 -- Changes made here will be overwritten on the next migration.
 -- Run: dotnet ef migrations add <Name> to update this file.
 -- ============================================================
+DO $norse$
+BEGIN
+	IF pg_catalog.current_setting('server_version_num')::int < 190000 THEN
+		RAISE EXCEPTION 'Norse temporal tables require PostgreSQL 19 or later (server_version_num >= 190000); this server reports %.', pg_catalog.current_setting('server_version');
+	END IF;
+	IF pg_catalog.current_schema() <> 'public' THEN
+		RAISE EXCEPTION 'This migration declares no schema for its temporal tables, so the Norse temporal apparatus is qualified with PostgreSQL''s default schema (public), but the session default schema is %. Declare the schema explicitly (HasDefaultSchema or ToTable) so the table and its apparatus cannot land apart.', pg_catalog.current_schema();
+	END IF;
+END $norse$;
+
+
+DO $norse$
+BEGIN
+	IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_extension WHERE extname = 'btree_gist') THEN
+		BEGIN
+			CREATE EXTENSION btree_gist;
+		EXCEPTION
+			WHEN insufficient_privilege THEN
+				RAISE EXCEPTION 'The btree_gist extension is a Norse platform provisioning prerequisite in this environment: the migration role may not CREATE EXTENSION. Install btree_gist out-of-band, then rerun this migration.';
+		END;
+	END IF;
+END $norse$;
+
+
 CREATE TABLE region (
     id uuid NOT NULL,
     code integer NOT NULL,
@@ -12,6 +36,63 @@ CREATE TABLE region (
     CONSTRAINT pk_region PRIMARY KEY (id),
     CONSTRAINT fk_region_region_parent_region_id FOREIGN KEY (parent_region_id) REFERENCES region (id)
 );
+
+
+ALTER TABLE "public"."region" ADD COLUMN system_period tstzrange NOT NULL;
+
+
+CREATE TABLE "public"."region_history" (
+	"id" uuid NOT NULL,
+	"code" integer,
+	"name" character varying(256),
+	"level" smallint,
+	"parent_region_id" uuid,
+	"system_period" tstzrange NOT NULL,
+	PRIMARY KEY ("id", "system_period" WITHOUT OVERLAPS)
+);
+
+
+CREATE FUNCTION "public"."region_versioning"() RETURNS trigger
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog AS $norse$
+DECLARE ts timestamptz;
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		IF NEW.system_period IS NOT NULL THEN
+			RAISE EXCEPTION 'system_period on "%.%" is database-owned; it cannot be written by clients.', TG_TABLE_SCHEMA, TG_TABLE_NAME;
+		END IF;
+		NEW.system_period := pg_catalog.tstzrange(pg_catalog.clock_timestamp(), 'infinity');
+		RETURN NEW;
+	END IF;
+	IF TG_OP = 'UPDATE' AND NEW.system_period IS DISTINCT FROM OLD.system_period THEN
+		RAISE EXCEPTION 'system_period on "%.%" is database-owned; it cannot be written by clients.', TG_TABLE_SCHEMA, TG_TABLE_NAME;
+	END IF;
+	IF TG_OP = 'UPDATE' AND ROW(OLD."id", OLD."code", OLD."name", OLD."level", OLD."parent_region_id") IS NOT DISTINCT FROM ROW(NEW."id", NEW."code", NEW."name", NEW."level", NEW."parent_region_id") THEN
+		RETURN NEW;
+	END IF;
+	ts := greatest(pg_catalog.clock_timestamp(), pg_catalog.lower(OLD.system_period) + interval '1 microsecond');
+	INSERT INTO "public"."region_history" ("id", "code", "name", "level", "parent_region_id", system_period)
+		VALUES (OLD."id", OLD."code", OLD."name", OLD."level", OLD."parent_region_id", pg_catalog.tstzrange(pg_catalog.lower(OLD.system_period), ts));
+	IF TG_OP = 'UPDATE' THEN
+		NEW.system_period := pg_catalog.tstzrange(ts, 'infinity');
+		RETURN NEW;
+	END IF;
+	RETURN OLD;
+END $norse$;
+REVOKE EXECUTE ON FUNCTION "public"."region_versioning"() FROM PUBLIC;
+
+
+CREATE TRIGGER "region_versioning_insert" BEFORE INSERT ON "public"."region"
+	FOR EACH ROW EXECUTE FUNCTION "public"."region_versioning"();
+CREATE TRIGGER "region_versioning_update" BEFORE UPDATE ON "public"."region"
+	FOR EACH ROW EXECUTE FUNCTION "public"."region_versioning"();
+CREATE TRIGGER "region_versioning_delete" BEFORE DELETE ON "public"."region"
+	FOR EACH ROW EXECUTE FUNCTION "public"."region_versioning"();
+
+
+CREATE VIEW "public"."region_timeline" AS
+SELECT "id", "code", "name", "level", "parent_region_id", system_period FROM "public"."region"
+UNION ALL
+SELECT "id", "code", "name", "level", "parent_region_id", system_period FROM "public"."region_history";
 
 
 CREATE TABLE country_or_area (
@@ -26,6 +107,66 @@ CREATE TABLE country_or_area (
     CONSTRAINT pk_country_or_area PRIMARY KEY (id),
     CONSTRAINT fk_country_or_area_region_parent_region_id FOREIGN KEY (parent_region_id) REFERENCES region (id)
 );
+
+
+ALTER TABLE "public"."country_or_area" ADD COLUMN system_period tstzrange NOT NULL;
+
+
+CREATE TABLE "public"."country_or_area_history" (
+	"id" uuid NOT NULL,
+	"code" integer,
+	"alpha2" character varying(2),
+	"alpha3" character varying(3),
+	"name" character varying(256),
+	"parent_region_id" uuid,
+	"classification" smallint,
+	"view" jsonb,
+	"system_period" tstzrange NOT NULL,
+	PRIMARY KEY ("id", "system_period" WITHOUT OVERLAPS)
+);
+
+
+CREATE FUNCTION "public"."country_or_area_versioning"() RETURNS trigger
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog AS $norse$
+DECLARE ts timestamptz;
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		IF NEW.system_period IS NOT NULL THEN
+			RAISE EXCEPTION 'system_period on "%.%" is database-owned; it cannot be written by clients.', TG_TABLE_SCHEMA, TG_TABLE_NAME;
+		END IF;
+		NEW.system_period := pg_catalog.tstzrange(pg_catalog.clock_timestamp(), 'infinity');
+		RETURN NEW;
+	END IF;
+	IF TG_OP = 'UPDATE' AND NEW.system_period IS DISTINCT FROM OLD.system_period THEN
+		RAISE EXCEPTION 'system_period on "%.%" is database-owned; it cannot be written by clients.', TG_TABLE_SCHEMA, TG_TABLE_NAME;
+	END IF;
+	IF TG_OP = 'UPDATE' AND ROW(OLD."id", OLD."code", OLD."alpha2", OLD."alpha3", OLD."name", OLD."parent_region_id", OLD."classification", OLD."view") IS NOT DISTINCT FROM ROW(NEW."id", NEW."code", NEW."alpha2", NEW."alpha3", NEW."name", NEW."parent_region_id", NEW."classification", NEW."view") THEN
+		RETURN NEW;
+	END IF;
+	ts := greatest(pg_catalog.clock_timestamp(), pg_catalog.lower(OLD.system_period) + interval '1 microsecond');
+	INSERT INTO "public"."country_or_area_history" ("id", "code", "alpha2", "alpha3", "name", "parent_region_id", "classification", "view", system_period)
+		VALUES (OLD."id", OLD."code", OLD."alpha2", OLD."alpha3", OLD."name", OLD."parent_region_id", OLD."classification", OLD."view", pg_catalog.tstzrange(pg_catalog.lower(OLD.system_period), ts));
+	IF TG_OP = 'UPDATE' THEN
+		NEW.system_period := pg_catalog.tstzrange(ts, 'infinity');
+		RETURN NEW;
+	END IF;
+	RETURN OLD;
+END $norse$;
+REVOKE EXECUTE ON FUNCTION "public"."country_or_area_versioning"() FROM PUBLIC;
+
+
+CREATE TRIGGER "country_or_area_versioning_insert" BEFORE INSERT ON "public"."country_or_area"
+	FOR EACH ROW EXECUTE FUNCTION "public"."country_or_area_versioning"();
+CREATE TRIGGER "country_or_area_versioning_update" BEFORE UPDATE ON "public"."country_or_area"
+	FOR EACH ROW EXECUTE FUNCTION "public"."country_or_area_versioning"();
+CREATE TRIGGER "country_or_area_versioning_delete" BEFORE DELETE ON "public"."country_or_area"
+	FOR EACH ROW EXECUTE FUNCTION "public"."country_or_area_versioning"();
+
+
+CREATE VIEW "public"."country_or_area_timeline" AS
+SELECT "id", "code", "alpha2", "alpha3", "name", "parent_region_id", "classification", "view", system_period FROM "public"."country_or_area"
+UNION ALL
+SELECT "id", "code", "alpha2", "alpha3", "name", "parent_region_id", "classification", "view", system_period FROM "public"."country_or_area_history";
 
 
 CREATE UNIQUE INDEX ix_country_or_area_alpha2 ON country_or_area (alpha2);

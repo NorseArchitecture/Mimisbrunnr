@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Norse.Reference.Data.EntityFramework.Migrations.SqlServer.Migrations;
 
 /// <inheritdoc />
-public partial class _20260802014858_InitialCreate : Migration
+public partial class _20260805233728_InitialCreate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,11 @@ public partial class _20260802014858_InitialCreate : Migration
                 Code = table.Column<int>(type: "int", nullable: false),
                 Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                 Level = table.Column<byte>(type: "tinyint", nullable: false),
-                ParentRegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                ParentRegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                SystemPeriodEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    .Annotation("SqlServer:TemporalIsPeriodEndColumn", true),
+                SystemPeriodStart = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    .Annotation("SqlServer:TemporalIsPeriodStartColumn", true)
             },
             constraints: table =>
             {
@@ -29,7 +33,12 @@ public partial class _20260802014858_InitialCreate : Migration
                     column: x => x.ParentRegionId,
                     principalTable: "Region",
                     principalColumn: "Id");
-            });
+            })
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalHistoryTableName", "RegionHistory")
+            .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "SystemPeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "SystemPeriodStart");
 
         migrationBuilder.CreateTable(
             name: "CountryOrArea",
@@ -42,6 +51,10 @@ public partial class _20260802014858_InitialCreate : Migration
                 Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                 ParentRegionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                 Classification = table.Column<byte>(type: "tinyint", nullable: false),
+                SystemPeriodEnd = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    .Annotation("SqlServer:TemporalIsPeriodEndColumn", true),
+                SystemPeriodStart = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    .Annotation("SqlServer:TemporalIsPeriodStartColumn", true),
                 View = table.Column<string>(type: "json", nullable: false)
             },
             constraints: table =>
@@ -52,7 +65,12 @@ public partial class _20260802014858_InitialCreate : Migration
                     column: x => x.ParentRegionId,
                     principalTable: "Region",
                     principalColumn: "Id");
-            });
+            })
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalHistoryTableName", "CountryOrAreaHistory")
+            .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "SystemPeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "SystemPeriodStart");
 
         migrationBuilder.CreateIndex(
             name: "IX_CountryOrArea_Alpha2",
@@ -93,9 +111,19 @@ public partial class _20260802014858_InitialCreate : Migration
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            name: "CountryOrArea");
+            name: "CountryOrArea")
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalHistoryTableName", "CountryOrAreaHistory")
+            .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "SystemPeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "SystemPeriodStart");
 
         migrationBuilder.DropTable(
-            name: "Region");
+            name: "Region")
+            .Annotation("SqlServer:IsTemporal", true)
+            .Annotation("SqlServer:TemporalHistoryTableName", "RegionHistory")
+            .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+            .Annotation("SqlServer:TemporalPeriodEndColumnName", "SystemPeriodEnd")
+            .Annotation("SqlServer:TemporalPeriodStartColumnName", "SystemPeriodStart");
     }
 }

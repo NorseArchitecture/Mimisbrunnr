@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Norse.Reference.Data.EntityFramework.Migrations.PostgreSQL.Migrations;
 
 /// <inheritdoc />
-public partial class _20260802014848_InitialCreate : Migration
+public partial class _20260805233717_InitialCreate : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,7 +29,8 @@ public partial class _20260802014848_InitialCreate : Migration
                     column: x => x.parent_region_id,
                     principalTable: "region",
                     principalColumn: "id");
-            });
+            })
+            .Annotation("Norse:Temporal", true);
 
         migrationBuilder.CreateTable(
             name: "country_or_area",
@@ -52,7 +53,8 @@ public partial class _20260802014848_InitialCreate : Migration
                     column: x => x.parent_region_id,
                     principalTable: "region",
                     principalColumn: "id");
-            });
+            })
+            .Annotation("Norse:Temporal", true);
 
         migrationBuilder.CreateIndex(
             name: "ix_country_or_area_alpha2",
@@ -93,9 +95,11 @@ public partial class _20260802014848_InitialCreate : Migration
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            name: "country_or_area");
+            name: "country_or_area")
+            .Annotation("Norse:Temporal", true);
 
         migrationBuilder.DropTable(
-            name: "region");
+            name: "region")
+            .Annotation("Norse:Temporal", true);
     }
 }

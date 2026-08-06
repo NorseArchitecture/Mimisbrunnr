@@ -3,19 +3,24 @@
 -- Changes made here will be overwritten on the next migration.
 -- Run: dotnet ef migrations add <Name> to update this file.
 -- ============================================================
-CREATE TABLE [Region] (
+DECLARE @historyTableSchema nvarchar(max) = QUOTENAME(SCHEMA_NAME())
+EXEC(N'CREATE TABLE [Region] (
     [Id] uniqueidentifier NOT NULL,
     [Code] int NOT NULL,
     [Name] nvarchar(256) NOT NULL,
     [Level] tinyint NOT NULL,
     [ParentRegionId] uniqueidentifier NULL,
+    [SystemPeriodEnd] datetime2 GENERATED ALWAYS AS ROW END HIDDEN NOT NULL,
+    [SystemPeriodStart] datetime2 GENERATED ALWAYS AS ROW START HIDDEN NOT NULL,
     CONSTRAINT [PK_Region] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_Region_Region_ParentRegionId] FOREIGN KEY ([ParentRegionId]) REFERENCES [Region] ([Id])
-);
+    CONSTRAINT [FK_Region_Region_ParentRegionId] FOREIGN KEY ([ParentRegionId]) REFERENCES [Region] ([Id]),
+    PERIOD FOR SYSTEM_TIME([SystemPeriodStart], [SystemPeriodEnd])
+) WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = ' + @historyTableSchema + N'.[RegionHistory]))');
 GO
 
 
-CREATE TABLE [CountryOrArea] (
+DECLARE @historyTableSchema1 nvarchar(max) = QUOTENAME(SCHEMA_NAME())
+EXEC(N'CREATE TABLE [CountryOrArea] (
     [Id] uniqueidentifier NOT NULL,
     [Code] int NOT NULL,
     [Alpha2] nchar(2) NOT NULL,
@@ -23,10 +28,13 @@ CREATE TABLE [CountryOrArea] (
     [Name] nvarchar(256) NOT NULL,
     [ParentRegionId] uniqueidentifier NULL,
     [Classification] tinyint NOT NULL,
+    [SystemPeriodEnd] datetime2 GENERATED ALWAYS AS ROW END HIDDEN NOT NULL,
+    [SystemPeriodStart] datetime2 GENERATED ALWAYS AS ROW START HIDDEN NOT NULL,
     [View] json NOT NULL,
     CONSTRAINT [PK_CountryOrArea] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_CountryOrArea_Region_ParentRegionId] FOREIGN KEY ([ParentRegionId]) REFERENCES [Region] ([Id])
-);
+    CONSTRAINT [FK_CountryOrArea_Region_ParentRegionId] FOREIGN KEY ([ParentRegionId]) REFERENCES [Region] ([Id]),
+    PERIOD FOR SYSTEM_TIME([SystemPeriodStart], [SystemPeriodEnd])
+) WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = ' + @historyTableSchema1 + N'.[CountryOrAreaHistory]))');
 GO
 
 

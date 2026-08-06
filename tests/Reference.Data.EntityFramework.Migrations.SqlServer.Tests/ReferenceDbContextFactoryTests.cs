@@ -29,6 +29,21 @@ public sealed class ReferenceDbContextFactoryTests
 		entityType.FindProperty(nameof(CountryOrArea.Code))!.GetColumnType().ShouldBe("int");
 	}
 
+	[Theory]
+	[InlineData(typeof(Region))]
+	[InlineData(typeof(CountryOrArea))]
+	void CreateDbContext_realizes_the_temporal_stamp_as_engine_native_system_versioning(Type entityType)
+	{
+		// The realm's only proof that the realization hook reaches this context at all: ReferenceDbContext
+		// inherits NorseDbContext, which reads the hook off its own options, so nothing here is wired by
+		// hand. Postgres supplies no hook — it realizes temporality in migration SQL generation, never in
+		// the model — so SQL Server is where a missing wire would show.
+		ReferenceDbContextFactory factory = new();
+		using var context = factory.CreateDbContext([]);
+
+		context.Model.FindEntityType(entityType)!.IsTemporal().ShouldBeTrue();
+	}
+
 	[Fact]
 	void CreateDbContext_forces_no_tracking()
 	{

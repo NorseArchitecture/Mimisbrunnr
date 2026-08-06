@@ -7,9 +7,14 @@ using Norse.Primitives.Identifiers;
 namespace Norse.Reference.Data.EntityFramework;
 
 /// <summary>
-/// A country or area per UN M49 with ISO and LDC classifications.
+/// A country or area per UN M49 with ISO and LDC classifications. System-versioned: ISO/UN canon is
+/// static data that changes rarely — a renamed country, a redenominated code, a re-parented region —
+/// and the record of when it changed is exactly what system-time history is for. The owned
+/// <see cref="View"/> document takes no marker of its own: JSON-mapped types are outside the temporal
+/// contract, and the column's contents ride this row's history like any other column.
 /// </summary>
-public sealed record CountryOrArea : NorseEntityBase<CountryOrArea>, INorseEntity<CountryOrArea>, IViewBearer<CountryOrAreaView>
+public sealed record CountryOrArea :
+	NorseEntityBase<CountryOrArea>, INorseEntity<CountryOrArea>, IViewBearer<CountryOrAreaView>, ITemporalEntity
 {
 	/// <summary>The country-or-area identifier.</summary>
 	public required DeterministicGuid Id { get; init; }

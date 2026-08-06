@@ -2,17 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Norse.Reference.Data.EntityFramework;
 
 #nullable disable
 
-namespace Norse.Reference.Data.EntityFramework.Migrations.PostgreSQL.Migrations;
+namespace Norse.Reference.Data.EntityFramework.Migrations.SqlServer.Migrations;
 
 [DbContext(typeof(ReferenceDbContext))]
-[Migration("20260802014848_InitialCreate")]
-partial class _20260802014848_InitialCreate
+[Migration("20260805233728_InitialCreate")]
+partial class _20260805233728_InitialCreate
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,110 +21,137 @@ partial class _20260802014848_InitialCreate
 #pragma warning disable 612, 618
         modelBuilder
             .HasAnnotation("ProductVersion", "11.0.0-preview.6.26359.118")
-            .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
         modelBuilder.Entity("Norse.Reference.Data.EntityFramework.CountryOrArea", b =>
             {
                 b.Property<Guid>("Id")
-                    .HasColumnType("uuid")
-                    .HasColumnName("id");
+                    .HasColumnType("uniqueidentifier");
 
                 b.Property<string>("Alpha2")
                     .IsRequired()
                     .HasMaxLength(2)
-                    .HasColumnType("character varying(2)")
-                    .HasColumnName("alpha2");
+                    .HasColumnType("nchar(2)")
+                    .IsFixedLength();
 
                 b.Property<string>("Alpha3")
                     .IsRequired()
                     .HasMaxLength(3)
-                    .HasColumnType("character varying(3)")
-                    .HasColumnName("alpha3");
+                    .HasColumnType("nchar(3)")
+                    .IsFixedLength();
 
                 b.Property<byte>("Classification")
-                    .HasColumnType("smallint")
-                    .HasColumnName("classification");
+                    .HasColumnType("tinyint");
 
                 b.Property<int>("Code")
-                    .HasColumnType("integer")
-                    .HasColumnName("code");
+                    .HasColumnType("int");
 
                 b.Property<string>("Name")
                     .IsRequired()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)")
-                    .HasColumnName("name");
+                    .HasColumnType("nvarchar(256)");
 
                 b.Property<Guid?>("ParentRegionId")
-                    .HasColumnType("uuid")
-                    .HasColumnName("parent_region_id");
+                    .HasColumnType("uniqueidentifier");
 
-                b.HasKey("Id")
-                    .HasName("pk_country_or_area");
+                b.Property<DateTime>("SystemPeriodEnd")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodEnd");
+
+                b.Property<DateTime>("SystemPeriodStart")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodStart");
+
+                b.HasKey("Id");
 
                 b.HasIndex("Alpha2")
-                    .IsUnique()
-                    .HasDatabaseName("ix_country_or_area_alpha2");
+                    .IsUnique();
 
                 b.HasIndex("Alpha3")
-                    .IsUnique()
-                    .HasDatabaseName("ix_country_or_area_alpha3");
+                    .IsUnique();
 
                 b.HasIndex("Code")
-                    .IsUnique()
-                    .HasDatabaseName("ix_country_or_area_code");
+                    .IsUnique();
 
-                b.HasIndex("ParentRegionId")
-                    .HasDatabaseName("ix_country_or_area_parent_region_id");
+                b.HasIndex("ParentRegionId");
 
-                b.ToTable("country_or_area");
+                b.ToTable("CountryOrArea");
+
+                b
+                    .ToTable(tb => tb.IsTemporal(ttb =>
+                        {
+                            ttb.UseHistoryTable("CountryOrAreaHistory");
+                            ttb
+                                .HasPeriodStart("SystemPeriodStart")
+                                .HasColumnName("SystemPeriodStart");
+                            ttb
+                                .HasPeriodEnd("SystemPeriodEnd")
+                                .HasColumnName("SystemPeriodEnd");
+                        }))
+                    .HasAnnotation("Norse:Temporal", true);
             });
 
         modelBuilder.Entity("Norse.Reference.Data.EntityFramework.Region", b =>
             {
                 b.Property<Guid>("Id")
-                    .HasColumnType("uuid")
-                    .HasColumnName("id");
+                    .HasColumnType("uniqueidentifier");
 
                 b.Property<int>("Code")
-                    .HasColumnType("integer")
-                    .HasColumnName("code");
+                    .HasColumnType("int");
 
                 b.Property<byte>("Level")
-                    .HasColumnType("smallint")
-                    .HasColumnName("level");
+                    .HasColumnType("tinyint");
 
                 b.Property<string>("Name")
                     .IsRequired()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)")
-                    .HasColumnName("name");
+                    .HasColumnType("nvarchar(256)");
 
                 b.Property<Guid?>("ParentRegionId")
-                    .HasColumnType("uuid")
-                    .HasColumnName("parent_region_id");
+                    .HasColumnType("uniqueidentifier");
 
-                b.HasKey("Id")
-                    .HasName("pk_region");
+                b.Property<DateTime>("SystemPeriodEnd")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodEnd");
+
+                b.Property<DateTime>("SystemPeriodStart")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("SystemPeriodStart");
+
+                b.HasKey("Id");
 
                 b.HasIndex("Code")
-                    .IsUnique()
-                    .HasDatabaseName("ix_region_code");
+                    .IsUnique();
 
-                b.HasIndex("ParentRegionId")
-                    .HasDatabaseName("ix_region_parent_region_id");
+                b.HasIndex("ParentRegionId");
 
-                b.ToTable("region");
+                b.ToTable("Region");
+
+                b
+                    .ToTable(tb => tb.IsTemporal(ttb =>
+                        {
+                            ttb.UseHistoryTable("RegionHistory");
+                            ttb
+                                .HasPeriodStart("SystemPeriodStart")
+                                .HasColumnName("SystemPeriodStart");
+                            ttb
+                                .HasPeriodEnd("SystemPeriodEnd")
+                                .HasColumnName("SystemPeriodEnd");
+                        }))
+                    .HasAnnotation("Norse:Temporal", true);
             });
 
         modelBuilder.Entity("Norse.Reference.Data.EntityFramework.CountryOrArea", b =>
             {
                 b.HasOne("Norse.Reference.Data.EntityFramework.Region", "ParentRegion")
                     .WithMany("CountriesOrAreas")
-                    .HasForeignKey("ParentRegionId")
-                    .HasConstraintName("fk_country_or_area_region_parent_region_id");
+                    .HasForeignKey("ParentRegionId");
 
                 b.OwnsOne("Norse.Reference.Data.EntityFramework.CountryOrAreaView", "View", b1 =>
                     {
@@ -146,11 +174,11 @@ partial class _20260802014848_InitialCreate
 
                         b1.HasKey("CountryOrAreaId");
 
-                        b1.ToTable("country_or_area");
+                        b1.ToTable("CountryOrArea");
 
                         b1
-                            .ToJson("view")
-                            .HasColumnType("jsonb");
+                            .ToJson("View")
+                            .HasColumnType("json");
 
                         b1.WithOwner()
                             .HasForeignKey("CountryOrAreaId");
@@ -169,7 +197,7 @@ partial class _20260802014848_InitialCreate
 
                                 b2.HasKey("CountryOrAreaViewCountryOrAreaId");
 
-                                b2.ToTable("country_or_area");
+                                b2.ToTable("CountryOrArea");
 
                                 b2.WithOwner()
                                     .HasForeignKey("CountryOrAreaViewCountryOrAreaId");
@@ -188,7 +216,7 @@ partial class _20260802014848_InitialCreate
 
                                         b3.HasKey("RegionNodeCountryOrAreaViewCountryOrAreaId");
 
-                                        b3.ToTable("country_or_area");
+                                        b3.ToTable("CountryOrArea");
 
                                         b3.WithOwner()
                                             .HasForeignKey("RegionNodeCountryOrAreaViewCountryOrAreaId");
@@ -207,7 +235,7 @@ partial class _20260802014848_InitialCreate
 
                                                 b4.HasKey("SubregionNodeRegionNodeCountryOrAreaViewCountryOrAreaId");
 
-                                                b4.ToTable("country_or_area");
+                                                b4.ToTable("CountryOrArea");
 
                                                 b4.WithOwner()
                                                     .HasForeignKey("SubregionNodeRegionNodeCountryOrAreaViewCountryOrAreaId");
@@ -232,8 +260,7 @@ partial class _20260802014848_InitialCreate
             {
                 b.HasOne("Norse.Reference.Data.EntityFramework.Region", "ParentRegion")
                     .WithMany("ChildRegions")
-                    .HasForeignKey("ParentRegionId")
-                    .HasConstraintName("fk_region_region_parent_region_id");
+                    .HasForeignKey("ParentRegionId");
 
                 b.Navigation("ParentRegion");
             });

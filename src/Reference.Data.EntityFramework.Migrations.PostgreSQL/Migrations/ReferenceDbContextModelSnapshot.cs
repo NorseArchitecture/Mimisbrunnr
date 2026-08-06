@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Norse.Reference.Data.EntityFramework;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -15,7 +16,7 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20260802014848_InitialCreate";
+    public override string LastMigrationId => "20260805233717_InitialCreate";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -81,6 +82,8 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                     .HasDatabaseName("ix_country_or_area_parent_region_id");
 
                 b.ToTable("country_or_area");
+
+                b.HasAnnotation("Norse:Temporal", true);
             });
 
         modelBuilder.Entity("Norse.Reference.Data.EntityFramework.Region", b =>
@@ -118,6 +121,8 @@ partial class ReferenceDbContextModelSnapshot : ModelSnapshot
                     .HasDatabaseName("ix_region_parent_region_id");
 
                 b.ToTable("region");
+
+                b.HasAnnotation("Norse:Temporal", true);
             });
 
         modelBuilder.Entity("Norse.Reference.Data.EntityFramework.CountryOrArea", b =>
