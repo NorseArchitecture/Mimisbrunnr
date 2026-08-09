@@ -24,8 +24,10 @@ public sealed class Iso3166EmissionTests
 	void Emits_the_iso3166_dataset_with_a_v5_guid_for_the_us_row()
 	{
 		var generated = GeneratorTestHarness.Run(Csv);
-		generated.ShouldContain("sealed record Iso3166Country(IsoCountryCode Code, string Alpha2, string Alpha3, string Name, global::System.Guid Id)");
-		generated.ShouldContain("new(IsoCountryCode.UnitedStatesOfAmerica, \"US\", \"USA\", \"United States of America\",");
+		generated.ShouldContain(
+			"sealed record Iso3166Country(IsoCountryCode Code, string Alpha2, string Alpha3, string Name, global::System.Guid Id)");
+		generated.ShouldContain(
+			"new(IsoCountryCode.UnitedStatesOfAmerica, \"US\", \"USA\", \"United States of America\",");
 		_v5GuidLiteral.IsMatch(generated).ShouldBeTrue();
 		generated.ShouldNotContain("ChannelIslands");
 	}
@@ -34,7 +36,8 @@ public sealed class Iso3166EmissionTests
 	void Emits_the_ids_frozen_dictionary()
 	{
 		var generated = GeneratorTestHarness.Run(Csv);
-		generated.ShouldContain("static readonly global::System.Collections.Frozen.FrozenDictionary<IsoCountryCode, global::System.Guid> Ids");
+		generated.ShouldContain(
+			"static readonly global::System.Collections.Frozen.FrozenDictionary<IsoCountryCode, global::System.Guid> Ids");
 		generated.ShouldContain("[IsoCountryCode.UnitedStatesOfAmerica] = new global::System.Guid(\"");
 	}
 

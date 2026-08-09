@@ -4,11 +4,11 @@ using System.Text;
 namespace Norse.Reference.Data.Primitives.Generator;
 
 /// <summary>
-/// Deterministic identifier rule that turns a UNSD English short name into a valid C# enum member
-/// name: Unicode-normalize and strip combining marks (<c>Côte d'Ivoire</c> → <c>Cote d'Ivoire</c>),
-/// drop any parenthesized segment (<c>Bolivia (Plurinational State of)</c> → <c>Bolivia</c>), then
-/// PascalCase every remaining alphanumeric run, treating any other character as a word boundary.
-/// Collision detection lives with the caller — this type only sanitizes one name at a time.
+///     Deterministic identifier rule that turns a UNSD English short name into a valid C# enum member
+///     name: Unicode-normalize and strip combining marks (<c>Côte d'Ivoire</c> → <c>Cote d'Ivoire</c>),
+///     drop any parenthesized segment (<c>Bolivia (Plurinational State of)</c> → <c>Bolivia</c>), then
+///     PascalCase every remaining alphanumeric run, treating any other character as a word boundary.
+///     Collision detection lives with the caller — this type only sanitizes one name at a time.
 /// </summary>
 static class NameSanitizer
 {
@@ -72,7 +72,9 @@ static class NameSanitizer
 				continue;
 			}
 
-			sb.Append(startOfWord ? char.ToUpperInvariant(c) : char.ToLowerInvariant(c));
+			sb.Append(startOfWord ?
+				char.ToUpperInvariant(c) :
+				char.ToLowerInvariant(c));
 			startOfWord = false;
 		}
 

@@ -5,18 +5,18 @@ using Microsoft.CodeAnalysis.Text;
 namespace Norse.Reference.Data.Primitives.Generator.Tests;
 
 /// <summary>
-/// Shared <see cref="GeneratorDriver"/> harness: an in-memory compilation plus an in-memory
-/// <see cref="AdditionalText"/> carrying the CSV under test, mirroring the pattern established by
-/// Urdarbrunnr's <c>Persistence.EntityFramework.Generator.Tests</c> — the only difference is this
-/// generator reads an <see cref="AdditionalText"/> rather than syntax trees.
+///     Shared <see cref="GeneratorDriver" /> harness: an in-memory compilation plus an in-memory
+///     <see cref="AdditionalText" /> carrying the CSV under test, mirroring the pattern established by
+///     Urdarbrunnr's <c>Persistence.EntityFramework.Generator.Tests</c> — the only difference is this
+///     generator reads an <see cref="AdditionalText" /> rather than syntax trees.
 /// </summary>
 static class GeneratorTestHarness
 {
-	/// <summary>Runs the generator over <paramref name="csv"/> and returns the emitted source text.</summary>
+	/// <summary>Runs the generator over <paramref name="csv" /> and returns the emitted source text.</summary>
 	internal static string Run(string csv, string assemblyName = "Norse.Reference.Data.Primitives") =>
 		string.Join("\n", Execute(csv, assemblyName).Result.GeneratedTrees.Select(tree => tree.ToString()));
 
-	/// <summary>Runs the generator over <paramref name="csv"/> and returns the resulting compilation.</summary>
+	/// <summary>Runs the generator over <paramref name="csv" /> and returns the resulting compilation.</summary>
 	internal static Compilation RunAndCompile(string csv, string assemblyName = "Norse.Reference.Data.Primitives") =>
 		Execute(csv, assemblyName).OutputCompilation;
 
@@ -35,7 +35,8 @@ static class GeneratorTestHarness
 			additionalTexts: [new InMemoryAdditionalText(csv)],
 			parseOptions: parseOptions);
 
-		driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _, TestContext.Current.CancellationToken);
+		driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _,
+			TestContext.Current.CancellationToken);
 		return (outputCompilation, driver.GetRunResult());
 	}
 
@@ -44,8 +45,9 @@ static class GeneratorTestHarness
 		var runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location)!;
 		IList<MetadataReference> references =
 		[
-			.. Directory.GetFiles(runtimeDir, "*.dll").Select(path => (MetadataReference)MetadataReference.CreateFromFile(path)),
-			MetadataReference.CreateFromFile(typeof(global::Norse.Primitives.Result<>).Assembly.Location)
+			.. Directory.GetFiles(runtimeDir, "*.dll")
+				.Select(path => (MetadataReference)MetadataReference.CreateFromFile(path)),
+			MetadataReference.CreateFromFile(typeof(Norse.Primitives.Result<>).Assembly.Location)
 		];
 
 		// A real net11.0 ImplicitUsings=enable classlib's actual implicit-usings set -- not a

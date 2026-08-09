@@ -6,11 +6,11 @@ using Norse.Abstractions.Emit;
 namespace Norse.Reference.Data.Primitives.Generator;
 
 /// <summary>
-/// Emits the generated <c>Norse.Reference.Iso3166Country</c> and <c>Iso3166</c> dataset — every ISO
-/// 3166-1 country/area row precomputed with a deterministic RFC 9562 version 5 identifier chained
-/// from the realm's hand-minted root namespace (spec §6). The namespace constants themselves are
-/// emitted separately by <see cref="NamespacesEmitter"/>, into the dedicated
-/// <c>Norse.Reference.Data.Namespaces</c> assembly.
+///     Emits the generated <c>Norse.Reference.Iso3166Country</c> and <c>Iso3166</c> dataset — every ISO
+///     3166-1 country/area row precomputed with a deterministic RFC 9562 version 5 identifier chained
+///     from the realm's hand-minted root namespace (spec §6). The namespace constants themselves are
+///     emitted separately by <see cref="NamespacesEmitter" />, into the dedicated
+///     <c>Norse.Reference.Data.Namespaces</c> assembly.
 /// </summary>
 static class Iso3166Emitter
 {
@@ -19,15 +19,16 @@ static class Iso3166Emitter
 	/// <summary>Renders the full generated source text for one CSV pass.</summary>
 	/// <param name="members">Sanitized, ISO-bearing, collision-free rows in CSV order.</param>
 	/// <param name="rootUuid">
-	/// The single hand-minted namespace GUID (<c>ReferenceNamespaces.Root</c>) every dataset namespace
-	/// and identifier in this file chains from.
+	///     The single hand-minted namespace GUID (<c>ReferenceNamespaces.Root</c>) every dataset namespace
+	///     and identifier in this file chains from.
 	/// </param>
 	internal static string Emit(IReadOnlyList<CountryMember> members, string rootUuid)
 	{
 		var root = new Guid(rootUuid);
 		var iso3166Namespace = Uuid5.Compute(root, Iso3166NamespaceName);
 		var rows = members
-			.Select(m => (Member: m, Id: Uuid5.Compute(iso3166Namespace, m.Value.ToString("D3", CultureInfo.InvariantCulture))))
+			.Select(m => (Member: m,
+				Id: Uuid5.Compute(iso3166Namespace, m.Value.ToString("D3", CultureInfo.InvariantCulture))))
 			.ToList();
 
 		StringBuilder sb = new();

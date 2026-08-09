@@ -10,6 +10,50 @@
 
 The reference-data store of the Norse Architecture — **`Norse.Reference.Data`**: the generated, browser-supported `Reference.Data.Primitives` and `Reference.Data.Namespaces` surfaces, the `Reference.Data.EntityFramework` entities and view models, TSV seeders (nietras Sep), and the `Reference.Data.EntityFramework.Migrations`/`.PostgreSQL`/`.SqlServer` family for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below; Mímir rides on it.
 
+## The dependency graph
+
+Arrows point at the thing depended on. Dashed arrows are the realm's own source generator mounted as a build-time analyzer, not a compile dependency — its output compiles *into* the consuming assembly, so package consumers receive generated code, never the generator. The shape below is deliberately congruent with Himinbjörg's chart: this is the persistence-consumer stencil every `norse_{context}` realm follows.
+
+```mermaid
+flowchart BT
+	subgraph Mimisbrunnr["Mímisbrunnr — Norse.Reference.Data"]
+		MigrationsPg["Reference.Data.EntityFramework.Migrations.PostgreSQL"]
+		Migrations["Reference.Data.EntityFramework.Migrations"]
+		EntityFramework["Reference.Data.EntityFramework"]
+		RefPrimitives["Reference.Data.Primitives"]
+		Namespaces["Reference.Data.Namespaces"]
+		Generator["Reference.Data.Primitives.Generator"]
+	end
+	subgraph Asgard
+		Backend["Abstractions.Backend"]
+		Emit["Abstractions.Emit"]
+	end
+	subgraph Urdarbrunnr["Urðarbrunnr — Norse.Persistence"]
+		PEFPg["EntityFramework.PostgreSQL"]
+		PEFMigrations["EntityFramework.Migrations"]
+		PEF["EntityFramework"]
+	end
+	subgraph Svartalfheim["Svartálfheim"]
+		Primitives["Norse.Primitives"]
+		Ingestion["Primitives.Ingestion"]
+	end
+	EntityFramework --> RefPrimitives
+	EntityFramework --> Backend
+	EntityFramework --> PEF
+	RefPrimitives --> Primitives
+	Migrations --> EntityFramework
+	Migrations --> PEFMigrations
+	Migrations --> Primitives
+	Migrations --> Ingestion
+	MigrationsPg --> Migrations
+	MigrationsPg --> PEFPg
+	RefPrimitives -.-> Generator
+	Namespaces -.-> Generator
+	Generator --> Emit
+```
+
+`Reference.Data.EntityFramework.Migrations.SqlServer` mirrors the PostgreSQL leg edge for edge (`Reference.Data.EntityFramework.Migrations` + Urðarbrunnr's `EntityFramework.SqlServer`) and is left off the chart for legibility, same as Himinbjörg's. Design-time-only references (`NorseDesignRef` on `EntityFramework.Design`, carried by both provider legs) stay off runtime charts. `tools/SeedTool` is dev-only tooling, never packed, and charts nothing.
+
 ## Status
 
 The first seed case — UN M49 reference data (`Region`/`CountryOrArea`) — has its raw-source-to-TSV conversion tooling live: `tools/SeedTool` (a dev-only console app, never packed or AOT-published) reads `seeds/raw/UNSD — Methodology.csv` via Svartálfheim's `Norse.Primitives.Ingestion` and produces the curated `seeds/region.tsv`/`seeds/country-or-area.tsv`, both committed as this realm's real seed data. The EF entities (`Region`, `CountryOrArea`, the `RegionNode` hierarchy), `ReferenceDbContext`, the `InitialCreate` migration (temporal apparatus and all), `NorseReferenceMigrationContributor`, and `ReferenceDataSeedContributor` are all live and load these TSVs into `norse_reference` (specced in Glitnir's `docs/Mimisbrunnr/`). Everything beyond this first seed case (currency, language, script, locale, timezone — see the ERD sketch below) remains unconverged; design happens first: brainstorm → spec → plan, recorded in Glitnir's `docs/Mimisbrunnr/`, before any further project is scaffolded here.

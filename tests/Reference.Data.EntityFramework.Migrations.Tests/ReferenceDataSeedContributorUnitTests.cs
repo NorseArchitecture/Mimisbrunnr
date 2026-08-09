@@ -1,9 +1,9 @@
 namespace Norse.Reference.Data.EntityFramework.Migrations.Tests;
 
 /// <summary>
-/// Contributor-level unit coverage for <see cref="ReferenceDataSeedContributor.ResolveCountryCode"/> — no
-/// database, no container. The seed drift guard (spec §9.11, acceptance 11) fires synchronously while a
-/// TSV row's M49 code is resolved, before any database I/O, so it is provable at this level alone.
+///     Contributor-level unit coverage for <see cref="ReferenceDataSeedContributor.ResolveCountryCode" /> — no
+///     database, no container. The seed drift guard (spec §9.11, acceptance 11) fires synchronously while a
+///     TSV row's M49 code is resolved, before any database I/O, so it is provable at this level alone.
 /// </summary>
 public sealed class ReferenceDataSeedContributorUnitTests
 {

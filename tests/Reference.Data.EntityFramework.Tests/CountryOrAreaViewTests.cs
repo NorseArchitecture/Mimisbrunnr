@@ -10,7 +10,8 @@ namespace Norse.Reference.Data.EntityFramework.Tests;
 [Collection("Postgres")]
 public sealed class CountryOrAreaViewTests(PostgresContainerFixture fixture)
 {
-	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString, CancellationToken cancellationToken)
+	static async Task<ReferenceDbContext> MigratedContextAsync(string connectionString,
+		CancellationToken cancellationToken)
 	{
 		DbContextOptionsBuilder<ReferenceDbContext> optionsBuilder = new();
 		optionsBuilder.ApplyNorseProviderOptions(NorsePostgresEfProvider.Instance,

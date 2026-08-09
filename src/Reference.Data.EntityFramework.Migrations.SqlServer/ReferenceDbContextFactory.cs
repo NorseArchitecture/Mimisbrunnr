@@ -6,8 +6,8 @@ using Norse.Persistence.EntityFramework.SqlServer;
 namespace Norse.Reference.Data.EntityFramework.Migrations.SqlServer;
 
 /// <summary>
-/// Design-time factory for <see cref="ReferenceDbContext"/>, used only by <c>dotnet ef</c> tooling
-/// (e.g. <c>dotnet ef migrations add</c>) to construct a context instance outside of DI at design time.
+///     Design-time factory for <see cref="ReferenceDbContext" />, used only by <c>dotnet ef</c> tooling
+///     (e.g. <c>dotnet ef migrations add</c>) to construct a context instance outside of DI at design time.
 /// </summary>
 public sealed class ReferenceDbContextFactory : NorseDesignTimeDbContextFactory<ReferenceDbContext>
 {

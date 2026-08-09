@@ -24,7 +24,8 @@ public sealed class EmissionDispatchTests
 	{
 		var generated = GeneratorTestHarness.Run(Csv, "Norse.Reference.Data.Namespaces");
 		generated.ShouldContain("public static class ReferenceNamespaces");
-		generated.ShouldContain("public static readonly global::System.Guid Root = new(\"8db01f36-dd6e-4cd1-8233-7ab1ec672fff\")");
+		generated.ShouldContain(
+			"public static readonly global::System.Guid Root = new(\"8db01f36-dd6e-4cd1-8233-7ab1ec672fff\")");
 		generated.ShouldContain("public static readonly global::System.Guid Iso3166 = new(\"");
 		generated.ShouldNotContain("enum IsoCountryCode");
 	}

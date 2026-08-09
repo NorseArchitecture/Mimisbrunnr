@@ -13,7 +13,8 @@ public sealed class NamespaceSelfVerificationTests
 	void Every_shipped_row_guid_recomputes_via_deterministic_guid()
 	{
 		foreach (var country in Iso3166.All)
-			new DeterministicGuid(ReferenceNamespaces.Iso3166, ((ushort)country.Code).ToString("D3", CultureInfo.InvariantCulture))
+			new DeterministicGuid(ReferenceNamespaces.Iso3166,
+					((ushort)country.Code).ToString("D3", CultureInfo.InvariantCulture))
 				.Value.ShouldBe(country.Id, $"{country.Alpha3} drifted");
 	}
 }

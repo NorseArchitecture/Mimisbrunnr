@@ -21,7 +21,8 @@ public sealed class ReferenceDbContextModelTests
 		IEntityType entityType = context.Model.FindEntityType(typeof(Region))!;
 
 		entityType.ShouldNotBeNull();
-		entityType.GetIndexes().Any(i => i.IsUnique && i.Properties.Single().Name == nameof(Region.Code)).ShouldBeTrue();
+		entityType.GetIndexes().Any(i => i.IsUnique && i.Properties.Single().Name == nameof(Region.Code))
+			.ShouldBeTrue();
 		entityType.GetForeignKeys().Single().PrincipalEntityType.ClrType.ShouldBe(typeof(Region));
 	}
 
@@ -37,10 +38,8 @@ public sealed class ReferenceDbContextModelTests
 	}
 
 	[Fact]
-	void CountryOrArea_implements_IViewBearer_of_its_own_View()
-	{
+	void CountryOrArea_implements_IViewBearer_of_its_own_View() =>
 		typeof(IViewBearer<CountryOrAreaView>).IsAssignableFrom(typeof(CountryOrArea)).ShouldBeTrue();
-	}
 
 	[Fact]
 	void Model_maps_CountryOrArea_Code_through_a_ushort_conversion_on_entity_and_JSON_view_member()
