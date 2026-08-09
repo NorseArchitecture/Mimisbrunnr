@@ -6,13 +6,13 @@ using Norse.Persistence.EntityFramework.PostgreSQL;
 namespace Norse.Reference.Data.EntityFramework.Tests;
 
 /// <summary>
-/// Which reference tables are system-versioned, pinned from both sides. Ruled 2026-08-05: both root
-/// tables go temporal — ISO/UN canon is static data that changes rarely, and the record of when it
-/// changed is exactly what system-time history is for. The owned <see cref="CountryOrAreaView"/> jsonb
-/// document graph takes no marker: owned and JSON-mapped types are outside the temporal contract by
-/// chassis validation, and the view column's contents ride the owner's history like any other column.
-/// The scope is a ruling, not an implementation detail — adding or dropping a marker without amending
-/// it breaks these facts by design.
+///     Which reference tables are system-versioned, pinned from both sides. Ruled 2026-08-05: both root
+///     tables go temporal — ISO/UN canon is static data that changes rarely, and the record of when it
+///     changed is exactly what system-time history is for. The owned <see cref="CountryOrAreaView" /> jsonb
+///     document graph takes no marker: owned and JSON-mapped types are outside the temporal contract by
+///     chassis validation, and the view column's contents ride the owner's history like any other column.
+///     The scope is a ruling, not an implementation detail — adding or dropping a marker without amending
+///     it breaks these facts by design.
 /// </summary>
 public sealed class ReferenceTemporalModelTests
 {
@@ -27,10 +27,10 @@ public sealed class ReferenceTemporalModelTests
 		return context.Model;
 	});
 
-	static IModel Model => _model.Value;
-
 	/// <summary>The two ruled temporal entities — the realm's root tables, and all of them.</summary>
 	static readonly Type[] _temporalEntities = [typeof(Region), typeof(CountryOrArea)];
+
+	static IModel Model => _model.Value;
 
 	[Theory]
 	[InlineData(typeof(Region), "region")]

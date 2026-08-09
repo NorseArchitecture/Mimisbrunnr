@@ -17,7 +17,8 @@ static class UnsdM49Writer
 	public static void WriteCountries(string path, IReadOnlyList<CountryOrAreaRow> countries)
 	{
 		using StreamWriter writer = new(path, append: false, _utf8NoBom);
-		writer.WriteLine("M49Code\tIsoAlpha2Code\tIsoAlpha3Code\tName\tParentM49Code\tIsLeastDevelopedCountry\tIsLandLockedDevelopingCountry\tIsSmallIslandDevelopingState");
+		writer.WriteLine(
+			"M49Code\tIsoAlpha2Code\tIsoAlpha3Code\tName\tParentM49Code\tIsLeastDevelopedCountry\tIsLandLockedDevelopingCountry\tIsSmallIslandDevelopingState");
 		foreach (var country in countries)
 			writer.WriteLine(string.Join('\t',
 				country.M49Code,
@@ -31,5 +32,7 @@ static class UnsdM49Writer
 	}
 
 	static string FormatFlag(bool value) =>
-		value ? "true" : "false";
+		value ?
+			"true" :
+			"false";
 }

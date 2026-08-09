@@ -3,11 +3,11 @@ using System.Text;
 namespace Norse.Reference.Data.Primitives.Generator;
 
 /// <summary>
-/// Minimal hand-rolled semicolon-delimited CSV reader for the UNSD raw file, netstandard2.0-clean
-/// (no <c>nietras.SeparatedValues</c> — a generator runs inside the compiler process and cannot take
-/// a runtime CSV dependency). Handles quoted fields defensively (RFC 4180 double-quote escaping) even
-/// though the current UNSD export carries none, since a country or area name can legitimately contain
-/// the field delimiter.
+///     Minimal hand-rolled semicolon-delimited CSV reader for the UNSD raw file, netstandard2.0-clean
+///     (no <c>nietras.SeparatedValues</c> — a generator runs inside the compiler process and cannot take
+///     a runtime CSV dependency). Handles quoted fields defensively (RFC 4180 double-quote escaping) even
+///     though the current UNSD export carries none, since a country or area name can legitimately contain
+///     the field delimiter.
 /// </summary>
 static class CsvParser
 {
@@ -25,17 +25,17 @@ static class CsvParser
 	];
 
 	/// <summary>
-	/// Parses the raw CSV text into rows carrying exactly the four columns this generator consumes.
-	/// A row whose alpha-2 or alpha-3 code is empty is skipped — it names a region/grouping, not an
-	/// ISO-bearing country or area.
+	///     Parses the raw CSV text into rows carrying exactly the four columns this generator consumes.
+	///     A row whose alpha-2 or alpha-3 code is empty is skipped — it names a region/grouping, not an
+	///     ISO-bearing country or area.
 	/// </summary>
 	/// <param name="csvText">The raw file contents.</param>
 	/// <param name="rows">The parsed, ISO-bearing rows. Empty when parsing fails.</param>
 	/// <param name="missingColumn">
-	/// The first expected column name absent from the header row, or <see langword="null"/> when the
-	/// header carries every expected column.
+	///     The first expected column name absent from the header row, or <see langword="null" /> when the
+	///     header carries every expected column.
 	/// </param>
-	/// <returns><see langword="true"/> when the header carried every expected column.</returns>
+	/// <returns><see langword="true" /> when the header carried every expected column.</returns>
 	internal static bool TryParse(string csvText, out IReadOnlyList<CsvRow> rows, out string? missingColumn)
 	{
 		var lines = SplitLines(csvText);
@@ -88,7 +88,9 @@ static class CsvParser
 	}
 
 	static string Field(List<string> fields, int index) =>
-		index < fields.Count ? fields[index] : string.Empty;
+		index < fields.Count ?
+			fields[index] :
+			string.Empty;
 
 	static List<string> SplitLines(string text)
 	{
@@ -99,7 +101,9 @@ static class CsvParser
 			if (text[i] != '\n')
 				continue;
 
-			var end = i > start && text[i - 1] == '\r' ? i - 1 : i;
+			var end = i > start && text[i - 1] == '\r' ?
+				i - 1 :
+				i;
 			lines.Add(text.Substring(start, end - start));
 			start = i + 1;
 		}
@@ -159,7 +163,7 @@ static class CsvParser
 	}
 }
 
-/// <summary>One data row's worth of the four columns <see cref="CsvParser"/> consumes.</summary>
+/// <summary>One data row's worth of the four columns <see cref="CsvParser" /> consumes.</summary>
 readonly struct CsvRow
 {
 	internal CsvRow(string countryOrArea, string m49Code, string alpha2, string alpha3)

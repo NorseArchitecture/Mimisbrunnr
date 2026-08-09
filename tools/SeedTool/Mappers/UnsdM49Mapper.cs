@@ -10,10 +10,11 @@ static class UnsdM49Mapper
 	{
 		["Region"] = 1,
 		["Subregion"] = 2,
-		["IntermediateRegion"] = 3,
+		["IntermediateRegion"] = 3
 	};
 
-	public static (IReadOnlyList<RegionRow> Regions, IReadOnlyList<CountryOrAreaRow> Countries) Map(ITabularReader reader)
+	public static (IReadOnlyList<RegionRow> Regions, IReadOnlyList<CountryOrAreaRow> Countries) Map(
+		ITabularReader reader)
 	{
 		var regionCodeOrdinal = reader.Ordinal("Region Code");
 		var regionNameOrdinal = reader.Ordinal("Region Name");
@@ -42,7 +43,8 @@ static class UnsdM49Mapper
 			var intermediateCode = reader[intermediateCodeOrdinal];
 
 			if (!regionCode.IsEmpty)
-				AddRegionIfAbsent(regions, regionCode, reader[regionNameOrdinal], "Region", null, rowNumber, "Region Code");
+				AddRegionIfAbsent(regions, regionCode, reader[regionNameOrdinal], "Region", null, rowNumber,
+					"Region Code");
 
 			if (!subregionCode.IsEmpty)
 				AddRegionIfAbsent(regions, subregionCode, reader[subregionNameOrdinal], "Subregion",
@@ -50,7 +52,8 @@ static class UnsdM49Mapper
 
 			if (!intermediateCode.IsEmpty)
 				AddRegionIfAbsent(regions, intermediateCode, reader[intermediateNameOrdinal], "IntermediateRegion",
-					ValidateM49Code(subregionCode, rowNumber, "Sub-region Code"), rowNumber, "Intermediate Region Code");
+					ValidateM49Code(subregionCode, rowNumber, "Sub-region Code"), rowNumber,
+					"Intermediate Region Code");
 
 			var parentCode =
 				!intermediateCode.IsEmpty ? ValidateM49Code(intermediateCode, rowNumber, "Intermediate Region Code")
@@ -59,21 +62,21 @@ static class UnsdM49Mapper
 				: null;
 
 			countries.Add(new CountryOrAreaRow(
-				M49Code: ValidateM49Code(reader[m49Ordinal], rowNumber, "M49 Code"),
-				IsoAlpha2Code: ValidateIsoAlpha(reader[iso2Ordinal], 2, rowNumber, "ISO-alpha2 Code"),
-				IsoAlpha3Code: ValidateIsoAlpha(reader[iso3Ordinal], 3, rowNumber, "ISO-alpha3 Code"),
-				Name: reader[countryNameOrdinal].ToString(),
-				ParentM49Code: parentCode,
-				IsLeastDevelopedCountry: ValidateFlag(reader[ldcOrdinal], rowNumber, "Least Developed Countries (LDC)"),
-				IsLandLockedDevelopingCountry: ValidateFlag(reader[llcOrdinal], rowNumber, "Land Locked Developing Countries (LLDC)"),
-				IsSmallIslandDevelopingState: ValidateFlag(reader[sidsOrdinal], rowNumber, "Small Island Developing States (SIDS)")));
+				ValidateM49Code(reader[m49Ordinal], rowNumber, "M49 Code"),
+				ValidateIsoAlpha(reader[iso2Ordinal], 2, rowNumber, "ISO-alpha2 Code"),
+				ValidateIsoAlpha(reader[iso3Ordinal], 3, rowNumber, "ISO-alpha3 Code"),
+				reader[countryNameOrdinal].ToString(),
+				parentCode,
+				ValidateFlag(reader[ldcOrdinal], rowNumber, "Least Developed Countries (LDC)"),
+				ValidateFlag(reader[llcOrdinal], rowNumber, "Land Locked Developing Countries (LLDC)"),
+				ValidateFlag(reader[sidsOrdinal], rowNumber, "Small Island Developing States (SIDS)")));
 		}
 
 		List<RegionRow> orderedRegions =
 		[
 			.. regions.Values
 				.OrderBy(r => _levelRank[r.Level])
-				.ThenBy(r => r.M49Code, StringComparer.Ordinal),
+				.ThenBy(r => r.M49Code, StringComparer.Ordinal)
 		];
 
 		return (orderedRegions, countries);
@@ -97,7 +100,8 @@ static class UnsdM49Mapper
 	{
 		var result = Parser.ParseRequired<ushort>(span, CultureInfo.InvariantCulture);
 		if (result.TryGetValue(out Failure failure))
-			throw new InvalidOperationException($"Row {rowNumber}, column '{columnName}': {failure.Reason} (\"{failure.Input}\").");
+			throw new InvalidOperationException(
+				$"Row {rowNumber}, column '{columnName}': {failure.Reason} (\"{failure.Input}\").");
 		result.TryGetValue(out Success<ushort> success);
 		return success.Value.ToString("D3", CultureInfo.InvariantCulture);
 	}
@@ -105,7 +109,8 @@ static class UnsdM49Mapper
 	static string ValidateIsoAlpha(ReadOnlySpan<char> span, int expectedLength, int rowNumber, string columnName)
 	{
 		if (span.Length != expectedLength || !AllUpperAscii(span))
-			throw new InvalidOperationException($"Row {rowNumber}, column '{columnName}': expected {expectedLength} uppercase letters, got \"{span}\".");
+			throw new InvalidOperationException(
+				$"Row {rowNumber}, column '{columnName}': expected {expectedLength} uppercase letters, got \"{span}\".");
 		return span.ToString();
 	}
 
@@ -124,6 +129,7 @@ static class UnsdM49Mapper
 			return false;
 		if (trimmed.Equals("x", StringComparison.OrdinalIgnoreCase))
 			return true;
-		throw new InvalidOperationException($"Row {rowNumber}, column '{columnName}': expected \"x\" or blank, got \"{trimmed}\".");
+		throw new InvalidOperationException(
+			$"Row {rowNumber}, column '{columnName}': expected \"x\" or blank, got \"{trimmed}\".");
 	}
 }

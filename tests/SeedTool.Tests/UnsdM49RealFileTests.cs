@@ -20,7 +20,8 @@ public sealed class UnsdM49RealFileTests
 		regions.Count.ShouldBe(29);
 		countries.Count.ShouldBe(248);
 
-		countries.Any(c => c is { M49Code: "566", Name: "Nigeria", IsoAlpha2Code: "NG", IsoAlpha3Code: "NGA" }).ShouldBeTrue();
+		countries.Any(c => c is { M49Code: "566", Name: "Nigeria", IsoAlpha2Code: "NG", IsoAlpha3Code: "NGA" })
+			.ShouldBeTrue();
 		countries.Any(c => c is { M49Code: "010", Name: "Antarctica", ParentM49Code: null }).ShouldBeTrue();
 	}
 

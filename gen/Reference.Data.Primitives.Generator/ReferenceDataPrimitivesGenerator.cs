@@ -6,13 +6,13 @@ using Norse.Abstractions.Emit;
 namespace Norse.Reference.Data.Primitives.Generator;
 
 /// <summary>
-/// Parses the UNSD M49 raw CSV, carried into the compilation as an <see cref="AdditionalText"/>, and
-/// emits the <c>Norse.Reference.IsoCountryCode</c> enum plus its tri-form span-based parser into
-/// <c>Norse.Reference.Data.Primitives</c>, and the <c>Norse.Reference.ReferenceNamespaces</c>
-/// constants into <c>Norse.Reference.Data.Namespaces</c> — dispatching on the compilation's assembly
-/// name so each assembly only ever sees the source it owns. Reports <c>NORSE050</c> when the header
-/// is missing an expected column and <c>NORSE051</c> when two rows sanitize to the same identifier —
-/// both fail loud rather than emit a partial or ambiguous surface.
+///     Parses the UNSD M49 raw CSV, carried into the compilation as an <see cref="AdditionalText" />, and
+///     emits the <c>Norse.Reference.IsoCountryCode</c> enum plus its tri-form span-based parser into
+///     <c>Norse.Reference.Data.Primitives</c>, and the <c>Norse.Reference.ReferenceNamespaces</c>
+///     constants into <c>Norse.Reference.Data.Namespaces</c> — dispatching on the compilation's assembly
+///     name so each assembly only ever sees the source it owns. Reports <c>NORSE050</c> when the header
+///     is missing an expected column and <c>NORSE051</c> when two rows sanitize to the same identifier —
+///     both fail loud rather than emit a partial or ambiguous surface.
 /// </summary>
 [Generator]
 public sealed class ReferenceDataPrimitivesGenerator : IIncrementalGenerator
@@ -28,12 +28,14 @@ public sealed class ReferenceDataPrimitivesGenerator : IIncrementalGenerator
 
 	static readonly DiagnosticDescriptor _missingColumn = new(
 		"NORSE050", "UNSD CSV header is missing an expected column",
-		"The UNSD raw CSV header does not contain the expected column '{0}' — refusing to emit an empty IsoCountryCode enum", "Norse.Reference",
+		"The UNSD raw CSV header does not contain the expected column '{0}' — refusing to emit an empty IsoCountryCode enum",
+		"Norse.Reference",
 		DiagnosticSeverity.Error, isEnabledByDefault: true);
 
 	static readonly DiagnosticDescriptor _identifierCollision = new(
 		"NORSE051", "Sanitized country identifier collides with another row",
-		"Sanitized identifier '{0}' for '{1}' (M49 {2}) collides with the identifier already produced for '{3}' (M49 {4}) — refusing to disambiguate silently", "Norse.Reference",
+		"Sanitized identifier '{0}' for '{1}' (M49 {2}) collides with the identifier already produced for '{3}' (M49 {4}) — refusing to disambiguate silently",
+		"Norse.Reference",
 		DiagnosticSeverity.Error, isEnabledByDefault: true);
 
 	/// <inheritdoc />

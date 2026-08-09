@@ -4,10 +4,10 @@ using Norse.Abstractions.Emit;
 namespace Norse.Reference.Data.Primitives.Generator;
 
 /// <summary>
-/// Emits the generated <c>Norse.Reference.ReferenceNamespaces</c> constants — the realm's single
-/// hand-minted root and every dataset namespace chained from it (sovereign namespace doctrine,
-/// inversion spec §3.8). Emitted only into <c>Norse.Reference.Data.Namespaces</c>; the
-/// browser-bound Primitives assembly never carries it.
+///     Emits the generated <c>Norse.Reference.ReferenceNamespaces</c> constants — the realm's single
+///     hand-minted root and every dataset namespace chained from it (sovereign namespace doctrine,
+///     inversion spec §3.8). Emitted only into <c>Norse.Reference.Data.Namespaces</c>; the
+///     browser-bound Primitives assembly never carries it.
 /// </summary>
 static class NamespacesEmitter
 {

@@ -123,7 +123,8 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var nigeria = await set.Where(c => c.Code == IsoCountryCode.Nigeria).Select(c => c.View).SingleAsync(cancellationToken);
+			var nigeria = await set.Where(c => c.Code == IsoCountryCode.Nigeria).Select(c => c.View)
+				.SingleAsync(cancellationToken);
 			nigeria.ShouldNotBeNull();
 			nigeria.Id.ShouldBe(nigeria.Id);
 			nigeria.Alpha2.ShouldBe("NG");
@@ -133,13 +134,15 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 			nigeria.Region.Subregion.IntermediateRegion.ShouldNotBeNull();
 			nigeria.Region.Subregion.IntermediateRegion.Code.ShouldBe("011");
 
-			var algeria = await set.Where(c => c.Code == IsoCountryCode.Algeria).Select(c => c.View).SingleAsync(cancellationToken);
+			var algeria = await set.Where(c => c.Code == IsoCountryCode.Algeria).Select(c => c.View)
+				.SingleAsync(cancellationToken);
 			algeria.ShouldNotBeNull();
 			algeria.Region.ShouldNotBeNull();
 			algeria.Region.Subregion.ShouldNotBeNull();
 			algeria.Region.Subregion.IntermediateRegion.ShouldBeNull();
 
-			var antarctica = await set.Where(c => c.Code == IsoCountryCode.Antarctica).Select(c => c.View).SingleAsync(cancellationToken);
+			var antarctica = await set.Where(c => c.Code == IsoCountryCode.Antarctica).Select(c => c.View)
+				.SingleAsync(cancellationToken);
 			antarctica.ShouldNotBeNull();
 			antarctica.Id.ShouldBe(antarctica.Id);
 			antarctica.Alpha2.ShouldBe("AQ");
@@ -164,7 +167,8 @@ public sealed class ReferenceSeedContributorTests(PostgresContainerFixture fixtu
 			await new ReferenceDataSeedContributor(context).SeedAsync(cancellationToken);
 			context.ChangeTracker.Clear();
 
-			var nigeria = await countrySet.Where(c => c.Code == IsoCountryCode.Nigeria).Select(c => c.View).SingleAsync(cancellationToken);
+			var nigeria = await countrySet.Where(c => c.Code == IsoCountryCode.Nigeria).Select(c => c.View)
+				.SingleAsync(cancellationToken);
 			nigeria.Region.ShouldNotBeNull();
 			nigeria.Region.Subregion.ShouldNotBeNull();
 			nigeria.Region.Subregion.IntermediateRegion.ShouldNotBeNull();

@@ -4,8 +4,8 @@ using Norse.Abstractions.Emit;
 namespace Norse.Reference.Data.Primitives.Generator;
 
 /// <summary>
-/// Emits the generated <c>Norse.Reference.IsoCountryCode</c> enum and its tri-form
-/// (numeric M49 / ISO alpha-2 / ISO alpha-3) span-based parser, <c>IsoCountryCodes</c>.
+///     Emits the generated <c>Norse.Reference.IsoCountryCode</c> enum and its tri-form
+///     (numeric M49 / ISO alpha-2 / ISO alpha-3) span-based parser, <c>IsoCountryCodes</c>.
 /// </summary>
 static class IsoCountryCodeEmitter
 {
