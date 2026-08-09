@@ -8,7 +8,7 @@
 
 *Image credit: [@norsemythologyclips](https://www.instagram.com/norsemythologyclips/) — go follow them.*
 
-The reference-data store of the Norse Architecture — **`Norse.Reference.Data`**: the generated, browser-supported `Reference.Data.Primitives` and `Reference.Data.Namespaces` surfaces, the `Reference.Data.EntityFramework` entities and view models, TSV seeders (nietras Sep), and the `Reference.Data.EntityFramework.Migrations`/`.PostgreSQL`/`.SqlServer` family for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below; Mímir rides on it.
+The reference-data store of the Norse Architecture — **`Norse.Reference.Data`**: the generated, browser-supported `Reference.Data.Contracts` and `Reference.Data.Namespaces` surfaces, the `Reference.Data.EntityFramework` entities and view models, TSV seeders (nietras Sep), and the `Reference.Data.EntityFramework.Migrations`/`.PostgreSQL`/`.SqlServer` family for canonical external-standard data. First tenants: ISO country codes, ISO currency codes, and IANA time zones. In the dependency chain it rides on Urðarbrunnr's EF foundation and everything below; Mímir rides on it.
 
 ## The dependency graph
 
@@ -20,9 +20,9 @@ flowchart BT
 		MigrationsPg["Reference.Data.EntityFramework.Migrations.PostgreSQL"]
 		Migrations["Reference.Data.EntityFramework.Migrations"]
 		EntityFramework["Reference.Data.EntityFramework"]
-		RefPrimitives["Reference.Data.Primitives"]
+		RefPrimitives["Reference.Data.Contracts"]
 		Namespaces["Reference.Data.Namespaces"]
-		Generator["Reference.Data.Primitives.Generator"]
+		Generator["Reference.Data.Contracts.Generator"]
 	end
 	subgraph Asgard
 		Backend["Abstractions.Backend"]

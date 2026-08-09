@@ -16,7 +16,7 @@
 		<Project Path="src/Reference.Data.EntityFramework.Migrations.PostgreSQL/Reference.Data.EntityFramework.Migrations.PostgreSQL.csproj" />
 		<Project Path="src/Reference.Data.EntityFramework.Migrations.SqlServer/Reference.Data.EntityFramework.Migrations.SqlServer.csproj" />
 		<Project Path="src/Reference.Data.Namespaces/Reference.Data.Namespaces.csproj" />
-		<Project Path="src/Reference.Data.Primitives/Reference.Data.Primitives.csproj" />
+		<Project Path="src/Reference.Data.Contracts/Reference.Data.Contracts.csproj" />
 	</Folder>
 	<Folder Name="/tools/">
 		<File Path="tools/Directory.Build.props" />
@@ -26,7 +26,7 @@
 	<Folder Name="/gen/">
 		<File Path="gen/Directory.Build.props" />
 		<File Path="gen/Directory.Build.targets" />
-		<Project Path="gen/Reference.Data.Primitives.Generator/Reference.Data.Primitives.Generator.csproj" />
+		<Project Path="gen/Reference.Data.Contracts.Generator/Reference.Data.Contracts.Generator.csproj" />
 	</Folder>
 	<Folder Name="/tests/">
 		<File Path="tests/Directory.Build.props" />
@@ -35,8 +35,8 @@
 		<Project Path="tests/Reference.Data.EntityFramework.Migrations.Tests/Reference.Data.EntityFramework.Migrations.Tests.csproj" />
 		<Project Path="tests/Reference.Data.EntityFramework.Tests/Reference.Data.EntityFramework.Tests.csproj" />
 		<Project Path="tests/Reference.Data.Namespaces.Tests/Reference.Data.Namespaces.Tests.csproj" />
-		<Project Path="tests/Reference.Data.Primitives.Generator.Tests/Reference.Data.Primitives.Generator.Tests.csproj" />
-		<Project Path="tests/Reference.Data.Primitives.Tests/Reference.Data.Primitives.Tests.csproj" />
+		<Project Path="tests/Reference.Data.Contracts.Generator.Tests/Reference.Data.Contracts.Generator.Tests.csproj" />
+		<Project Path="tests/Reference.Data.Contracts.Tests/Reference.Data.Contracts.Tests.csproj" />
 		<Project Path="tests/SeedTool.Tests/SeedTool.Tests.csproj" />
 	</Folder>
 </Solution>

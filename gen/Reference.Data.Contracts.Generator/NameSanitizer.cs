@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace Norse.Reference.Data.Primitives.Generator;
+namespace Norse.Reference.Data.Contracts.Generator;
 
 /// <summary>
 ///     Deterministic identifier rule that turns a UNSD English short name into a valid C# enum member

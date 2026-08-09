@@ -5,6 +5,6 @@
 		<RootNamespace>Norse.Reference</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
-		<ProjectReference Include="../../gen/Reference.Data.Primitives.Generator/Reference.Data.Primitives.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="../../gen/Reference.Data.Contracts.Generator/Reference.Data.Contracts.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 </Project>

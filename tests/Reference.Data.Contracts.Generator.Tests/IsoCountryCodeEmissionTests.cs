@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace Norse.Reference.Data.Primitives.Generator.Tests;
+namespace Norse.Reference.Data.Contracts.Generator.Tests;
 
 public sealed class IsoCountryCodeEmissionTests
 {

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Norse.Reference.Data.Primitives.Generator;
+namespace Norse.Reference.Data.Contracts.Generator;
 
 /// <summary>
 ///     Minimal hand-rolled semicolon-delimited CSV reader for the UNSD raw file, netstandard2.0-clean

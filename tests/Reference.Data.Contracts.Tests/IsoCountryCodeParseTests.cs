@@ -1,6 +1,6 @@
 using Norse.Primitives;
 
-namespace Norse.Reference.Data.Primitives.Tests;
+namespace Norse.Reference.Data.Contracts.Tests;
 
 public sealed class IsoCountryCodeParseTests
 {

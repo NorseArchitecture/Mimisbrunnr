@@ -1,4 +1,4 @@
-namespace Norse.Reference.Data.Primitives.Tests;
+namespace Norse.Reference.Data.Contracts.Tests;
 
 public sealed class Iso3166DatasetTests
 {

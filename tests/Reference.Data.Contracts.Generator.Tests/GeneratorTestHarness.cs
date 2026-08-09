@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Norse.Reference.Data.Primitives.Generator.Tests;
+namespace Norse.Reference.Data.Contracts.Generator.Tests;
 
 /// <summary>
 ///     Shared <see cref="GeneratorDriver" /> harness: an in-memory compilation plus an in-memory
@@ -13,23 +13,23 @@ namespace Norse.Reference.Data.Primitives.Generator.Tests;
 static class GeneratorTestHarness
 {
 	/// <summary>Runs the generator over <paramref name="csv" /> and returns the emitted source text.</summary>
-	internal static string Run(string csv, string assemblyName = "Norse.Reference.Data.Primitives") =>
+	internal static string Run(string csv, string assemblyName = "Norse.Reference.Data.Contracts") =>
 		string.Join("\n", Execute(csv, assemblyName).Result.GeneratedTrees.Select(tree => tree.ToString()));
 
 	/// <summary>Runs the generator over <paramref name="csv" /> and returns the resulting compilation.</summary>
-	internal static Compilation RunAndCompile(string csv, string assemblyName = "Norse.Reference.Data.Primitives") =>
+	internal static Compilation RunAndCompile(string csv, string assemblyName = "Norse.Reference.Data.Contracts") =>
 		Execute(csv, assemblyName).OutputCompilation;
 
 	static (Compilation OutputCompilation, GeneratorDriverRunResult Result) Execute(string csv, string assemblyName)
 	{
-		// The real Reference.Data.Primitives.csproj carries ImplicitUsings=enable and LangVersion=preview
+		// The real Reference.Data.Contracts.csproj carries ImplicitUsings=enable and LangVersion=preview
 		// (Mimisbrunnr's root Directory.Build.props) — both matter to the *emitted* source, which relies on
 		// System's implicit global usings (MemoryExtensions.Trim/AsSpan) and the platform's hand-authored
 		// C# union feature (Result<T> case-type conversions). Mirrored here so this harness's compilation
 		// matches the real consumer, not a bare default.
 		CSharpParseOptions parseOptions = new(LanguageVersion.Preview);
 		var compilation = CreateCompilation(parseOptions, assemblyName);
-		ReferenceDataPrimitivesGenerator generator = new();
+		ReferenceDataContractsGenerator generator = new();
 		GeneratorDriver driver = CSharpGeneratorDriver.Create(
 			[generator.AsSourceGenerator()],
 			additionalTexts: [new InMemoryAdditionalText(csv)],

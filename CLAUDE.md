@@ -12,12 +12,12 @@ Mímisbrunnr is **the reference-data store** — `Norse.Reference.Data`: canonic
 
 | Project | Carries | Rule |
 |---|---|---|
-| `Reference.Data.Primitives` | The generated, browser-supported primitives surface (`IsoCountryCode`, `Iso3166`) | Authored **here, in-realm** — the migration and seed contributors resolve country codes through this realm's own generated surface, never a companion-repo dependency |
+| `Reference.Data.Contracts` | The generated, browser-supported primitives surface (`IsoCountryCode`, `Iso3166`) | Authored **here, in-realm** — the migration and seed contributors resolve country codes through this realm's own generated surface, never a companion-repo dependency |
 | `Reference.Data.Namespaces` | The generated `ReferenceNamespaces` surface | Generator-mounted only; no other dependency |
 | `Reference.Data.EntityFramework` | The entities (`Region`, `CountryOrArea`, the `RegionNode` hierarchy), `ReferenceDbContext` (inherits `NorseDbContext`), and view models (the owned `CountryOrAreaView` jsonb document graph) | The interop boundary with Mímir — see the SemVer contract below |
 | `Reference.Data.EntityFramework.Migrations` | `NorseReferenceMigrationContributor` and `ReferenceDataSeedContributor` — loads the committed `seeds/*.tsv` via Svartálfheim's `Primitives.Ingestion` | `ISeedContributor` lives here, inside the existing migrations project — no new assemblies (seeding-framework law) |
 | `Reference.Data.EntityFramework.Migrations.PostgreSQL` / `.SqlServer` | Per-provider `InitialCreate` (temporal apparatus and all), embedded `schema/norse_reference.sql` DDL, offline design-time factory | One `InitialCreate` per provider — squash, never stack (see Build & Test) |
-| `gen/Reference.Data.Primitives.Generator` | The Roslyn generator emitting the `Primitives`/`Namespaces` surfaces | Mounted as an analyzer by both consuming projects; consumers of the published packages receive generated code, never the generator |
+| `gen/Reference.Data.Contracts.Generator` | The Roslyn generator emitting the `Primitives`/`Namespaces` surfaces | Mounted as an analyzer by both consuming projects; consumers of the published packages receive generated code, never the generator |
 | `tools/SeedTool` | Dev-only console app converting `seeds/raw/UNSD — Methodology.csv` into the committed `seeds/region.tsv`/`seeds/country-or-area.tsv` | Never packed, never AOT-published |
 
 **Dependency posture:** rides Urðarbrunnr's EF foundation (`Persistence.EntityFramework` + `.Migrations` + the PostgreSQL/SqlServer provider legs) and everything below, plus Asgard's `Abstractions.Backend` and `Abstractions.Emit`, and Svartálfheim's `Primitives`/`Primitives.Ingestion`. The README's chart is the persistence-consumer stencil — deliberately congruent with Himinbjörg's; a future `norse_{context}` realm should render the same shape with the names swapped.
