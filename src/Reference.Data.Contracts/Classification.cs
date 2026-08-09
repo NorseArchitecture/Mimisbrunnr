@@ -1,9 +1,12 @@
-namespace Norse.Reference.Data.EntityFramework;
+namespace Norse.Reference;
 
 /// <summary>
-///     UN classification flags for a <see cref="CountryOrArea" /> — Least Developed Country, Land Locked
+///     UN classification flags for a country or area — Least Developed Country, Land Locked
 ///     Developing Country, and Small Island Developing State are independent, non-exclusive designations
 ///     a country or area can hold in combination. Test membership via <see cref="Enum.HasFlag" />.
+///     Lives on the browser-safe contracts surface because wire responses carry the flags member
+///     directly: the binary channel rides the composed varint, and the text channels render the
+///     governed-name array form (ruled 2026-08-09) — the persistence side consumes it by reference.
 /// </summary>
 [Flags]
 public enum Classification : byte

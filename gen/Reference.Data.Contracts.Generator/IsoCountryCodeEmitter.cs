@@ -4,8 +4,9 @@ using Norse.Abstractions.Emit;
 namespace Norse.Reference.Data.Contracts.Generator;
 
 /// <summary>
-///     Emits the generated <c>Norse.Reference.IsoCountryCode</c> enum and its tri-form
-///     (numeric M49 / ISO alpha-2 / ISO alpha-3) span-based parser, <c>IsoCountryCodes</c>.
+///     Emits the generated <c>Norse.Reference.IsoCountryCode</c> enum and its quad-form
+///     (numeric M49 / ISO alpha-2 / ISO alpha-3 / baked v5 identifier) span-based parser,
+///     <c>IsoCountryCodes</c>.
 /// </summary>
 static class IsoCountryCodeEmitter
 {
@@ -41,9 +42,9 @@ static class IsoCountryCodeEmitter
 			}
 
 			/// <summary>
-			/// Tri-form (numeric M49 / ISO alpha-2 / ISO alpha-3) span-based parser for
-			/// <see cref="IsoCountryCode"/>, generated at compile time from the UNSD raw CSV.
-			/// Culture-insensitive — no <see cref="global::System.IFormatProvider"/>.
+			/// Quad-form (numeric M49 / ISO alpha-2 / ISO alpha-3 / baked v5 identifier) span-based
+			/// parser for <see cref="IsoCountryCode"/>, generated at compile time from the UNSD raw
+			/// CSV. Culture-insensitive — no <see cref="global::System.IFormatProvider"/>.
 			/// </summary>
 			public static class IsoCountryCodes
 			{
@@ -67,11 +68,21 @@ static class IsoCountryCodeEmitter
 			{{NumericEntries(members)}}
 					}.ToFrozenDictionary();
 
+				// The inverse of Iso3166.Ids, built once from the same baked rows — the parser never
+				// re-derives an identifier, it only recognizes the ones the dataset already minted.
+				static readonly global::System.Collections.Frozen.FrozenDictionary<global::System.Guid, IsoCountryCode> _byId =
+					global::System.Linq.Enumerable.ToDictionary(Iso3166.All, static row => row.Id, static row => row.Code)
+						.ToFrozenDictionary();
+
 				/// <summary>
-				/// Parses required tri-form country text: an M49 numeric code (1-3 digits, unpadded),
-				/// an ISO alpha-2 code, or an ISO alpha-3 code. Empty or whitespace input is a
+				/// Parses required quad-form country text: an M49 numeric code (1-3 digits, unpadded),
+				/// an ISO alpha-2 code, an ISO alpha-3 code, or the dataset's own baked deterministic
+				/// v5 identifier in any textual form <see cref="global::System.Guid.TryParse(global::System.ReadOnlySpan{char}, out global::System.Guid)"/>
+				/// accepts — so a foreign key read straight off a persisted row hydrates the full ISO
+				/// canon with no join. Empty or whitespace input is a
 				/// <see cref="global::Norse.Primitives.ParseFailure.Empty"/> failure; unrecognized
-				/// input is <see cref="global::Norse.Primitives.ParseFailure.Malformed"/>.
+				/// input — including a well-formed identifier the dataset never minted — is
+				/// <see cref="global::Norse.Primitives.ParseFailure.Malformed"/>.
 				/// </summary>
 				/// <param name="value">The raw scalar text.</param>
 				/// <returns>The parse outcome — never throws on bad input.</returns>
@@ -94,6 +105,13 @@ static class IsoCountryCodeEmitter
 
 					if (trimmed.Length == 3 && _byAlpha3.TryGetValue(trimmed, out var byAlpha3))
 						return new global::Norse.Primitives.Success<IsoCountryCode>(byAlpha3);
+
+					if (trimmed.Length >= 32 &&
+						global::System.Guid.TryParse(trimmed, out var guid) &&
+						_byId.TryGetValue(guid, out var byId))
+					{
+						return new global::Norse.Primitives.Success<IsoCountryCode>(byId);
+					}
 
 					return new global::Norse.Primitives.Failure(global::Norse.Primitives.ParseFailure.Malformed, trimmed, ExpectedType);
 				}
