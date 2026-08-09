@@ -11,7 +11,7 @@ namespace Norse.Reference.Data.EntityFramework.Migrations;
 ///     Seeds <see cref="Region" /> and <see cref="CountryOrArea" /> rows from the committed UN M49 TSVs
 ///     (<c>seeds/region.tsv</c>, <c>seeds/country-or-area.tsv</c>), idempotently, and hydrates each
 ///     <see cref="CountryOrArea.View" /> from the same region rows. Each country row's <see cref="CountryOrArea.Id" />
-///     resolves through the realm's own generated <see cref="IsoCountryCode" /> surface (<c>Reference.Data.Primitives</c>)
+///     resolves through the realm's own generated <see cref="IsoCountryCode" /> surface (<c>Reference.Data.Contracts</c>)
 ///     (<see cref="Iso3166.Ids" />) rather than an ad-hoc namespace hash — a TSV row whose M49 code is unknown to that
 ///     generated surface fails the seed loudly (spec §9.11 drift guard) rather than minting an ungoverned identifier.
 /// </summary>
@@ -26,7 +26,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 
 	/// <summary>
 	///     Resolves a TSV row's raw M49 code through the realm's own generated ISO 3166-1 surface
-	///     (<c>Reference.Data.Primitives</c>). Never falls back to an ad-hoc identifier — a code the generated
+	///     (<c>Reference.Data.Contracts</c>). Never falls back to an ad-hoc identifier — a code the generated
 	///     surface doesn't recognize is a drift signal, not a value to seed around.
 	/// </summary>
 	/// <param name="m49Code">The raw, unpadded M49 numeric code text read from the TSV row.</param>

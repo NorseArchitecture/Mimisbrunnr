@@ -1,7 +1,7 @@
 using System.Text;
 using Norse.Abstractions.Emit;
 
-namespace Norse.Reference.Data.Primitives.Generator;
+namespace Norse.Reference.Data.Contracts.Generator;
 
 /// <summary>
 ///     Emits the generated <c>Norse.Reference.IsoCountryCode</c> enum and its tri-form

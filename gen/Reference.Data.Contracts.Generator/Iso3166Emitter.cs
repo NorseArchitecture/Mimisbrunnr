@@ -3,7 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis.CSharp;
 using Norse.Abstractions.Emit;
 
-namespace Norse.Reference.Data.Primitives.Generator;
+namespace Norse.Reference.Data.Contracts.Generator;
 
 /// <summary>
 ///     Emits the generated <c>Norse.Reference.Iso3166Country</c> and <c>Iso3166</c> dataset — every ISO

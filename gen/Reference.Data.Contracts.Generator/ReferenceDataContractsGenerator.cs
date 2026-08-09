@@ -3,23 +3,23 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Norse.Abstractions.Emit;
 
-namespace Norse.Reference.Data.Primitives.Generator;
+namespace Norse.Reference.Data.Contracts.Generator;
 
 /// <summary>
 ///     Parses the UNSD M49 raw CSV, carried into the compilation as an <see cref="AdditionalText" />, and
 ///     emits the <c>Norse.Reference.IsoCountryCode</c> enum plus its tri-form span-based parser into
-///     <c>Norse.Reference.Data.Primitives</c>, and the <c>Norse.Reference.ReferenceNamespaces</c>
+///     <c>Norse.Reference.Data.Contracts</c>, and the <c>Norse.Reference.ReferenceNamespaces</c>
 ///     constants into <c>Norse.Reference.Data.Namespaces</c> — dispatching on the compilation's assembly
 ///     name so each assembly only ever sees the source it owns. Reports <c>NORSE050</c> when the header
 ///     is missing an expected column and <c>NORSE051</c> when two rows sanitize to the same identifier —
 ///     both fail loud rather than emit a partial or ambiguous surface.
 /// </summary>
 [Generator]
-public sealed class ReferenceDataPrimitivesGenerator : IIncrementalGenerator
+public sealed class ReferenceDataContractsGenerator : IIncrementalGenerator
 {
 	const string CsvFileName = "UNSD — Methodology.csv";
 
-	const string PrimitivesAssemblyName = "Norse.Reference.Data.Primitives";
+	const string ContractsAssemblyName = "Norse.Reference.Data.Contracts";
 	const string NamespacesAssemblyName = "Norse.Reference.Data.Namespaces";
 
 	// ReferenceNamespaces.Root — the single hand-minted act (spec §6); every dataset namespace chains
@@ -62,7 +62,7 @@ public sealed class ReferenceDataPrimitivesGenerator : IIncrementalGenerator
 		context.RegisterSourceOutput(csvTexts, static (ctx, pair) =>
 		{
 			var (csvText, name) = pair;
-			if (name == PrimitivesAssemblyName)
+			if (name == ContractsAssemblyName)
 				Emit(ctx, csvText);
 		});
 	}

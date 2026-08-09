@@ -10,6 +10,6 @@
 			<Repo>Urdarbrunnr</Repo>
 			<Generator>true</Generator>
 		</NorseRef>
-		<ProjectReference Include="../Reference.Data.Primitives/Reference.Data.Primitives.csproj" />
+		<ProjectReference Include="../Reference.Data.Contracts/Reference.Data.Contracts.csproj" />
 	</ItemGroup>
 </Project>
