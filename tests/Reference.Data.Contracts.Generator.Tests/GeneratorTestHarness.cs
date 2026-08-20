@@ -1,3 +1,4 @@
+using System.Reflection.PortableExecutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -43,9 +44,16 @@ static class GeneratorTestHarness
 	static Compilation CreateCompilation(CSharpParseOptions parseOptions, string assemblyName)
 	{
 		var runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location)!;
+
+		// Managed assemblies only. On Windows the shared framework ships coreclr.dll, clrjit.dll,
+		// hostpolicy.dll, msquic.dll and friends alongside them, and handing Roslyn a metadata-free PE
+		// lands twelve CS0009 errors in every compilation this harness builds — which is what the
+		// "compiles clean" facts below were actually reporting. Linux and macOS name their native
+		// siblings .so/.dylib, so a "*.dll" glob never picks one up there: green on CI, red locally.
 		IList<MetadataReference> references =
 		[
 			.. Directory.GetFiles(runtimeDir, "*.dll")
+				.Where(IsManagedAssembly)
 				.Select(path => (MetadataReference)MetadataReference.CreateFromFile(path)),
 			MetadataReference.CreateFromFile(typeof(Norse.Primitives.Result<>).Assembly.Location)
 		];
@@ -68,6 +76,13 @@ static class GeneratorTestHarness
 			[globalUsings],
 			references,
 			new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+	}
+
+	static bool IsManagedAssembly(string path)
+	{
+		using var stream = File.OpenRead(path);
+		using PEReader peReader = new(stream);
+		return peReader.HasMetadata;
 	}
 
 	sealed class InMemoryAdditionalText(string csv) : AdditionalText
