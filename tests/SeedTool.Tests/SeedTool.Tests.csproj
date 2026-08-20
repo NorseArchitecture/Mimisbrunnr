@@ -1,5 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
+		<!-- The raw UNSD source and both committed seed files ride inside the test assembly rather
+		     than being read off disk by a path walked up from the test binary's own location. That
+		     walk only resolves when bin/ sits in-tree, and it does not: both dev environments
+		     redirect BaseOutputPath out of the tree via NORSE_BUILD_ARTIFACTS_DIR, so the relative
+		     form resolved to <artifacts-root>/seeds and threw DirectoryNotFoundException on Windows
+		     and in the devcontainer alike, passing only in CI where the redirect is unset. Same
+		     EmbeddedResource + LogicalName treatment ReferenceDataSeedContributor already gives
+		     these TSVs in the sibling .Migrations project. -->
+		<EmbeddedResource Include="../../seeds/*.tsv;../../seeds/raw/*.csv">
+			<LogicalName>%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
 		<ProjectReference Include="..\..\tools\SeedTool\SeedTool.csproj" />
 	</ItemGroup>
 </Project>

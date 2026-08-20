@@ -5,14 +5,28 @@ namespace Norse.SeedTool.Tests;
 
 public sealed class UnsdM49RealFileTests
 {
-	const string RawCsvPath = "../../../../../seeds/raw/UNSD — Methodology.csv";
-	const string RegionTsvPath = "../../../../../seeds/region.tsv";
-	const string CountryOrAreaTsvPath = "../../../../../seeds/country-or-area.tsv";
+	// Embedded in this test assembly (EmbeddedResource, LogicalName = bare file name), never read
+	// off disk — see the csproj for why a relative path from the test binary cannot work here.
+	const string RawCsvResource = "UNSD — Methodology.csv";
+	const string RegionTsvResource = "region.tsv";
+	const string CountryOrAreaTsvResource = "country-or-area.tsv";
+
+	static Stream OpenResource(string name) =>
+		typeof(UnsdM49RealFileTests).Assembly.GetManifestResourceStream(name)
+		?? throw new InvalidOperationException($"Embedded seed resource '{name}' was not found.");
+
+	static byte[] ReadResource(string name)
+	{
+		using var stream = OpenResource(name);
+		using MemoryStream buffer = new();
+		stream.CopyTo(buffer);
+		return buffer.ToArray();
+	}
 
 	[Fact]
 	void Map_produces_the_expected_counts_and_known_rows_from_the_real_source()
 	{
-		using var reader = TabularReader.OpenDelimited(RawCsvPath, ';');
+		using var reader = TabularReader.OpenDelimited(OpenResource(RawCsvResource), ';');
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		// 5 Regions + 17 Sub-regions + 7 Intermediate Regions, per the approved M49 spec's
@@ -28,7 +42,7 @@ public sealed class UnsdM49RealFileTests
 	[Fact]
 	void Map_emits_byte_identical_tsv_output_against_the_committed_seed_files()
 	{
-		using var reader = TabularReader.OpenDelimited(RawCsvPath, ';');
+		using var reader = TabularReader.OpenDelimited(OpenResource(RawCsvResource), ';');
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		var regionPath = Path.GetTempFileName();
@@ -38,8 +52,8 @@ public sealed class UnsdM49RealFileTests
 			UnsdM49Writer.WriteRegions(regionPath, regions);
 			UnsdM49Writer.WriteCountries(countryPath, countries);
 
-			File.ReadAllBytes(regionPath).ShouldBe(File.ReadAllBytes(RegionTsvPath));
-			File.ReadAllBytes(countryPath).ShouldBe(File.ReadAllBytes(CountryOrAreaTsvPath));
+			File.ReadAllBytes(regionPath).ShouldBe(ReadResource(RegionTsvResource));
+			File.ReadAllBytes(countryPath).ShouldBe(ReadResource(CountryOrAreaTsvResource));
 		}
 		finally
 		{
