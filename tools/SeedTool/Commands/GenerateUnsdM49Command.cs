@@ -7,7 +7,7 @@ namespace Norse.SeedTool.Commands;
 
 sealed class GenerateUnsdM49Command : Command<GenerateUnsdM49Command.Settings>
 {
-	protected override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
+	public override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
 	{
 		using ITabularReader reader = TabularReader.OpenDelimited(settings.InputFile, ';');
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
