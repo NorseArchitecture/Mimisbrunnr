@@ -6,7 +6,7 @@ using Norse.Reference.Data.EntityFramework.Migrations.PostgreSQL;
 namespace Norse.Reference.Data.EntityFramework.Migrations.Tests;
 
 /// <summary>
-///     The temporal apparatus against a real <c>postgres:19beta2</c> server: <c>InitialCreate</c> applies
+///     The temporal apparatus against a real <c>postgres:19beta4</c> server: <c>InitialCreate</c> applies
 ///     clean, the full apparatus stands for both reference root tables — and for nothing else — and the
 ///     seed-then-amend lifecycle versions the way §3.2 says it should. This realm keeps exactly one
 ///     <c>InitialCreate</c> per provider (squashed in place, never stacked, spec §7.1), so the apparatus

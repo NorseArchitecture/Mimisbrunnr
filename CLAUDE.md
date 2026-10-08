@@ -35,7 +35,7 @@ Mímisbrunnr is **the reference-data store** — `Norse.Reference.Data`: canonic
 ## Build & Test
 
 - `dotnet build Mimisbrunnr.slnx` — warnings are errors; a single warning fails.
-- `dotnet test Mimisbrunnr.slnx` — xUnit v3 + Shouldly on Microsoft.Testing.Platform. **VSTest `--filter` does NOT work** — use `dotnet test tests/<Project> -- --filter-class "*.<ClassName>"`. `ReferenceTemporalApparatusContainerTests` needs Docker (Testcontainers `postgres:19beta2`).
+- `dotnet test Mimisbrunnr.slnx` — xUnit v3 + Shouldly on Microsoft.Testing.Platform. **VSTest `--filter` does NOT work** — use `dotnet test tests/<Project> -- --filter-class "*.<ClassName>"`. `ReferenceTemporalApparatusContainerTests` needs Docker (Testcontainers `postgres:19beta4`).
 - SDK pinned by `global.json`: `11.0.100-` prerelease.
 - **Migrations CLI:** commands live in README's Migrations CLI section — fully offline, inert placeholder connection strings; every `add`/`remove` auto-refreshes the embedded `schema/norse_reference.sql` (scaffolder-emitted, never hand-edited). **One `InitialCreate` per provider is law** (this realm's spec §7.1): delete the provider's `Migrations/` folder and re-add — never stack. The cost is paid on the dev box: a re-issued `InitialCreate` orphans any database that applied the prior one (`MigrateAsync` dies on `CREATE TABLE region` with "relation already exists", naming neither cause nor cure) — drop `norse_reference` or Bifröst's named `norse-pg-primary` volume; migration plus seed restores full state by construction, which is exactly what buys the squash posture until the preview-7 V1 memorialization.
 
