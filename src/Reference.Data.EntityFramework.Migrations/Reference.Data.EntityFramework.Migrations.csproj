@@ -19,9 +19,9 @@
 		<NorseRef Include="Primitives">
 			<Repo>Svartalfheim</Repo>
 		</NorseRef>
-		<NorseRef Include="Primitives.Ingestion">
-			<Repo>Svartalfheim</Repo>
-		</NorseRef>
+		<!-- The committed TSVs are read through HyperTabular directly (header-first, async, cancellable)
+		     since the engines cut retired Svartálfheim's Primitives.Ingestion. -->
+		<PackageReference Include="HyperTabular" Version="*" />
 		<ProjectReference Include="../Reference.Data.EntityFramework/Reference.Data.EntityFramework.csproj" />
 	</ItemGroup>
 </Project>

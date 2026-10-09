@@ -1,9 +1,9 @@
 using System.Globalization;
+using HyperTabular;
 using Microsoft.EntityFrameworkCore;
 using Norse.Abstractions.Migrations.Seeding;
 using Norse.Primitives;
 using Norse.Primitives.Identifiers;
-using Norse.Primitives.Ingestion;
 
 namespace Norse.Reference.Data.EntityFramework.Migrations;
 
@@ -14,6 +14,8 @@ namespace Norse.Reference.Data.EntityFramework.Migrations;
 ///     resolves through the realm's own generated <see cref="IsoCountryCode" /> surface (<c>Reference.Data.Contracts</c>)
 ///     (<see cref="Iso3166.Ids" />) rather than an ad-hoc namespace hash — a TSV row whose M49 code is unknown to that
 ///     generated surface fails the seed loudly (spec §9.11 drift guard) rather than minting an ungoverned identifier.
+///     The TSVs are read through HyperTabular, header-first and asynchronously, so a missing column fails naming it
+///     and the seed observes its cancellation token at every refill.
 /// </summary>
 /// <param name="context">The reference-data context instance resolved from DI.</param>
 public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : ISeedContributor
@@ -46,36 +48,57 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		typeof(ReferenceDataSeedContributor).Assembly.GetManifestResourceStream(fileName)
 		?? throw new InvalidOperationException($"Embedded seed resource '{fileName}' was not found.");
 
+	/// <summary>Opens an embedded TSV header-first; the reader owns and disposes the resource stream.</summary>
+	static ValueTask<DelimitedReader> OpenSeedAsync(string fileName, CancellationToken cancellationToken) =>
+		DelimitedReader.OpenAsync(OpenSeedStream(fileName), Dialect.Tsv, cancellationToken: cancellationToken);
+
 	/// <inheritdoc />
 	public async Task SeedAsync(CancellationToken cancellationToken)
 	{
+		cancellationToken.ThrowIfCancellationRequested();
 		var regionsByCode = await SeedRegionsAsync(cancellationToken).ConfigureAwait(false);
 		await SeedCountriesAsync(regionsByCode, cancellationToken).ConfigureAwait(false);
 	}
 
-	async Task<Dictionary<string, RegionRow>> SeedRegionsAsync(CancellationToken cancellationToken)
+	/// <summary>Reads region.tsv into memory: the TSV half of the region seed, with no database in sight.</summary>
+	static async Task<Dictionary<string, RegionRow>> ReadRegionsAsync(CancellationToken cancellationToken)
 	{
 		Dictionary<string, RegionRow> regionsByCode = [];
 
-		using var reader = TabularReader.OpenDelimited(OpenSeedStream("region.tsv"), '\t');
-		var m49Ordinal = reader.Ordinal("M49Code");
-		var nameOrdinal = reader.Ordinal("Name");
-		var levelOrdinal = reader.Ordinal("Level");
-		var parentOrdinal = reader.Ordinal("ParentM49Code");
-
-		while (reader.Read())
+		var reader = await OpenSeedAsync("region.tsv", cancellationToken).ConfigureAwait(false);
+		await using (reader.ConfigureAwait(false))
 		{
-			var m49Code = reader[m49Ordinal].ToString();
-			// The TSV's Level column holds the enum member name (Region/Subregion/IntermediateRegion),
-			// not a numeric value — written that way by tools/SeedTool's UnsdM49Writer.
-			var level = Enum.Parse<RegionLevel>(reader[levelOrdinal]);
-			var parentCode = reader[parentOrdinal].ToString();
-			DeterministicGuid id = new(_namespaceRegion, m49Code);
+			var header = reader.Header ?? throw new InvalidOperationException("region.tsv declares a header row.");
+			reader.Bind(
+			[
+				Column.Text(header.Ordinal("M49Code")),
+				Column.Text(header.Ordinal("Name")),
+				Column.Text(header.Ordinal("Level")),
+				Column.Text(header.Ordinal("ParentM49Code"))
+			]);
 
-			regionsByCode[m49Code] = new(id, m49Code, reader[nameOrdinal].ToString(), level, parentCode.Length == 0 ?
-				null :
-				parentCode);
+			while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false) is { } batch)
+				foreach (var row in batch)
+				{
+					var m49Code = row.GetChars(0).ToString();
+					// The TSV's Level column holds the enum member name (Region/Subregion/IntermediateRegion),
+					// not a numeric value — written that way by tools/SeedTool's UnsdM49Writer.
+					var level = Enum.Parse<RegionLevel>(row.GetChars(2));
+					var parentCode = row.GetChars(3).ToString();
+					DeterministicGuid id = new(_namespaceRegion, m49Code);
+
+					regionsByCode[m49Code] = new(id, m49Code, row.GetChars(1).ToString(), level, parentCode.Length == 0 ?
+						null :
+						parentCode);
+				}
 		}
+
+		return regionsByCode;
+	}
+
+	async Task<Dictionary<string, RegionRow>> SeedRegionsAsync(CancellationToken cancellationToken)
+	{
+		var regionsByCode = await ReadRegionsAsync(cancellationToken).ConfigureAwait(false);
 
 		var set = context.Set<Region>();
 		HashSet<DeterministicGuid> existingIds =
@@ -99,44 +122,59 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		return regionsByCode;
 	}
 
+	/// <summary>Reads country-or-area.tsv into memory: the TSV half of the country seed, with no database in sight.</summary>
+	static async Task<IList<CountryRow>> ReadCountriesAsync(CancellationToken cancellationToken)
+	{
+		IList<CountryRow> rows = [];
+
+		var reader = await OpenSeedAsync("country-or-area.tsv", cancellationToken).ConfigureAwait(false);
+		await using (reader.ConfigureAwait(false))
+		{
+			var header = reader.Header ?? throw new InvalidOperationException("country-or-area.tsv declares a header row.");
+			reader.Bind(
+			[
+				Column.Text(header.Ordinal("M49Code")),
+				Column.Text(header.Ordinal("IsoAlpha2Code")),
+				Column.Text(header.Ordinal("IsoAlpha3Code")),
+				Column.Text(header.Ordinal("Name")),
+				Column.Text(header.Ordinal("ParentM49Code")),
+				Column.Text(header.Ordinal("IsLeastDevelopedCountry")),
+				Column.Text(header.Ordinal("IsLandLockedDevelopingCountry")),
+				Column.Text(header.Ordinal("IsSmallIslandDevelopingState"))
+			]);
+
+			while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false) is { } batch)
+				foreach (var row in batch)
+				{
+					var m49Code = row.GetChars(0).ToString();
+					var code = ResolveCountryCode(m49Code);
+					DeterministicGuid id = new(Iso3166.Ids[code]);
+					var parentCode = row.GetChars(4).ToString();
+
+					rows.Add(new(
+						id,
+						code,
+						row.GetChars(1).ToString(),
+						row.GetChars(2).ToString(),
+						row.GetChars(3).ToString(),
+						parentCode.Length == 0 ?
+							null :
+							parentCode,
+						// The TSV's flag columns hold literal "true"/"false" (written by UnsdM49Writer's
+						// FormatFlag), not the "x"/blank convention of the raw UNSD source CSV.
+						bool.Parse(row.GetChars(5)),
+						bool.Parse(row.GetChars(6)),
+						bool.Parse(row.GetChars(7))));
+				}
+		}
+
+		return rows;
+	}
+
 	async Task SeedCountriesAsync(Dictionary<string, RegionRow> regionsByCode, CancellationToken cancellationToken)
 	{
-		using var reader = TabularReader.OpenDelimited(OpenSeedStream("country-or-area.tsv"), '\t');
-		var m49Ordinal = reader.Ordinal("M49Code");
-		var alpha2Ordinal = reader.Ordinal("IsoAlpha2Code");
-		var alpha3Ordinal = reader.Ordinal("IsoAlpha3Code");
-		var nameOrdinal = reader.Ordinal("Name");
-		var parentOrdinal = reader.Ordinal("ParentM49Code");
-		var ldcOrdinal = reader.Ordinal("IsLeastDevelopedCountry");
-		var lldcOrdinal = reader.Ordinal("IsLandLockedDevelopingCountry");
-		var sidsOrdinal = reader.Ordinal("IsSmallIslandDevelopingState");
-
-		IList<(DeterministicGuid Id, IsoCountryCode Code, string Alpha2Code, string Alpha3Code, string Name, string?
-			ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool
-			IsSmallIslandDevelopingState)> rows = [];
+		var rows = await ReadCountriesAsync(cancellationToken).ConfigureAwait(false);
 		var set = context.Set<CountryOrArea>();
-		while (reader.Read())
-		{
-			var m49Code = reader[m49Ordinal].ToString();
-			var code = ResolveCountryCode(m49Code);
-			DeterministicGuid id = new(Iso3166.Ids[code]);
-			var parentCode = reader[parentOrdinal].ToString();
-
-			rows.Add((
-				id,
-				code,
-				reader[alpha2Ordinal].ToString(),
-				reader[alpha3Ordinal].ToString(),
-				reader[nameOrdinal].ToString(),
-				parentCode.Length == 0 ?
-					null :
-					parentCode,
-				// The TSV's flag columns hold literal "true"/"false" (written by UnsdM49Writer's
-				// FormatFlag), not the "x"/blank convention of the raw UNSD source CSV.
-				bool.Parse(reader[ldcOrdinal]),
-				bool.Parse(reader[lldcOrdinal]),
-				bool.Parse(reader[sidsOrdinal])));
-		}
 
 		var existingIds =
 			(await set.Select(c => c.Id).ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
@@ -172,9 +210,7 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 	///     is <see langword="null" /> only for Antarctica, the one UN M49 row with no ancestor at all.
 	/// </summary>
 	static CountryOrAreaView BuildView(
-		(DeterministicGuid Id, IsoCountryCode Code, string Alpha2Code, string Alpha3Code, string Name, string?
-			ParentM49Code, bool IsLeastDevelopedCountry, bool IsLandLockedDevelopingCountry, bool
-			IsSmallIslandDevelopingState) row,
+		CountryRow row,
 		Classification classification,
 		Dictionary<string, RegionRow> regionsByCode)
 	{
@@ -234,4 +270,15 @@ public sealed class ReferenceDataSeedContributor(ReferenceDbContext context) : I
 		string Name,
 		RegionLevel Level,
 		string? ParentM49Code);
+
+	sealed record CountryRow(
+		DeterministicGuid Id,
+		IsoCountryCode Code,
+		string Alpha2Code,
+		string Alpha3Code,
+		string Name,
+		string? ParentM49Code,
+		bool IsLeastDevelopedCountry,
+		bool IsLandLockedDevelopingCountry,
+		bool IsSmallIslandDevelopingState);
 }
