@@ -1,13 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
-		<PackageReference Include="Spectre.Console.Cli" Version="*" />
-	</ItemGroup>
-	<ItemGroup>
 		<NorseRef Include="Primitives">
 			<Repo>Svartalfheim</Repo>
 		</NorseRef>
-		<NorseRef Include="Primitives.Ingestion">
-			<Repo>Svartalfheim</Repo>
-		</NorseRef>
+		<!-- The raw UNSD CSV is read through HyperTabular directly (header-first, name-resolved plan) since
+		     the engines cut retired Svartálfheim's Primitives.Ingestion. -->
+		<PackageReference Include="HyperTabular" Version="*" />
+		<PackageReference Include="Spectre.Console.Cli" Version="*" />
 	</ItemGroup>
 </Project>

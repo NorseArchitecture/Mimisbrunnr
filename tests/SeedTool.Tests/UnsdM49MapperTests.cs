@@ -1,4 +1,4 @@
-using Norse.Primitives.Ingestion;
+using HyperTabular;
 using Norse.SeedTool.Mappers;
 
 namespace Norse.SeedTool.Tests;
@@ -25,7 +25,7 @@ public sealed class UnsdM49MapperTests
 		var path = WriteFixture();
 		try
 		{
-			using ITabularReader reader = TabularReader.OpenDelimited(path, ';');
+			using var reader = DelimitedReader.Open(path, UnsdM49Mapper.SourceDialect);
 			var (regions, _) = UnsdM49Mapper.Map(reader);
 
 			regions.Count.ShouldBe(5);
@@ -51,7 +51,7 @@ public sealed class UnsdM49MapperTests
 		var path = WriteFixture();
 		try
 		{
-			using ITabularReader reader = TabularReader.OpenDelimited(path, ';');
+			using var reader = DelimitedReader.Open(path, UnsdM49Mapper.SourceDialect);
 			var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 			regions.Any(r => r is
@@ -71,7 +71,7 @@ public sealed class UnsdM49MapperTests
 		var path = WriteFixture();
 		try
 		{
-			using ITabularReader reader = TabularReader.OpenDelimited(path, ';');
+			using var reader = DelimitedReader.Open(path, UnsdM49Mapper.SourceDialect);
 			var (_, countries) = UnsdM49Mapper.Map(reader);
 
 			countries.Any(c => c is { M49Code: "010", Name: "Antarctica", ParentM49Code: null }).ShouldBeTrue();
@@ -88,7 +88,7 @@ public sealed class UnsdM49MapperTests
 		var path = WriteFixture();
 		try
 		{
-			using ITabularReader reader = TabularReader.OpenDelimited(path, ';');
+			using var reader = DelimitedReader.Open(path, UnsdM49Mapper.SourceDialect);
 			var (_, countries) = UnsdM49Mapper.Map(reader);
 
 			countries.Any(c => c is
@@ -118,7 +118,7 @@ public sealed class UnsdM49MapperTests
 		var path = WriteFixture(_rows[0].Replace("566", "abc"));
 		try
 		{
-			using ITabularReader reader = TabularReader.OpenDelimited(path, ';');
+			using var reader = DelimitedReader.Open(path, UnsdM49Mapper.SourceDialect);
 
 			Should.Throw<InvalidOperationException>(() => UnsdM49Mapper.Map(reader));
 		}
@@ -136,5 +136,22 @@ public sealed class UnsdM49MapperTests
 		var path = Path.GetTempFileName();
 		File.WriteAllLines(path, [Header, .. rows]);
 		return path;
+	}
+
+	[Fact]
+	void Map_reports_the_source_line_of_a_malformed_row()
+	{
+		// The header is line 1, so the first data row is "Row 2" — as the old hand counter had it.
+		var path = WriteFixture(_rows[0].Replace("566", "abc"));
+		try
+		{
+			using var reader = DelimitedReader.Open(path, UnsdM49Mapper.SourceDialect);
+
+			Should.Throw<InvalidOperationException>(() => UnsdM49Mapper.Map(reader)).Message.ShouldContain("Row 2");
+		}
+		finally
+		{
+			File.Delete(path);
+		}
 	}
 }

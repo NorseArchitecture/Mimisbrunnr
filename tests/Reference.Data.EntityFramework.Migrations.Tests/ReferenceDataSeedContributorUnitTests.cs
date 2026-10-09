@@ -15,4 +15,16 @@ public sealed class ReferenceDataSeedContributorUnitTests
 
 		exception.Message.ShouldContain("999");
 	}
+
+	[Fact]
+	async Task SeedAsync_throws_before_any_work_when_already_cancelled()
+	{
+		using CancellationTokenSource cancelled = new();
+		await cancelled.CancelAsync();
+		// The context is never touched: the token is checked before the first TSV is opened, so a null
+		// here is the proof, not a shortcut.
+		ReferenceDataSeedContributor contributor = new(null!);
+
+		await Should.ThrowAsync<OperationCanceledException>(() => contributor.SeedAsync(cancelled.Token));
+	}
 }

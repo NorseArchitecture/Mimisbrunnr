@@ -1,4 +1,4 @@
-using Norse.Primitives.Ingestion;
+using HyperTabular;
 using Norse.SeedTool.Mappers;
 
 namespace Norse.SeedTool.Tests;
@@ -26,7 +26,7 @@ public sealed class UnsdM49RealFileTests
 	[Fact]
 	void Map_produces_the_expected_counts_and_known_rows_from_the_real_source()
 	{
-		using var reader = TabularReader.OpenDelimited(OpenResource(RawCsvResource), ';');
+		using var reader = new DelimitedReader(OpenResource(RawCsvResource), UnsdM49Mapper.SourceDialect);
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		// 5 Regions + 17 Sub-regions + 7 Intermediate Regions, per the approved M49 spec's
@@ -42,7 +42,7 @@ public sealed class UnsdM49RealFileTests
 	[Fact]
 	void Map_emits_byte_identical_tsv_output_against_the_committed_seed_files()
 	{
-		using var reader = TabularReader.OpenDelimited(OpenResource(RawCsvResource), ';');
+		using var reader = new DelimitedReader(OpenResource(RawCsvResource), UnsdM49Mapper.SourceDialect);
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		var regionPath = Path.GetTempFileName();

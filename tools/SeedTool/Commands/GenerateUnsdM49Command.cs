@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Norse.Primitives.Ingestion;
+using HyperTabular;
 using Norse.SeedTool.Mappers;
 using Spectre.Console.Cli;
 
@@ -9,7 +9,7 @@ sealed class GenerateUnsdM49Command : Command<GenerateUnsdM49Command.Settings>
 {
 	public override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
 	{
-		using ITabularReader reader = TabularReader.OpenDelimited(settings.InputFile, ';');
+		using var reader = DelimitedReader.Open(settings.InputFile, UnsdM49Mapper.SourceDialect);
 		var (regions, countries) = UnsdM49Mapper.Map(reader);
 
 		var regionPath = Path.Combine(settings.OutputDirectory, "region.tsv");
