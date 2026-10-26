@@ -5,7 +5,7 @@
 		</NorseRef>
 		<!-- The raw UNSD CSV is read through HyperTabular directly (header-first, name-resolved plan) since
 		     the engines cut retired Svartálfheim's Primitives.Ingestion. -->
-		<PackageReference Include="HyperTabular" Version="*" />
+		<PackageReference Include="HyperTabular" Version="1.*" />
 		<PackageReference Include="Spectre.Console.Cli" Version="*" />
 	</ItemGroup>
 </Project>
