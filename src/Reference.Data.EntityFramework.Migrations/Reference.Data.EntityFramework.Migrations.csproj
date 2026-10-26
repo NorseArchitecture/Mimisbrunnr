@@ -21,7 +21,7 @@
 		</NorseRef>
 		<!-- The committed TSVs are read through HyperTabular directly (header-first, async, cancellable)
 		     since the engines cut retired Svartálfheim's Primitives.Ingestion. -->
-		<PackageReference Include="HyperTabular" Version="*" />
+		<PackageReference Include="HyperTabular" Version="1.*" />
 		<ProjectReference Include="../Reference.Data.EntityFramework/Reference.Data.EntityFramework.csproj" />
 	</ItemGroup>
 </Project>
