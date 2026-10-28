@@ -23,7 +23,7 @@
 		     Design chassis marks its own EFCore.Design reference PrivateAssets="all" so runtime
 		     consumers never pull in design-time tooling, which also stops it reaching this leaf
 		     project transitively. -->
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-rc.2.26504.105">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.*-*">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<ProjectReference Include="../Reference.Data.EntityFramework.Migrations/Reference.Data.EntityFramework.Migrations.csproj" />
